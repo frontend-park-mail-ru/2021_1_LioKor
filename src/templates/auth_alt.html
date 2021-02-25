@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#E9B047">
+
+    <link rel="stylesheet" type="text/css" href="auth_alt.css">
+</head>
+<body>
+    <div class="main">
+        <!-- <img class="wolf" src="../images/wolf_dark.png"> -->
+
+        <header>
+            <div class="logo">
+                <div class="image">
+                    <img src="../images/liokor_logo.png">
+                </div>
+                <div class="text">
+                    <span>MAIL</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="auth">
+                <div class="title">
+                    <div class="primary">Вход</div>
+                    <div class="secondary">Рады видеть вас снова!</div>
+                </div>
+                <div class="form">
+                    <div class="form-group" id="loginGroup">
+                        <label>ЛОГИН ИЛИ EMAIL<span class="error-text" id="loginErrorText"></span></label>
+                        <input type="text">
+                    </div>
+                    <div class="form-group" id="passwordGroup">
+                        <label>ПАРОЛЬ<span class="error-text" id="passwordErrorText"></span></label>
+                        <input type="password">
+                        <div class="muted"><a href="#">Забыли пароль?</a>
+                    </div>
+                    <div class="form-group">
+                        <button id="authButton">Войти</button>
+                        <div class="muted">Нужен аккаунт? <a href="#">Создать</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        authButton.addEventListener('click', () => {
+            if (loginGroup.classList.contains('error')) {
+                loginGroup.classList.remove('error');
+                loginErrorText.innerHTML = '';
+                passwordGroup.classList.remove('error');
+                passwordErrorText.innerHTML = '';
+            } else {
+                loginGroup.classList.add('error');
+                loginErrorText.innerHTML = 'Неверный логин или пароль';
+                passwordGroup.classList.add('error');
+                passwordErrorText.innerHTML = 'Неверный логин или пароль';
+            }
+        });
+    </script>
+</body>
+</html>
