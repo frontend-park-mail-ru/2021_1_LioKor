@@ -1,0 +1,110 @@
+textColor1 = #F5F5F5
+textColor2 = #CCC
+textColor3 = #888
+
+clError = #F04747
+clPrimary = #FF6436
+// clHighlight = #FFA500
+clHighlight = #EF9900
+
+formBgColor = #404346
+
+*
+    box-sizing border-box
+
+@font-face
+    font-family wr
+    src url(w_font.ttf)
+
+a
+    text-decoration none
+    color clPrimary
+    transition all 0.3s ease
+a:hover
+    color clHighlight
+
+button
+    background-color clPrimary
+    color textColor1
+    border-width 0
+    font-size 1.1rem
+    padding 10px 20px
+    border-radius 3px
+    cursor pointer
+    transition all 0.3s ease
+button:hover
+    background-color clHighlight
+
+input[type="text"],
+input[type="password"]
+    padding 10px
+    font-size 1rem
+    color textColor1
+    background-color #393C3F
+    border 1px solid #080808
+    border-radius 3px
+
+    transition all 0.3s ease
+input[type="text"]:focus,
+input[type="password"]:focus
+    outline 0
+    border 1px solid clHighlight
+input[type="text"]::placeholder,
+input[type="password"]::placeholder
+    color textColor3
+
+input.error[type="text"],
+input.error[type="password"],
+.error input
+    border 1px solid clError !important
+
+div.standalone-form
+    box-shadow 0 0 3px #101010
+    padding 20px 30px
+
+    max-width 460px
+    margin 150px auto
+    border-radius 7px
+    overflow hidden
+
+    background-color formBgColor
+
+    div.title
+        text-align center
+        color textColor1
+        div.primary
+            font-size 1.5rem
+            font-weight bold
+        div.secondary
+            margin-top 10px
+            font-size 0.95rem
+            color textColor2
+    div.form
+        padding-top 5px
+
+        div.form-group
+            margin 20px 0
+            label
+                color textColor2
+                display block
+                font-size 0.75rem
+                font-weight bold
+                margin-bottom 9px
+                span.error-text
+                    font-style italic
+                span.error-text:not(:empty):before
+                    content: " - "
+
+            input,
+            button
+                width 100%
+            div.muted
+                margin-top 8px
+                font-size 0.9rem
+                color textColor3
+        div.form-group.error
+            label
+                color clError
+
+body
+    margin 0
