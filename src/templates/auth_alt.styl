@@ -1,7 +1,10 @@
 textColor1 = #F5F5F5
 textColor2 = #CCC
 textColor3 = #888
+
 clError = #F04747
+clPrimary = #FF6436
+clHighlight = #FFA500
 
 formBgColor = #404346
 
@@ -14,21 +17,22 @@ formBgColor = #404346
 
 a
     text-decoration none
-    color #EF9900
+    color clPrimary
     transition all 0.3s ease
 a:hover
-    color #FAFAFA
+    color clHighlight
 
 button
-    background-color textColor1
-    border 1px solid #FFA500
+    background-color clPrimary
+    color textColor1
+    border-width 0
     font-size 1.1rem
     padding 10px 20px
     border-radius 3px
     cursor pointer
     transition all 0.3s ease
 button:hover
-    background-color #FFA500
+    background-color clHighlight
 
 input[type="text"],
 input[type="password"]
@@ -91,7 +95,7 @@ body
             padding 20px 30px
 
             max-width 460px
-            margin 175px auto
+            margin 150px auto
             border-radius 7px
             overflow hidden
 
