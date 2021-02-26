@@ -1,0 +1,102 @@
+*
+    box-sizing border-box
+
+@font-face
+    font-family wr
+    src url(w_font.ttf)
+
+a
+    text-decoration none
+    color #155bd6
+    outline 0
+    transition all 0.3s ease
+a:hover
+    color #F29900
+
+button
+    background-color #FAFAFA
+    border 1px solid #FFA500
+    outline 0
+    font-size 1.1em
+    padding 10px 20px
+    border-radius 5px
+    cursor pointer
+    transition all 0.3s ease
+
+button:hover
+    background-color #FFA500
+
+input[type="text"],
+input[type="password"]
+    padding 10px
+    font-size 1.1rem
+    border 1px solid #CCC
+    border-radius 5px
+
+    transition all 0.3s ease
+
+input[type="text"]:hover,
+input[type="password"]:hover,
+input[type="text"]:focus,
+input[type="password"]:focus
+    outline 0
+    border 1px solid rgba(255, 165, 0, .7);
+    box-shadow 0 0 0 3px rgba(255, 165, 0, 0.25)
+
+body
+    margin 0
+    background-color #202020
+
+    font-family Arial
+    color #202020
+
+    background-image url(../images/background.jpg)
+
+    div.main
+        img.wolf
+            position fixed
+            right 20px
+            bottom 20px
+            z-index -1
+            height 400px
+
+        div.auth
+            footerHeight = 64px
+            bgColorMain = #FAFAFA
+
+            max-height 354px
+            max-width 450px
+            margin 200px auto
+            text-align center
+            border-radius 7px
+            overflow hidden
+
+
+            div.title
+                background-color #454545
+                color #FAFAFA
+                padding 15px 0
+                font-size 1.5rem
+                font-weight bold
+            div.form
+                background-color bgColorMain
+                padding 20px 0
+
+                div.form-group
+                    padding 10px 20px
+
+                    input
+                        width 85%
+                    button
+                        width 200px
+            div.footer
+                background-color bgColorMain
+                display flex
+                height footerHeight
+                line-height footerHeight
+                border-top 1px solid #CCC
+                div:first-child
+                    border-right 1px solid #CCC
+                    box-sizing content-box
+                div
+                    width 50%
