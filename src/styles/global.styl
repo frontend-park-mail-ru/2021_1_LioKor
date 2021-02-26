@@ -23,7 +23,7 @@ a
 a:hover
     color clHighlight
 
-button
+button.btn
     background-color clPrimary
     color textColor1
     border-width 0
@@ -32,11 +32,13 @@ button
     border-radius 3px
     cursor pointer
     transition all 0.3s ease
-button:hover
+button.btn.btn-danger
+    background-color clError
+button.btn:hover
     background-color clHighlight
 
-input[type="text"],
-input[type="password"]
+input.form-control[type="text"],
+input.form-control[type="password"]
     padding 10px
     font-size 1rem
     color textColor1
@@ -45,16 +47,16 @@ input[type="password"]
     border-radius 3px
 
     transition all 0.3s ease
-input[type="text"]:focus,
-input[type="password"]:focus
+input.form-control[type="text"]:focus,
+input.form-control[type="password"]:focus
     outline 0
     border 1px solid clHighlight
-input[type="text"]::placeholder,
-input[type="password"]::placeholder
+input.form-control[type="text"]::placeholder,
+input.form-control[type="password"]::placeholder
     color textColor3
 
-input.error[type="text"],
-input.error[type="password"],
+input.form-control.error[type="text"],
+input.form-control.error[type="password"],
 .error input
     border 1px solid clError !important
 
