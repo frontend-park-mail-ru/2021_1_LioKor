@@ -12,7 +12,7 @@
     <div class="main">
         <!-- <img class="wolf" src="../images/wolf_dark.png"> -->
 
-        <header>
+        <header class="lite">
             <div class="logo">
                 <div class="image">
                     <img src="../images/liokor_logo.png">
@@ -50,17 +50,7 @@
 
     <script>
         const authButtonClick = () => {
-            if (loginGroup.classList.contains('error')) {
-                loginGroup.classList.remove('error');
-                loginErrorText.innerHTML = '';
-                passwordGroup.classList.remove('error');
-                passwordErrorText.innerHTML = '';
-            } else {
-                loginGroup.classList.add('error');
-                loginErrorText.innerHTML = 'Неверный логин или пароль';
-                passwordGroup.classList.add('error');
-                passwordErrorText.innerHTML = 'Неверный логин или пароль';
-            }
+            location.href = '/templates/profile.html'
         }
         authButton.addEventListener('click', authButtonClick);
 

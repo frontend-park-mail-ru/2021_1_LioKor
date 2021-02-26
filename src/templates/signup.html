@@ -12,7 +12,7 @@
     <div class="main">
         <!-- <img class="wolf" src="../images/wolf_dark.png"> -->
 
-        <header>
+        <header class="lite">
             <div class="logo">
                 <div class="image">
                     <img src="../images/liokor_logo.png">
@@ -30,7 +30,7 @@
                 </div>
                 <div class="form">
                     <div class="form-group" id="loginGroup">
-                        <label>ЛОГИН<span class="error-text" id="loginErrorText"></span></label>
+                        <label>ЛОГИН*<span class="error-text" id="loginErrorText"></span></label>
                         <input type="text">
                         <div class="muted">Будет использоваться как часть адреса: login@liokor.ru</div>
                     </div>
@@ -40,13 +40,13 @@
                         <div class="muted">Будет отображаться у получателей писем</div>
                     </div>
                     <div class="form-group" id="passwordGroup">
-                        <label>ПАРОЛЬ<span class="error-text" id="passwordErrorText"></span></label>
+                        <label>ПАРОЛЬ*<span class="error-text" id="passwordErrorText"></span></label>
                         <input type="password" id="authPasswordInput">
                         <div class="muted">8 символов, минимум 2 буквы разного регистра и 1 цифра</a>
                     </div>
                     <div class="form-group">
-                        <button id="authButton">Создать</button>
-                        <div class="muted">Уже с нами? <a href="/templates/auth_alt.html">Войти</a></div>
+                        <button id="createButton">Создать</button>
+                        <div class="muted">Уже с нами? <a href="/templates/auth.html">Войти</a></div>
                     </div>
                 </div>
             </div>
@@ -54,7 +54,7 @@
     </div>
 
     <script>
-        const authButtonClick = () => {
+        const createButtonClick = () => {
             if (loginGroup.classList.contains('error')) {
                 loginGroup.classList.remove('error');
                 loginErrorText.innerHTML = '';
@@ -62,18 +62,12 @@
                 passwordErrorText.innerHTML = '';
             } else {
                 loginGroup.classList.add('error');
-                loginErrorText.innerHTML = 'Неверный логин или пароль';
+                loginErrorText.innerHTML = 'Такой логин уже занят';
                 passwordGroup.classList.add('error');
-                passwordErrorText.innerHTML = 'Неверный логин или пароль';
+                passwordErrorText.innerHTML = 'Пароль не удовлетворяет требованиям';
             }
         }
-        authButton.addEventListener('click', authButtonClick);
-
-        authPasswordInput.addEventListener('keydown', (e) => {
-            if (e.key == 'Enter') {
-                authButtonClick();
-            }
-        })
+        createButton.addEventListener('click', createButtonClick);
     </script>
 </body>
 </html>
