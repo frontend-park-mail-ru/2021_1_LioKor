@@ -30,32 +30,38 @@
                     <div class="secondary">korolion@liokor.ru</div>
                 </div>
                 <div class="form">
-                    <div class="form-group" id="loginGroup">
-                        <label>ПОЛНОЕ ИМЯ<span class="error-text" id="loginErrorText"></span></label>
-                        <input class="form-control" type="text" value="Артем К.">
-                    </div>
-                    <div class="form-group" id="loginGroup">
-                        <label>ЗАПАСНОЙ EMAIL<span class="error-text"></span></label>
-                        <input class="form-control" type="text" value="wolf@liokor.ru">
-                        <div class="muted">Необходимо будет подтвердить на старом и новом ящиках</div>
-                    </div>
-                    <div class="form-group">
-                        <button class="btn" id="updateButton">Сохранить</button>
-                    </div>
-                    <div class="form-group">
-                        <button class="btn" id="changePassButton">Сменить пароль</button>
-                    </div>
-                    <div class="form-group">
-                        <button class="btn btn-danger" id="logoutButton">Выйти</button>
-                    </div>
+                    <form id="editProfileForm">
+                        <div class="form-group" id="fullnameGroup">
+                            <label>ПОЛНОЕ ИМЯ<span class="error-text" id="fullnameErrorText"></span></label>
+                            <input name="fullname" type="text" class="form-control" value="Артем К.">
+                        </div>
+                        <div class="form-group" id="reserveEmailGroup">
+                            <label>ЗАПАСНОЙ EMAIL<span class="error-text" id="reserveEmailErrorText"></span></label>
+                            <input name="reserveEmail" type="text" class="form-control" value="wolf@liokor.ru">
+                            <div class="muted">Необходимо будет подтвердить на старом и новом ящиках</div>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn" value="Сохранить">
+                        </div>
+                        <div class="form-group">
+                            <button class="btn" id="changePassButton">Сменить пароль</button>
+                        </div>
+                        <div class="form-group">
+                            <a href="/templates/auth.html" class="btn btn-danger">Выйти</a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        logoutButton.addEventListener('click', () => {
-            location.href = "/templates/auth.html"
+        editProfileForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let formData = new FormData(editProfileForm);
+            let fullname = formData.get('fullname');
+            let reserveEmail = formData.get('reserveEmail');
+            alert('New data: ' + fullname + ' ' + reserveEmail);
         });
     </script>
 </body>

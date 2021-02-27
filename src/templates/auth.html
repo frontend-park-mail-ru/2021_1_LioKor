@@ -27,40 +27,44 @@
 
         <div class="content">
             <div class="standalone-form">
-                <div class="title">
-                    <div class="primary">Вход</div>
-                    <div class="secondary">Рады видеть вас снова!</div>
-                </div>
-                <div class="form">
-                    <div class="form-group" id="loginGroup">
-                        <label>ЛОГИН ИЛИ EMAIL<span class="error-text" id="loginErrorText"></span></label>
-                        <input class="form-control" type="text">
+                <form id="authForm">
+                    <div class="title">
+                        <div class="primary">Вход</div>
+                        <div class="secondary">Рады видеть вас снова!</div>
                     </div>
-                    <div class="form-group" id="passwordGroup">
-                        <label>ПАРОЛЬ<span class="error-text" id="passwordErrorText"></span></label>
-                        <input class="form-control" type="password" id="authPasswordInput">
-                        <div class="muted"><a href="#">Забыли пароль?</a>
+                    <div class="form">
+                        <div class="form-group" id="usernameGroup">
+                            <label>ЛОГИН ИЛИ EMAIL<span class="error-text" id="usernameErrorText"></span></label>
+                            <input name="username" type="text" class="form-control" required>
+                        </div>
+                        <div class="form-group" id="passwordGroup">
+                            <label>ПАРОЛЬ<span class="error-text" id="passwordErrorText"></span></label>
+                            <input name="password" type="password" class="form-control" required>
+                            <div class="muted"><a href="#">Забыли пароль?</a>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn" value="Войти">
+                            <div class="muted">Нужен аккаунт? <a href="/templates/signup.html">Создать</a></div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <button class="btn" id="authButton">Войти</button>
-                        <div class="muted">Нужен аккаунт? <a href="/templates/signup.html">Создать</a></div>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
 
     <script>
-        const authButtonClick = () => {
-            location.href = '/templates/profile.html'
-        }
-        authButton.addEventListener('click', authButtonClick);
-
-        authPasswordInput.addEventListener('keydown', (e) => {
-            if (e.key == 'Enter') {
-                authButtonClick();
+        authForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let formData = new FormData(authForm);
+            let username = formData.get('username');
+            let password = formData.get('password');
+            if (username.length < 3) {
+                usernameGroup.classList.add('error');
+                usernameErrorText.innerHTML = 'Слишком короткий логин';
+                return;
             }
-        })
+            location.href = '/templates/profile.html'
+        });
     </script>
 </body>
 </html>
