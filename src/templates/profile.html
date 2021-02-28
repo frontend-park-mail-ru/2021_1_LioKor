@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../styles/profile.css">
 </head>
 <body>
-    <div class="main">
+    <div class="main profile">
         <header class="lite">
             <div class="logo">
                 <div class="image">
@@ -24,13 +24,21 @@
         </header>
 
         <div class="content">
-            <div class="standalone-form">
+            <div class="standalone-form profile">
                 <div class="title">
+                    <div class="avatar">
+                        <img id="avatarImage" src="../images/avatar.jpg">
+                        <div id="avatarChange" class="cover">
+                            Изменить
+                        </div>
+                    </div>
                     <div class="primary">KoroLion</div>
                     <div class="secondary">korolion@liokor.ru</div>
                 </div>
                 <div class="form">
                     <form id="editProfileForm">
+                        <input name="avatarDataURL" type="hidden" id="avatarDataURL">
+
                         <div class="form-group" id="fullnameGroup">
                             <label>ПОЛНОЕ ИМЯ<span class="error-text" id="fullnameErrorText"></span></label>
                             <input name="fullname" type="text" class="form-control" value="Артем К.">
@@ -44,7 +52,7 @@
                             <input type="submit" class="btn" value="Сохранить">
                         </div>
                         <div class="form-group">
-                            <button class="btn" id="changePassButton">Сменить пароль</button>
+                            <a href="/templates/change_password.html" class="btn">Сменить пароль</a>
                         </div>
                         <div class="form-group">
                             <a href="/templates/auth.html" class="btn btn-danger">Выйти</a>
@@ -55,13 +63,22 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { readImageAsDataURL } from '../modules/files.js';
+
+        avatarChange.addEventListener('click', async () => {
+            let dataURL = await readImageAsDataURL();
+            avatarImage.src = dataURL;
+            avatarDataURL.value = dataURL;
+        });
+
         editProfileForm.addEventListener('submit', (e) => {
             e.preventDefault();
             let formData = new FormData(editProfileForm);
             let fullname = formData.get('fullname');
             let reserveEmail = formData.get('reserveEmail');
-            alert('New data: ' + fullname + ' ' + reserveEmail);
+            let avatarDataURL = formData.get('avatarDataURL');
+            alert('New data: ' + fullname + ' ' + reserveEmail + avatarDataURL);
         });
     </script>
 </body>
