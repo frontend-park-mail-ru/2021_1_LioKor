@@ -1,9 +1,9 @@
 export const readImageAsDataURL = async (maxFileSizeMB = 10) => {
     const createImageInput = (changeCallback) => {
-        let hasInp = true;
-        let imageInput = document.getElementById('filesImageInput');
+        let hasInp = true
+        let imageInput = document.getElementById('filesImageInput')
         if (imageInput === null) {
-            hasInp = false;
+            hasInp = false
             imageInput = document.createElement('INPUT')
         }
         imageInput.id = 'filesImageInput'
@@ -13,7 +13,7 @@ export const readImageAsDataURL = async (maxFileSizeMB = 10) => {
 
         imageInput.style = 'display: none'
         if (!hasInp) {
-            document.body.appendChild(imageInput); // otherwise don't work on ios
+            document.body.appendChild(imageInput) // otherwise don't work on ios
         }
 
         return imageInput
@@ -59,7 +59,7 @@ export const readImageAsDataURL = async (maxFileSizeMB = 10) => {
     return new Promise((resolve, reject) => {
         createImageInput(async (changeEvent) => {
             try {
-                let dataURL = await inputImageToDataURL(changeEvent.target)
+                const dataURL = await inputImageToDataURL(changeEvent.target)
                 resolve(dataURL)
             } catch (err) {
                 changeEvent.target.remove()
