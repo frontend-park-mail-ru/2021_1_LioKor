@@ -1,10 +1,21 @@
 export const readImageAsDataURL = async (maxFileSizeMB = 10) => {
     const createImageInput = (changeCallback) => {
-        const imageInput = document.createElement('INPUT')
+        let hasInp = true;
+        let imageInput = document.getElementById('filesImageInput');
+        if (imageInput === null) {
+            hasInp = false;
+            imageInput = document.createElement('INPUT')
+        }
+        imageInput.id = 'filesImageInput'
         imageInput.type = 'file'
         imageInput.accept = 'image/png, image/jpeg, image/bmp'
-        imageInput.style = 'display: none'
         imageInput.addEventListener('change', changeCallback)
+
+        imageInput.style = 'display: none'
+        if (!hasInp) {
+            document.body.appendChild(imageInput); // otherwise don't work on ios
+        }
+
         return imageInput
     }
 
@@ -24,11 +35,11 @@ export const readImageAsDataURL = async (maxFileSizeMB = 10) => {
         return file
     }
 
-    return new Promise((resolve, reject) => {
-        createImageInput((changeEvent) => {
+    const inputImageToDataURL = (inputImage) => {
+        return new Promise((resolve, reject) => {
             let image
             try {
-                image = getValidatedImage(changeEvent.target)
+                image = getValidatedImage(inputImage)
             } catch (err) {
                 reject(err)
                 return
@@ -42,6 +53,18 @@ export const readImageAsDataURL = async (maxFileSizeMB = 10) => {
                 reject(new Error('Unable to read file!'))
             })
             reader.readAsDataURL(image)
+        })
+    }
+
+    return new Promise((resolve, reject) => {
+        createImageInput(async (changeEvent) => {
+            try {
+                let dataURL = await inputImageToDataURL(changeEvent.target)
+                resolve(dataURL)
+            } catch (err) {
+                changeEvent.target.remove()
+                reject(err)
+            }
         }).click()
     })
 }

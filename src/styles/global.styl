@@ -24,6 +24,7 @@ a:hover
     color clHighlight
 
 .btn
+    -webkit-appearance none
     display block
     text-align center
     background-color clPrimary
@@ -70,7 +71,6 @@ div.standalone-form
 
     max-width 460px
     margin 125px auto
-    margin-bottom 0
     border-radius 7px
     overflow hidden
 
@@ -119,10 +119,9 @@ body
     margin 0
     font-family Arial
     color #202020
-    height 100%
 
     div.main
-        height 100%
+        overflow auto
         img.wolf
             position fixed
             right 20px
