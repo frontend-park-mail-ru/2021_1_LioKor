@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "concurrently 'http-server src -c-1' 'stylus src/styles -w'",
+    "dev": "concurrently \"http-server src -c-1\" \"stylus src/styles -w\" --kill-others",
     "lint": "eslint 'src/**/*.js'"
   },
   "devDependencies": {
