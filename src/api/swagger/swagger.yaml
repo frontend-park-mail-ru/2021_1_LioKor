@@ -38,8 +38,8 @@ paths:
           description: "Invalid data in request"
         "403":
           description: "Invalid login or password"
-  /user/logout:
-    post:
+  /user/session:
+    delete:
       tags:
       - "user"
       summary: "Removes user's session from db"
@@ -67,7 +67,7 @@ paths:
       tags:
       - "user"
       summary: "Creates new user"
-      description: "This can only be done by the logged in user."
+      description: ""
       operationId: "createUser"
       produces:
       - "application/json"

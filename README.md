@@ -8,15 +8,18 @@
 * [Сергей Тяпкин](https://github.com/SergTyapkin)
 
 ### Менторы:
-* [Наталия Климова](https://github.com/Tataklim) (фронтенд)
+* Джахонгир Тулфоров (фронтенд)
 * [Владимир Северов](https://github.com/hackallcode) (бэкенд)
 
 ### HowTo Run:
+0. npm install -g yarn
 1. npm install -g http-server
 2. npm install -g stylus
-3. в одном терминале: cd src && http-server -c-1
-4. в другом терминале: cd src/templates && stylus -w
-5. Теперь сайт доступен по localhost:8080
+3. yarn dev
+4. Теперь сайт доступен по localhost:8080
+
+### API Swagger:
+* [https://mail.liokor.ru/api/swagger](https://mail.liokor.ru/api/swagger)
 
 ### Деплой
 * [https://mail.liokor.ru](https://mail.liokor.ru)

@@ -1,3 +1,5 @@
 node_modules
-
+src/api/swagger/*
+!src/api/swagger/swagger.yaml
+!src/api/swagger/index.html
 *.css
