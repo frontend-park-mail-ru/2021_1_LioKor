@@ -8,7 +8,7 @@
 * [Сергей Тяпкин](https://github.com/SergTyapkin)
 
 ### Менторы:
-* Джахонгир Тулфоров (фронтенд)
+* [Джахонгир Тулфоров](https://github.com/bin-umar) (фронтенд)
 * [Владимир Северов](https://github.com/hackallcode) (бэкенд)
 
 ### HowTo Run:
