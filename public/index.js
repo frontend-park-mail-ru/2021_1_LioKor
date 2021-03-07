@@ -3,7 +3,7 @@ import {ajax} from "./modules/ajax.js";
 
 const router = new Router();
 
-ajax("GET", "/api/me", {}, (status, response) => {
+ajax("GET", "/api/user", null, (status, response) => {
     /*if (status == 200) { // valid
         document.getElementById("nickname").innerText = response.nickname;
         document.getElementById("me/login-button").setAttribute('href', '/me');
@@ -13,6 +13,9 @@ ajax("GET", "/api/me", {}, (status, response) => {
         document.getElementById("progressbar").style.backgroundPositionX = "100%";
         document.getElementById("me/login-button").setAttribute('href', '/login');
     }*/
-
-    router.goto("/auth");
+    console.log(location.pathname);
+    if (location.pathname === "/")
+        router.goto("/auth");
+    else
+        router.goto(location.pathname);
 });

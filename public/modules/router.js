@@ -38,8 +38,13 @@ export default class Router {
         this.goto(event.currentTarget.getAttribute("href").toString());
     }
 
+    resolvePaths = [{path: /^\/user\/.*\/password$/, renderPath: "/change_password"}];
     goto(path) {
         history.pushState({}, "", path);
+        this.resolvePaths.forEach((resolvePath) => {
+            if (resolvePath.path.test(path))
+                path = resolvePath.renderPath;
+        });
         renderer.render("body", path, this, () => {this.relinkButtons();});
     }
 }

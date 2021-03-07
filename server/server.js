@@ -103,6 +103,39 @@ app.get('/api/user', (req, res) => {
     res.status(200).json(user).end();
 });
 
+app.put('/api/user/*/password', (req, res) => {
+    const id = req.cookies['userId'];
+    if (!(id in usernames))
+        return res.status(401).json({usernameError: 'Сессия устарела, и ты теперь не вошёл в аккаунт.'});
+
+    let username = req.url.substring(10);
+    username = username.substr(0, username.length - 9);
+    console.log(username);
+    if (!users[username])
+        return res.status(404).json({passwordError: 'Такого пользователя нет'});
+
+    const password = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+
+    if (users[usernames[id]].password !== password)
+        return res.status(400).json({passwordError: 'Пароль не подходит'});
+    if (usernames[id] !== username)
+        return res.status(401).json({usernameError: 'Сессия устарела, и ты теперь не вошёл в аккаунт.'});
+    if (!newPassword)
+        return res.status(403).json({newPasswordError: 'Без пароля нельзя'});
+    if (newPassword.length > 30)
+        return res.status(403).json({newPasswordError: 'Длинновато. Больше 30 символов не влезет'});
+    if (newPassword.length < 4)
+        return res.status(403).json({newPasswordError: 'Пароль коротковат, надо хотя бы 4 с̶м̶ символа'});
+
+    if (newPassword === password)
+        return res.status(403).json({passwordError: 'Пароли совпадают. (Шо то - фигня, шо то - фигня)', newPasswordError: ''});
+
+    users[usernames[id]].password = newPassword;
+
+    res.status(200).end();
+});
+
 app.put('/api/user/*', (req, res) => {
     const id = req.cookies['userId'];
     if (!(id in usernames))
@@ -155,32 +188,6 @@ app.post('/api/me/check-password', (req, res) => {
 
     if (users[usernames[id]].password !== password)
         return res.status(403).json({passwordError: 'Пароль не подходит'});
-
-    res.status(200).end();
-});
-
-app.put('/api/user/*/password', (req, res) => {
-    const id = req.cookies['userId'];
-    if (!(id in usernames))
-        return res.status(403).json({usernameError: 'Сессия устарела, и ты теперь не вошёл в аккаунт.'});
-
-    const password = req.body.password;
-    const newPassword = req.body.newPassword;
-
-    if (users[usernames[id]].password !== password)
-        return res.status(403).json({passwordError: 'Пароль не подходит'});
-
-    if (!newPassword)
-        return res.status(403).json({newPasswordError: 'Без пароля нельзя'});
-    if (newPassword.length > 30)
-        return res.status(403).json({newPasswordError: 'Длинновато. Больше 30 символов не влезет'});
-    if (newPassword.length < 4)
-        return res.status(403).json({newPasswordError: 'Пароль коротковат, надо хотя бы 4 с̶м̶ символа'});
-
-    if (newPassword === password)
-        return res.status(403).json({passwordError: 'Пароли совпадают. (Шо то - фигня, шо то - фигня)', newPasswordError: ''});
-
-    users[usernames[id]].password = newPassword;
 
     res.status(200).end();
 });
@@ -288,19 +295,10 @@ app.post('/api/admin/delete-user', (req, res) => {
 app.use(express.static(path.resolve(__dirname, '..', 'public')));
 
 app.get('/*', (req, res) => {
-    fs.readFile(path.resolve(__dirname, '..', 'public', 'redirect.html'), (err, data) => {
-        data = data.toString();
-        data += '    router.goto("' + req.originalUrl + '");\n' +
-            '</script>\n' +
-            '</body>\n' +
-            '</html>'
-
-        res.type('text/html; charset=UTF-8');
-        res.send(data);
-    });
+    res.sendFile(path.resolve(__dirname, '..', 'public', 'index.html'));
 });
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8080;
 
 app.listen(port, () => {
     console.log(`Server listening port ${port}`);

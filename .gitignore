@@ -1,6 +1,6 @@
 node_modules
 .idea
-api/swagger/*
-!api/swagger/swagger.yaml
-!api/swagger/index.html
+public/api/swagger/*
+!public/api/swagger/swagger.yaml
+!public/api/swagger/index.html
 *.css

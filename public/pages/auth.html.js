@@ -1,20 +1,8 @@
 import {ajax} from "../modules/ajax.js";
 
 const html = `
-<div class="main auth">
+<div class="auth">
     <!-- <img class="wolf" src="../images/wolf_dark.png"> -->
-
-    <header class="lite">
-        <div class="logo">
-            <div class="image">
-                <div class="img-cover"></div>
-                <img src="../images/liokor_logo.png" alt="лого">
-            </div>
-            <div class="text">
-                <span>MAIL</span>
-            </div>
-        </div>
-    </header>
 
     <div class="content">
         <div class="standalone-form">
@@ -49,13 +37,15 @@ export function source(element, router) {
     element.innerHTML = html;
     document.getElementById("usernameInput").focus();
 
+    document.getElementById("main").style.backgroundColor = "transparent";
+
     ajax('GET', '/api/user', null, (status, response) => {
         if (status === 200) // is authorized
-            router.goto("/profile");
+            router.goto("/user");
     });
 
-    document.getElementById("authForm").addEventListener('submit', (e) => {
-        e.preventDefault();
+    document.getElementById("authForm").addEventListener('submit', (event) => {
+        event.preventDefault();
         const username = document.getElementById("usernameInput").value.trim();
         const password = document.getElementById("passwordInput").value.trim();
         if (username.length < 3) {
@@ -66,7 +56,7 @@ export function source(element, router) {
 
         ajax("POST", "/api/user/auth", {username, password}, (status, response) => {
             if (status === 200) { // valid
-                router.goto("/profile");
+                router.goto("/user");
             } else if (status === 400) { // invalid
                 document.getElementById("usernameErrorText").innerText = "Запрос на сервер не по форме";
             } else {

@@ -1,20 +1,9 @@
 import {ajax} from "../modules/ajax.js";
 
 const html = `
-<div class="main signup">
+<div class="signup">
     <!-- <img class="wolf" src="../images/wolf_dark.png"> -->
-
-    <header class="lite">
-        <div class="logo">
-            <div class="image">
-                <img src="../images/liokor_logo.png">
-            </div>
-            <div class="text">
-                <span>MAIL</span>
-            </div>
-        </div>
-    </header>
-
+    
     <div class="content">
         <div class="standalone-form">
             <div class="title">
@@ -56,7 +45,9 @@ const html = `
 export function source(element, router) {
     document.title = "SQuest | Регистрация";
     element.innerHTML = html;
-    
+
+    document.getElementById("main").style.backgroundColor = "transparent";
+
     document.getElementById("signupForm").addEventListener("submit", (event) => {
         event.preventDefault();
         const username = document.getElementById("usernameInput").value.trim();
@@ -66,7 +57,7 @@ export function source(element, router) {
 
         ajax("POST", "/api/user", {username, password, reserveEmail, fullname}, (status, response) => {
             if (status == 200) { // valide
-                router.goto("/profile");
+                router.goto("/user");
             } else { // invalide
                 if (response.nicknameError)
                     document.getElementById("nicknameError").innerText = response.nicknameError;

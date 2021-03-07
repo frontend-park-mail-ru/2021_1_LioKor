@@ -1,17 +1,7 @@
 import {ajax} from "../modules/ajax.js";
 
 const html = `
-<div class="main profile">
-    <header class="lite">
-        <div class="logo">
-            <div class="image">
-                <img src="../images/liokor_logo.png">
-            </div>
-            <div class="text">
-                <span>MAIL</span>
-            </div>
-        </div>
-    </header>
+<div class="profile">
 
     <div class="content">
         <div class="standalone-form">
@@ -19,12 +9,12 @@ const html = `
                 <div class="primary">Смена пароля</div>
             </div>
             <div class="form">
-                <form id="editProfileForm">
-                    <div class="form-group" id="fullnameGroup">
+                <form id="changePasswordForm">
+                    <div class="form-group" id="oldPasswordGroup">
                         <label>СТАРЫЙ ПАРОЛЬ<span class="error-text" id="oldPasswordErrorText"></span></label>
                         <input name="oldPassword" type="password" class="form-control" id="oldPasswordInput">
                     </div>
-                    <div class="form-group" id="reserveEmailGroup">
+                    <div class="form-group" id="newPasswordGroup">
                         <label>НОВЫЙ ПАРОЛЬ<span class="error-text" id="newPasswordErrorText"></span></label>
                         <input name="newPassword" type="password" class="form-control" id="newPasswordInput">
                     </div>
@@ -32,7 +22,7 @@ const html = `
                         <input type="submit" class="btn" value="Сменить пароль">
                     </div>
                     <div class="form-group">
-                        <a href="/templates/profile.html" class="btn btn-danger">Отмена</a>
+                        <linkButton href="/user" class="btn btn-danger">Отмена</linkButton>
                     </div>
                 </form>
             </div>
@@ -44,27 +34,27 @@ const html = `
 export function source(element, router) {
     document.title = "LioKor | Cменить пароль";
     element.innerHTML = html;
-    document.getElementById("usernameInput").focus();
+    document.getElementById("oldPasswordInput").focus();
 
-    ajax('GET', '/api/user', null, (status, response) => {
-        if (status === 200) // is authorized
-            router.goto("/profile");
-    });
+    document.getElementById("main").style.backgroundColor = "#404244";
 
-    document.getElementById("authForm").addEventListener('submit', (e) => {
+    document.getElementById("changePasswordForm").addEventListener('submit', (e) => {
         e.preventDefault();
         const oldPassword = document.getElementById("oldPasswordInput").value.trim();
         const newPassword = document.getElementById("newPasswordInput").value.trim();
 
-        ajax("POST", document.location, {oldPassword, newPassword}, (status, response) => {
+        ajax("PUT", "/api" + location.pathname, {oldPassword, newPassword}, (status, response) => {
             if (status === 200) { // valid
                 alert("Пароль изменён");
+                router.goto("/user");
             } else if (status === 400) { // invalid
-                document.getElementById("usernameErrorText").innerText = "Неправильный пароль";
+                document.getElementById("oldPasswordErrorText").innerText = "Неправильный пароль";
             } else if (status === 401) { // invalid
-                document.getElementById("usernameErrorText").innerText = "У вас нет доступа";
-            } else {
-                document.getElementById("usernameErrorText").innerText = "Пользователь не найден";
+                document.getElementById("oldPasswordErrorText").innerText = "У вас нет доступа";
+            } else if (status === 403) {
+                document.getElementById("newPasswordErrorText").innerText = "Неправильный формат ввода";
+            } else if (status === 404) {
+                document.getElementById("oldPasswordErrorText").innerText = "Неизвестная ошибка " + status;
             }
         });
     });
