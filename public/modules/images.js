@@ -11,7 +11,7 @@ export const readImageAsDataURL = async (maxFileSizeMB = 10) => {
         imageInput.accept = 'image/png, image/jpeg, image/bmp'
         imageInput.addEventListener('change', changeCallback)
 
-        imageInput.style = 'display: none'
+        imageInput.style.display = 'none'
         if (!hasInp) {
             document.body.appendChild(imageInput) // otherwise don't work on ios
         }

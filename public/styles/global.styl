@@ -12,15 +12,20 @@ formBgColor = #404346
 *
     box-sizing border-box
 
+#body
+    opacity 0
+    transition all 200ms ease
+
 @font-face
     font-family wr
     src url(../fonts/w_font.ttf)
 
-a
+linkButton
     text-decoration none
     color clPrimary
     transition all 0.3s ease
-a:hover
+    cursor pointer
+linkButton:hover
     color clHighlight
 
 .btn
@@ -39,7 +44,7 @@ a:hover
     background-color clError
 .btn:hover
     background-color clHighlight
-a.btn:hover
+linkButton.btn:hover
     color textColor1
 
 input.form-control[type="text"],
