@@ -8,7 +8,7 @@
 * [Сергей Тяпкин](https://github.com/SergTyapkin)
 
 ### Менторы:
-* Джахонгир Тулфоров (фронтенд)
+* [Джахонгир Тулфоров](https://github.com/bin-umar) (фронтенд)
 * [Владимир Северов](https://github.com/hackallcode) (бэкенд)
 
 ### HowTo Run:
@@ -21,8 +21,11 @@
 ### API Swagger:
 * [https://mail.liokor.ru/api/swagger](https://mail.liokor.ru/api/swagger)
 
-### Деплой
-* [https://mail.liokor.ru](https://mail.liokor.ru)
+### Деплой этой ветки
+* [https://liokor-mail.herokuapp.com/](https://liokor-mail.herokuapp.com/)
 
-### Репозиторий с бэкендом
+### Деплой
+* [https://mail.liokor.ru/](https://mail.liokor.ru/)
+
+### Репозиторий с бэкендом (В деплое работает клон сервера на node.js)
 * [2021_1_LioKor](https://github.com/go-park-mail-ru/2021_1_LioKor)
