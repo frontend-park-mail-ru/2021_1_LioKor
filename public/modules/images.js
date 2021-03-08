@@ -1,4 +1,4 @@
-export const readImageAsDataURL = async (maxFileSizeMB = 10) => {
+export const readImageAsDataURL = async(maxFileSizeMB = 10) => {
     const createImageInput = (changeCallback) => {
         let hasInp = true;
         let imageInput = document.getElementById('filesImageInput');
@@ -57,7 +57,7 @@ export const readImageAsDataURL = async (maxFileSizeMB = 10) => {
     };
 
     return new Promise((resolve, reject) => {
-        createImageInput(async (changeEvent) => {
+        createImageInput(async(changeEvent) => {
             try {
                 const dataURL = await inputImageToDataURL(changeEvent.target);
                 resolve(dataURL);

@@ -1,10 +1,7 @@
 import * as renderer from './renderer.js';
 
 export default class Router {
-    constructor () {
-        /* window.onpopstate = ((event) => {
-            event.preventDefault();
-        }); */
+    constructor() {
         this.resolvePaths = [
             { path: /^\/user\/.*\/password$/, renderPath: '/change_password' },
             { path: /^\/user\/.*/, renderPath: '/user_view' }
@@ -13,34 +10,31 @@ export default class Router {
         this.linkButtons();
     }
 
-    linkButtons () {
+    linkButtons() {
         this.linkedButtons = document.querySelectorAll('linkButton');
         this.linkedButtons.forEach((button) => {
-            // console.log("New link: " + button.innerHTML.toString());
             button.addEventListener('click', (event) => {
                 this.linksListener(event);
             });
         });
     }
 
-    relinkButtons () {
+    relinkButtons() {
         this.linkedButtons.forEach((button) => {
             button.outerHTML = button.outerHTML.toString();
-            // console.log("Remove link: " + button.innerHTML);
             button.removeEventListener('click', (event) => {
                 this.linksListener(event);
             });
         });
-        // document.innerHTML = document.documentElement.innerHTML;
         this.linkButtons();
     }
 
-    linksListener (event) {
+    linksListener(event) {
         event.preventDefault();
         this.goto(event.currentTarget.getAttribute('href').toString());
     }
 
-    goto (path) {
+    goto(path) {
         history.pushState({}, '', path);
         this.resolvePaths.forEach((resolvePath) => {
             if (resolvePath.path.test(path)) {

@@ -1,9 +1,9 @@
-export function ajax (method, url, body = null, callback) {
+export function ajax(method, url, body = null, callback) {
     const xhr = new XMLHttpRequest();
     xhr.open(method, url, true);
     xhr.withCredentials = true;
 
-    xhr.addEventListener('readystatechange', function () {
+    xhr.addEventListener('readystatechange', function() {
         if (xhr.readyState !== XMLHttpRequest.DONE) return;
 
         try {

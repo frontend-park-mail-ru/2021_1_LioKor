@@ -32,7 +32,7 @@ const html = `
 </div>
 `;
 
-export function source (element, router) {
+export function source(element, router) {
     document.title = 'LioKor | Авторизация';
     element.innerHTML = html;
     document.getElementById('usernameInput').focus();
@@ -40,8 +40,9 @@ export function source (element, router) {
     document.getElementById('main').style.backgroundColor = 'transparent';
 
     ajax('GET', '/api/user', null, (status, response) => {
-        if (status === 200) // is authorized
-        { router.goto('/user'); }
+        if (status === 200) { // is authorized
+            router.goto('/user');
+        }
     });
 
     document.getElementById('authForm').addEventListener('submit', (event) => {

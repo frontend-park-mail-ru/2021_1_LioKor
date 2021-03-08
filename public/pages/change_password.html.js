@@ -31,7 +31,7 @@ const html = `
 </div>
 `;
 
-export function source (element, router) {
+export function source(element, router) {
     document.title = 'LioKor | Cменить пароль';
     element.innerHTML = html;
     document.getElementById('oldPasswordInput').focus();

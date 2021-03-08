@@ -34,7 +34,7 @@ const html = `
 </div>
 `;
 
-export function source (element, router) {
+export function source(element, router) {
     document.title = 'LioKor | Профиль ' + location.pathname.substring(6);
     element.innerHTML = html;
 

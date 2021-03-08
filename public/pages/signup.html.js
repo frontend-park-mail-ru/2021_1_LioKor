@@ -42,7 +42,7 @@ const html = `
 </div>
 `;
 
-export function source (element, router) {
+export function source(element, router) {
     document.title = 'LioKor | Регистрация';
     element.innerHTML = html;
 
@@ -56,7 +56,7 @@ export function source (element, router) {
         const reserveEmail = document.getElementById('reserveEmailInput').value.trim();
 
         ajax('POST', '/api/user', { username, password, reserveEmail, fullname }, (status, response) => {
-            if (status == 200) { // valide
+            if (status === 200) { // valide
                 router.goto('/user');
             } else { // invalide
                 if (response.nicknameError) { document.getElementById('nicknameError').innerText = response.nicknameError; }

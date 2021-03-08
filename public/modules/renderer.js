@@ -4,7 +4,7 @@ import * as signup from '../pages/signup.html.js';
 import * as changePassword from '../pages/change_password.html.js';
 // import * as userView from '../pages/user_view.html.js'
 
-export function render (target, path, router, callback) {
+export function render(target, path, router, callback) {
     const body = document.getElementById(target);
     try {
         console.log(path);

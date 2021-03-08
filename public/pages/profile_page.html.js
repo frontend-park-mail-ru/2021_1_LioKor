@@ -48,7 +48,7 @@ const html = `
 </div>
 `;
 
-export function source (element, router) {
+export function source(element, router) {
     document.title = 'LioKor | Профиль';
     element.innerHTML = html;
 
@@ -74,8 +74,7 @@ export function source (element, router) {
         const fullname = document.getElementById('fullnameInput').value.trim();
         const reserveEmail = document.getElementById('reserveEmailInput').value.trim();
         ajax('PUT', '/api/user/' + username, { fullname, reserveEmail }, (status, response) => {
-            if (status == 200) { // valide
-                // document.getElementById("completeDataChange").innerText = "Не знаю, зачем тебе это, но данные изменены";
+            if (status === 200) { // valid
                 alert('Не знаю, зачем тебе это, но данные изменены');
             } else { // invalide
                 document.getElementById('fullnameErrorText').innerText = 'Неверные данные';
@@ -87,7 +86,7 @@ export function source (element, router) {
         ajax('DELETE', '/api/user/session', {}, (status, response) => {});
     });
 
-    document.getElementById('avatarChange').addEventListener('click', async () => {
+    document.getElementById('avatarChange').addEventListener('click', async() => {
         const dataURL = await readImageAsDataURL();
         document.getElementById('avatarImage').src = dataURL;
         document.getElementById('avatarDataURL').value = dataURL;
