@@ -1,7 +1,7 @@
-import Router from './modules/router.js'
-import { ajax } from './modules/ajax.js'
+import Router from './modules/router.js';
+import { ajax } from './modules/ajax.js';
 
-const router = new Router()
+const router = new Router();
 
 ajax('GET', '/api/user', null, (status, response) => {
     /* if (status == 200) { // valid
@@ -13,10 +13,10 @@ ajax('GET', '/api/user', null, (status, response) => {
         document.getElementById("progressbar").style.backgroundPositionX = "100%";
         document.getElementById("me/login-button").setAttribute('href', '/login');
     } */
-    console.log(location.pathname)
+    console.log(location.pathname);
     if (location.pathname === '/') {
-        router.goto('/auth')
+        router.goto('/auth');
     } else {
-        router.goto(location.pathname)
+        router.goto(location.pathname);
     }
-})
+});

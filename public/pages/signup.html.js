@@ -1,4 +1,4 @@
-import {ajax} from "../modules/ajax.js";
+import { ajax } from '../modules/ajax.js';
 
 const html = `
 <div class="signup">
@@ -42,29 +42,26 @@ const html = `
 </div>
 `;
 
-export function source(element, router) {
-    document.title = "LioKor | Регистрация";
+export function source (element, router) {
+    document.title = 'LioKor | Регистрация';
     element.innerHTML = html;
 
-    document.getElementById("main").style.backgroundColor = "transparent";
+    document.getElementById('main').style.backgroundColor = 'transparent';
 
-    document.getElementById("signupForm").addEventListener("submit", (event) => {
+    document.getElementById('signupForm').addEventListener('submit', (event) => {
         event.preventDefault();
-        const username = document.getElementById("usernameInput").value.trim();
-        const password = document.getElementById("passwordInput").value.trim();
-        const fullname = document.getElementById("fullnameInput").value.trim();
-        const reserveEmail = document.getElementById("reserveEmailInput").value.trim();
+        const username = document.getElementById('usernameInput').value.trim();
+        const password = document.getElementById('passwordInput').value.trim();
+        const fullname = document.getElementById('fullnameInput').value.trim();
+        const reserveEmail = document.getElementById('reserveEmailInput').value.trim();
 
-        ajax("POST", "/api/user", {username, password, reserveEmail, fullname}, (status, response) => {
+        ajax('POST', '/api/user', { username, password, reserveEmail, fullname }, (status, response) => {
             if (status == 200) { // valide
-                router.goto("/user");
+                router.goto('/user');
             } else { // invalide
-                if (response.nicknameError)
-                    document.getElementById("nicknameError").innerText = response.nicknameError;
-                if (response.passwordError)
-                    document.getElementById("passwordError").innerText = response.passwordError;
-                if (response.emailError)
-                    document.getElementById("emailError").innerText = response.emailError;
+                if (response.nicknameError) { document.getElementById('nicknameError').innerText = response.nicknameError; }
+                if (response.passwordError) { document.getElementById('passwordError').innerText = response.passwordError; }
+                if (response.emailError) { document.getElementById('emailError').innerText = response.emailError; }
             }
         });
     });

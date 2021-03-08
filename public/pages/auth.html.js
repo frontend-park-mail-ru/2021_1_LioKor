@@ -1,4 +1,4 @@
-import {ajax} from "../modules/ajax.js";
+import { ajax } from '../modules/ajax.js';
 
 const html = `
 <div class="auth">
@@ -32,35 +32,35 @@ const html = `
 </div>
 `;
 
-export function source(element, router) {
-    document.title = "LioKor | Авторизация";
+export function source (element, router) {
+    document.title = 'LioKor | Авторизация';
     element.innerHTML = html;
-    document.getElementById("usernameInput").focus();
+    document.getElementById('usernameInput').focus();
 
-    document.getElementById("main").style.backgroundColor = "transparent";
+    document.getElementById('main').style.backgroundColor = 'transparent';
 
     ajax('GET', '/api/user', null, (status, response) => {
         if (status === 200) // is authorized
-            router.goto("/user");
+        { router.goto('/user'); }
     });
 
-    document.getElementById("authForm").addEventListener('submit', (event) => {
+    document.getElementById('authForm').addEventListener('submit', (event) => {
         event.preventDefault();
-        const username = document.getElementById("usernameInput").value.trim();
-        const password = document.getElementById("passwordInput").value.trim();
+        const username = document.getElementById('usernameInput').value.trim();
+        const password = document.getElementById('passwordInput').value.trim();
         if (username.length < 3) {
-            document.getElementById("usernameGroup").classList.add('error');
-            document.getElementById("usernameErrorText").innerHTML = 'Слишком короткий логин';
+            document.getElementById('usernameGroup').classList.add('error');
+            document.getElementById('usernameErrorText').innerHTML = 'Слишком короткий логин';
             return;
         }
 
-        ajax("POST", "/api/user/auth", {username, password}, (status, response) => {
+        ajax('POST', '/api/user/auth', { username, password }, (status, response) => {
             if (status === 200) { // valid
-                router.goto("/user");
+                router.goto('/user');
             } else if (status === 400) { // invalid
-                document.getElementById("usernameErrorText").innerText = "Запрос на сервер не по форме";
+                document.getElementById('usernameErrorText').innerText = 'Запрос на сервер не по форме';
             } else {
-                document.getElementById("usernameErrorText").innerText = "Неправильный логин или пароль";
+                document.getElementById('usernameErrorText').innerText = 'Неправильный логин или пароль';
             }
         });
     });

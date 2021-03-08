@@ -1,70 +1,70 @@
 export const readImageAsDataURL = async (maxFileSizeMB = 10) => {
     const createImageInput = (changeCallback) => {
-        let hasInp = true
-        let imageInput = document.getElementById('filesImageInput')
+        let hasInp = true;
+        let imageInput = document.getElementById('filesImageInput');
         if (imageInput === null) {
-            hasInp = false
-            imageInput = document.createElement('INPUT')
+            hasInp = false;
+            imageInput = document.createElement('INPUT');
         }
-        imageInput.id = 'filesImageInput'
-        imageInput.type = 'file'
-        imageInput.accept = 'image/png, image/jpeg, image/bmp'
-        imageInput.addEventListener('change', changeCallback)
+        imageInput.id = 'filesImageInput';
+        imageInput.type = 'file';
+        imageInput.accept = 'image/png, image/jpeg, image/bmp';
+        imageInput.addEventListener('change', changeCallback);
 
-        imageInput.style.display = 'none'
+        imageInput.style.display = 'none';
         if (!hasInp) {
-            document.body.appendChild(imageInput) // otherwise don't work on ios
+            document.body.appendChild(imageInput); // otherwise don't work on ios
         }
 
-        return imageInput
-    }
+        return imageInput;
+    };
 
     const getValidatedImage = (imageInput) => {
         if (imageInput.files.length !== 1) {
-            throw new Error('Wrong amount of files!')
+            throw new Error('Wrong amount of files!');
         }
-        const file = imageInput.files[0]
-        const typeSplitted = file.type.split('/')
+        const file = imageInput.files[0];
+        const typeSplitted = file.type.split('/');
         if (typeSplitted.length === 0 || typeSplitted[0] !== 'image') {
-            throw new Error('File is not an image!')
+            throw new Error('File is not an image!');
         }
         if (file.size / 1048576 > maxFileSizeMB) {
-            throw new Error('File is bigger than allowed!')
+            throw new Error('File is bigger than allowed!');
         }
 
-        return file
-    }
+        return file;
+    };
 
     const inputImageToDataURL = (inputImage) => {
         return new Promise((resolve, reject) => {
-            let image
+            let image;
             try {
-                image = getValidatedImage(inputImage)
+                image = getValidatedImage(inputImage);
             } catch (err) {
-                reject(err)
-                return
+                reject(err);
+                return;
             }
 
-            const reader = new FileReader()
+            const reader = new FileReader();
             reader.addEventListener('load', (e) => {
-                resolve(e.target.result)
-            })
+                resolve(e.target.result);
+            });
             reader.addEventListener('error', (e) => {
-                reject(new Error('Unable to read file!'))
-            })
-            reader.readAsDataURL(image)
-        })
-    }
+                reject(new Error('Unable to read file!'));
+            });
+            reader.readAsDataURL(image);
+        });
+    };
 
     return new Promise((resolve, reject) => {
         createImageInput(async (changeEvent) => {
             try {
-                const dataURL = await inputImageToDataURL(changeEvent.target)
-                resolve(dataURL)
+                const dataURL = await inputImageToDataURL(changeEvent.target);
+                resolve(dataURL);
             } catch (err) {
-                changeEvent.target.remove()
-                reject(err)
+                changeEvent.target.remove();
+                reject(err);
             }
-        }).click()
-    })
-}
+        }).click();
+    });
+};

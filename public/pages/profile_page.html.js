@@ -1,4 +1,4 @@
-import {ajax} from "../modules/ajax.js";
+import { ajax } from '../modules/ajax.js';
 import { readImageAsDataURL } from '../modules/images.js';
 
 const html = `
@@ -48,49 +48,48 @@ const html = `
 </div>
 `;
 
-export function source(element, router) {
-    document.title = "LioKor | Профиль";
+export function source (element, router) {
+    document.title = 'LioKor | Профиль';
     element.innerHTML = html;
 
-    document.getElementById("main").style.backgroundColor = "#404244";
+    document.getElementById('main').style.backgroundColor = '#404244';
 
     let username = '';
     ajax('GET', '/api/user', null, (status, response) => {
         if (status === 200) { // is authorized
-            document.getElementById("username").innerText = username = response.username;
-            document.getElementById("email").innerText = response.username.toLowerCase() + '@liokor.ru';
-            document.getElementById("fullnameInput").value = response.fullname;
-            document.getElementById("reserveEmailInput").value = response.reserveEmail;
-            document.getElementById("changePasswordButton").setAttribute("href", location.pathname + "/" + username + '/password');
+            document.getElementById('username').innerText = username = response.username;
+            document.getElementById('email').innerText = response.username.toLowerCase() + '@liokor.ru';
+            document.getElementById('fullnameInput').value = response.fullname;
+            document.getElementById('reserveEmailInput').value = response.reserveEmail;
+            document.getElementById('changePasswordButton').setAttribute('href', location.pathname + '/' + username + '/password');
 
-            if (response.isAdmin)
-                document.getElementById("adminButton").style.display = "block";
+            if (response.isAdmin) { document.getElementById('adminButton').style.display = 'block'; }
         } else { // not authorized
-            router.goto("/auth");
+            router.goto('/auth');
         }
     });
 
-    document.getElementById("editProfileForm").addEventListener("submit", (event) => {
+    document.getElementById('editProfileForm').addEventListener('submit', (event) => {
         event.preventDefault();
-        const fullname = document.getElementById("fullnameInput").value.trim();
-        const reserveEmail = document.getElementById("reserveEmailInput").value.trim();
-        ajax("PUT", "/api/user/" + username, {fullname, reserveEmail}, (status, response) => {
+        const fullname = document.getElementById('fullnameInput').value.trim();
+        const reserveEmail = document.getElementById('reserveEmailInput').value.trim();
+        ajax('PUT', '/api/user/' + username, { fullname, reserveEmail }, (status, response) => {
             if (status == 200) { // valide
-                //document.getElementById("completeDataChange").innerText = "Не знаю, зачем тебе это, но данные изменены";
-                alert("Не знаю, зачем тебе это, но данные изменены");
+                // document.getElementById("completeDataChange").innerText = "Не знаю, зачем тебе это, но данные изменены";
+                alert('Не знаю, зачем тебе это, но данные изменены');
             } else { // invalide
-                document.getElementById("fullnameErrorText").innerText = 'Неверные данные';
+                document.getElementById('fullnameErrorText').innerText = 'Неверные данные';
             }
         });
     });
 
-    document.getElementById("logoutButton").addEventListener("click", (event) => {
-        ajax("DELETE", "/api/user/session", {}, (status, response) => {});
+    document.getElementById('logoutButton').addEventListener('click', (event) => {
+        ajax('DELETE', '/api/user/session', {}, (status, response) => {});
     });
 
-    document.getElementById("avatarChange").addEventListener('click', async () => {
+    document.getElementById('avatarChange').addEventListener('click', async () => {
         const dataURL = await readImageAsDataURL();
-        document.getElementById("avatarImage").src = dataURL;
-        document.getElementById("avatarDataURL").value = dataURL;
+        document.getElementById('avatarImage').src = dataURL;
+        document.getElementById('avatarDataURL').value = dataURL;
     });
 }

@@ -1,4 +1,4 @@
-import {ajax} from "../modules/ajax.js";
+import { ajax } from '../modules/ajax.js';
 
 const html = `
 <div class="profile">
@@ -34,23 +34,22 @@ const html = `
 </div>
 `;
 
-export function source(element, router) {
-    document.title = "LioKor | Профиль " + location.pathname.substring(6);
+export function source (element, router) {
+    document.title = 'LioKor | Профиль ' + location.pathname.substring(6);
     element.innerHTML = html;
 
-    document.getElementById("main").style.backgroundColor = "#404244";
+    document.getElementById('main').style.backgroundColor = '#404244';
 
-    ajax('GET', "/api" + location.pathname.toLowerCase(), null, (status, response) => {
+    ajax('GET', '/api' + location.pathname.toLowerCase(), null, (status, response) => {
         if (status === 200) { // is found
-            document.getElementById("username").innerText = response.username;
-            document.getElementById("email").innerText = response.username + '@liokor.ru';
-            document.getElementById("fullnameInput").value = response.fullname;
-            document.getElementById("reserveEmailInput").value = response.reserveEmail;
+            document.getElementById('username').innerText = response.username;
+            document.getElementById('email').innerText = response.username + '@liokor.ru';
+            document.getElementById('fullnameInput').value = response.fullname;
+            document.getElementById('reserveEmailInput').value = response.reserveEmail;
 
-            if (response.isAdmin)
-                document.getElementById("adminButton").style.display = "block";
+            if (response.isAdmin) { document.getElementById('adminButton').style.display = 'block'; }
         } else { // not found
-            document.getElementById("username").innerText = "Не найден";
+            document.getElementById('username').innerText = 'Не найден';
         }
     });
 }

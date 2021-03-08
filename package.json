@@ -6,7 +6,7 @@
     "private": true,
     "scripts": {
         "dev": "concurrently \"node ./server/server.js\" \"stylus public/styles -w\" --kill-others",
-        "lint": "eslint public/modules/*.js public/index.js server/server.js"
+        "lint": "eslint public/modules/*.js public/index.js server/server.js public/pages/*.js"
     },
     "devDependencies": {
         "express": "^4.17.1",
