@@ -2,6 +2,7 @@ import * as auth from "../pages/auth.html.js";
 import * as user from "../pages/profile_page.html.js";
 import * as signup from "../pages/signup.html.js";
 import * as change_password from "../pages/change_password.html.js";
+import * as user_view from "../pages/user_view.html.js";
 
 export function render(target, path, router, callback) {
     const body = document.getElementById(target);

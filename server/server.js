@@ -23,6 +23,14 @@ const users = {
         rating: 300,
         isAdmin: true,
     },
+    'sererga': {
+        username: 'sererga',
+        password: 'password',
+        fullname: "Tyapkin Sergey",
+        reserveEmail: "Tyapkin2002@mail.ru",
+        rating: 300,
+        isAdmin: true,
+    },
 };
 const usernames = {};
 
@@ -105,12 +113,9 @@ app.get('/api/user', (req, res) => {
 
 app.put('/api/user/*/password', (req, res) => {
     const id = req.cookies['userId'];
-    if (!(id in usernames))
-        return res.status(401).json({usernameError: 'Сессия устарела, и ты теперь не вошёл в аккаунт.'});
 
     let username = req.url.substring(10);
     username = username.substr(0, username.length - 9);
-    console.log(username);
     if (!users[username])
         return res.status(404).json({passwordError: 'Такого пользователя нет'});
 
@@ -120,62 +125,77 @@ app.put('/api/user/*/password', (req, res) => {
     if (users[usernames[id]].password !== password)
         return res.status(400).json({passwordError: 'Пароль не подходит'});
     if (usernames[id] !== username)
-        return res.status(401).json({usernameError: 'Сессия устарела, и ты теперь не вошёл в аккаунт.'});
+        return res.status(401).json({usernameError: 'В доступе отказано'});
     if (!newPassword)
-        return res.status(403).json({newPasswordError: 'Без пароля нельзя'});
+        return res.status(400).json({newPasswordError: 'Без пароля нельзя'});
     if (newPassword.length > 30)
-        return res.status(403).json({newPasswordError: 'Длинновато. Больше 30 символов не влезет'});
+        return res.status(400).json({newPasswordError: 'Длинновато. Больше 30 символов не влезет'});
     if (newPassword.length < 4)
-        return res.status(403).json({newPasswordError: 'Пароль коротковат, надо хотя бы 4 с̶м̶ символа'});
+        return res.status(400).json({newPasswordError: 'Пароль коротковат, надо хотя бы 4 с̶м̶ символа'});
 
     if (newPassword === password)
-        return res.status(403).json({passwordError: 'Пароли совпадают. (Шо то - фигня, шо то - фигня)', newPasswordError: ''});
+        return res.status(400).json({passwordError: 'Пароли совпадают. (Шо то - фигня, шо то - фигня)', newPasswordError: ''});
 
     users[usernames[id]].password = newPassword;
 
     res.status(200).end();
 });
 
+app.get('/api/user/*', (req, res) => {
+    const username = req.url.substring(10);
+    if (!users[username])
+        return res.status(404).json({usernameError: 'Такого пользователя нет'});
+
+    const user = {};
+    Object.assign(user, users[username]);
+    delete user.password;
+
+    res.status(200).json(user).end();
+});
+
 app.put('/api/user/*', (req, res) => {
     const id = req.cookies['userId'];
-    if (!(id in usernames))
-        return res.status(403).json({usernameError: 'Сессия устарела, и ты теперь не вошёл в аккаунт.'});
 
-    const username = usernames[id];
-    const password = users[usernames[id]].password;
-    const prevFullname = users[usernames[id]].fullname;
-    const prevEmail = users[usernames[id]].email;
+    const username = req.url.substring(10);
+    if (!users[username])
+        return res.status(404).json({usernameError: 'Такого пользователя нет'});
 
+    const prevFullname = users[username].fullname;
+    const prevReserveEmail = users[username].reserveEmail;
+    
     const fullname = req.body.fullname;
-    const email = req.body.reserveEmail.toLowerCase();
+    const reserveEmail = req.body.reserveEmail.toLowerCase();
 
     if (!fullname)
-        return res.status(403).json({usernameError: 'Пустое имя пользователя занято оригинальным админом'});
-    if (!email)
-        return res.status(403).json({emailError: 'Без email\'а нельзя'});
+        return res.status(400).json({usernameError: 'А чё, а где имя пользователя?'});
+    if (!reserveEmail)
+        return res.status(400).json({emailError: 'А чё, а где reserveEmail?'});
     if (fullname.length > 16)
-        return res.status(403).json({usernameError: 'Уложи свой полёт фантазии в 16 символов пж'});
-    if (email.length > 30)
-        return res.status(403).json({emailError: 'Длинновато. Больше 30 символов не влезет'});
-    if (!email.match(/@/))
-        return res.status(403).json({emailError: 'Не обманывай, email не настоящий'});
+        return res.status(400).json({usernameError: 'Уложи свой полёт фантазии в 16 символов пж'});
+    if (reserveEmail.length > 30)
+        return res.status(400).json({emailError: 'Длинновато. Больше 30 символов не влезет'});
+    if (!reserveEmail.match(/.+@.+\..+/))
+        return res.status(400).json({emailError: 'Не обманывай, reserveEmail не настоящий.'});
 
-    if (prevFullname !== fullname && users[fullname])
-        return res.status(403).json({usernameError: 'Художественный фильм: "у̶к̶р̶а̶л̶и̶ имя пользователя". (оно занято)'});
 
-    if (prevEmail !== email)
+    if (users[fullname])
+        return res.status(400).json({usernameError: 'Художественный фильм: "у̶к̶р̶а̶л̶и̶ имя пользователя". (оно занято)'});
+
+    if (prevReserveEmail !== reserveEmail)
         for (const [, userData] of Object.entries(users))
-            if (userData.email === email)
-                return res.status(403).json({emailError: 'На этот email уже зарегистрирован пользователь "' + userData.fullname + '"'});
+            if (userData.reserveEmail === reserveEmail)
+                return res.status(400).json({emailError: 'На этот reserveEmail уже зарегистрирован пользователь "' + userData.fullname + '"'});
 
-    if (prevFullname === fullname && prevEmail === email)
-        return res.status(403).json({usernameError: 'Зачем кнопку теребишь, если не поменял ничего?', emailError: ''});
+    if (prevFullname === fullname && prevReserveEmail === reserveEmail)
+        return res.status(400).json({nicknameError: 'Зачем кнопку теребишь, если не поменял ничего?'});
 
-    delete users[usernames[id]];
-    users[username] = {username: username, fullname: fullname, password: password, rating: 0, isAdmin: false, reserveEmail: email,}; // create new user
-    usernames[id] = username;
+    if (usernames[id] !== username)
+        return res.status(401).json({usernameError: 'В доступе отказано'});
 
-    res.cookie('userId', id, {maxAge: 1000 * 60 * 10});
+    const user = users[username];
+    user.fullname = fullname;
+    user.reserveEmail = reserveEmail;
+
     res.status(200).end();
 });
 
