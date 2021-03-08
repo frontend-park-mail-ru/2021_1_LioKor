@@ -1,4 +1,5 @@
 import { request } from '../modules/requests.js';
+import { validatePassword } from '../modules/validators.js';
 
 const html = `
 <div class="signup">
@@ -45,14 +46,19 @@ export function source(element, router) {
     document.title = 'LioKor | Регистрация';
     element.innerHTML = html;
 
-    const validatePassword = (password) => {
-        const validPasswordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-        return password.match(validPasswordRegex) !== null;
-    };
-
     const signupForm = document.getElementById('signupForm');
     signupForm.addEventListener('submit', async (event) => {
         event.preventDefault();
+
+        const usernameGroup = document.getElementById('usernameGroup');
+        const usernameErrorText = document.getElementById('usernameErrorText');
+        const passwordGroup = document.getElementById('passwordGroup');
+        const passwordErrorText = document.getElementById('passwordErrorText');
+
+        usernameGroup.classList.remove('error');
+        usernameErrorText.innerHTML = '';
+        passwordGroup.classList.remove('error');
+        passwordErrorText.innerHTML = '';
 
         const formData = new FormData(signupForm);
         const username = formData.get('username');
@@ -60,35 +66,31 @@ export function source(element, router) {
         const fullname = formData.get('fullname');
         const reserveEmail = formData.get('reserveEmail');
 
-        document.getElementById('usernameGroup').classList.remove('error');
-        document.getElementById('usernameErrorText').innerHTML = '';
-        document.getElementById('passwordGroup').classList.remove('error');
-        document.getElementById('passwordErrorText').innerHTML = '';
-
         if (!validatePassword(password)) {
-            document.getElementById('passwordErrorText').innerHTML = 'Пароль не удовлетворяет требованиям';
-            document.getElementById('passwordGroup').classList.add('error');
-        } else {
-            const response = await request('POST', '/api/user', {
-                username,
-                password,
-                reserveEmail,
-                fullname
-            });
+            passwordGroup.classList.add('error');
+            passwordErrorText.innerHTML = 'Пароль не удовлетворяет требованиям';
+            return;
+        }
 
-            switch (response.status) {
-            case 200:
-                router.goto('/auth');
-                break;
-            case 400:
-                document.getElementById('usernameErrorText').innerHTML = 'Логин некорректен';
-                document.getElementById('usernameGroup').classList.add('error');
-                break;
-            case 409:
-                document.getElementById('usernameErrorText').innerHTML = 'Логин уже занят';
-                document.getElementById('usernameGroup').classList.add('error');
-                break;
-            }
+        const response = await request('POST', '/api/user', {
+            username,
+            password,
+            reserveEmail,
+            fullname
+        });
+
+        switch (response.status) {
+        case 200:
+            router.goto('/auth');
+            break;
+        case 400:
+            usernameGroup.classList.add('error');
+            usernameErrorText.innerHTML = 'Логин некорректен';
+            break;
+        case 409:
+            usernameGroup.classList.add('error');
+            usernameErrorText.innerHTML = 'Логин уже занят';
+            break;
         }
     });
 }

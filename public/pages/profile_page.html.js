@@ -7,7 +7,7 @@ const html = `
         <div class="standalone-form profile">
             <div class="title">
                 <div class="avatar">
-                    <img id="avatarImage" src="../images/avatar.jpg">
+                    <img id="avatarImage" src="../images/default-avatar.jpg">
                     <div id="avatarChange" class="cover">
                         Изменить
                     </div>
@@ -25,14 +25,14 @@ const html = `
                     </div>
                     <div class="form-group" id="reserveEmailGroup">
                         <label>ЗАПАСНОЙ E-MAIL<span class="error-text" id="reserveEmailErrorText"></span></label>
-                        <input name="reserveEmail" type="text" class="form-control" id="reserveEmailInput">
+                        <input name="reserveEmail" type="email" class="form-control" id="reserveEmailInput">
                         <div class="muted">Необходимо будет подтвердить на старом и новом ящиках</div>
                     </div>
                     <div class="form-group">
                         <input type="submit" class="btn" value="Сохранить">
                     </div>
                     <div class="form-group">
-                        <LinkButton href="???" class="btn" id="changePasswordButton">Сменить пароль</LinkButton>
+                        <LinkButton href="#" class="btn" id="changePasswordButton">Сменить пароль</LinkButton>
                     </div>
                     <div class="form-group">
                         <linkButton href="/auth" class="btn btn-danger" id="logoutButton">Выйти</linkButton>
@@ -48,6 +48,9 @@ export async function source(element, router) {
     document.title = 'LioKor | Профиль';
     element.innerHTML = html;
 
+    const avatarImage = document.getElementById('avatarImage');
+    const avatarDataURL = document.getElementById('avatarDataURL');
+
     let username = '';
 
     const response = await request('GET', '/api/user');
@@ -55,7 +58,8 @@ export async function source(element, router) {
         const data = await response.json();
 
         if (data.avatarUrl) {
-            document.getElementById('avatarImage').src = data.avatarUrl;
+            avatarImage.src = data.avatarUrl;
+            avatarDataURL.value = data.avatarUrl;
         }
         document.getElementById('username').innerText = username = data.username;
         document.getElementById('email').innerText = data.username.toLowerCase() + '@liokor.ru';
@@ -87,7 +91,7 @@ export async function source(element, router) {
 
     document.getElementById('avatarChange').addEventListener('click', async () => {
         const dataURL = await readImageAsDataURL();
-        document.getElementById('avatarImage').src = dataURL;
-        document.getElementById('avatarDataURL').value = dataURL;
+        avatarImage.src = dataURL;
+        avatarDataURL.value = dataURL;
     });
 }

@@ -1,4 +1,5 @@
 import { request } from '../modules/requests.js';
+import { validatePassword } from '../modules/validators.js';
 
 const html = `
 <div class="profile">
@@ -16,6 +17,7 @@ const html = `
                     <div class="form-group" id="newPasswordGroup">
                         <label>НОВЫЙ ПАРОЛЬ<span class="error-text" id="newPasswordErrorText"></span></label>
                         <input name="newPassword" type="password" class="form-control">
+                        <div class="muted">Минимум 8 символов, 2 буквы разного регистра и 1 цифра</div>
                     </div>
                     <div class="form-group">
                         <input type="submit" class="btn" value="Сменить пароль">
@@ -51,6 +53,12 @@ export function source(element, router) {
         const formData = new FormData(changePasswordForm);
         const oldPassword = formData.get('oldPassword');
         const newPassword = formData.get('newPassword');
+
+        if (!validatePassword(newPassword)) {
+            newPasswordGroup.classList.add('error');
+            newPasswordErrorText.innerHTML = 'Пароль не удовлетворяет требованиям';
+            return;
+        }
 
         const response = await request('PUT', `/api${location.pathname}`, {
             oldPassword,
