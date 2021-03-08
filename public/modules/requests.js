@@ -13,7 +13,7 @@ export function request(method, url, data = null) {
             try {
                 response = JSON.parse(xhr.responseText);
             } catch {
-                console.warn('Unable to parse response!');
+                // nothing to do here, we need just to leave response empty as it is already
             }
 
             resolve({

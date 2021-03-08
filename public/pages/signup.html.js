@@ -14,12 +14,13 @@ const html = `
                     <div class="form-group" id="usernameGroup">
                         <label>ЛОГИН*<span class="error-text" id="usernameErrorText"></span></label>
                         <input name="username" type="text" class="form-control" required>
+                        <div class="muted">Минимум 3 символа, только буквы, цифры и _</div>
                         <div class="muted">Будет использоваться как часть адреса: login@liokor.ru</div>
                     </div>
                     <div class="form-group" id="passwordGroup">
                         <label>ПАРОЛЬ*<span class="error-text" id="passwordErrorText"></span></label>
                         <input name="password" type="password" class="form-control" required>
-                        <div class="muted">8 символов, минимум 2 буквы разного регистра и 1 цифра</div>
+                        <div class="muted">Минимум 8 символов, 2 буквы разного регистра и 1 цифра</div>
                     </div>
                     <div class="form-group" id="fullnameGroup">
                         <label>ПОЛНОЕ ИМЯ<span class="error-text" id="fullnameErrorText"></span></label>
@@ -57,10 +58,15 @@ export function source(element, router) {
         event.preventDefault();
 
         const formData = new FormData(signupForm);
-        const username = formData.get('username').trim();
-        const password = formData.get('password').trim();
-        const fullname = formData.get('fullname').trim();
-        const reserveEmail = formData.get('reserveEmail').trim();
+        const username = formData.get('username');
+        const password = formData.get('password');
+        const fullname = formData.get('fullname');
+        const reserveEmail = formData.get('reserveEmail');
+
+        document.getElementById('usernameGroup').classList.remove('error');
+        document.getElementById('usernameErrorText').innerHTML = '';
+        document.getElementById('passwordGroup').classList.remove('error');
+        document.getElementById('passwordErrorText').innerHTML = '';
 
         if (!validatePassword(password)) {
             document.getElementById('passwordErrorText').innerHTML = 'Пароль не удовлетворяет требованиям';

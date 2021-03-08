@@ -1,4 +1,4 @@
-import { ajax } from '../modules/ajax.js';
+import { request } from '../modules/requests.js';
 
 const html = `
 <div class="auth">
@@ -18,8 +18,8 @@ const html = `
                     </div>
                     <div class="form-group" id="passwordGroup">
                         <label>ПАРОЛЬ<span class="error-text" id="passwordErrorText"></span></label>
-                        <input name="password" type="password" class="form-control" id="passwordInput" required>
-                        <div class="muted"><linkButton href="#">Забыли пароль?</linkButton>
+                        <input name="password" type="password" class="form-control" required>
+                        <!-- <div class="muted"><linkButton href="#">Забыли пароль?</linkButton> -->
                     </div>
                     <div class="form-group">
                         <input type="submit" class="btn" value="Войти">
@@ -32,37 +32,36 @@ const html = `
 </div>
 `;
 
-export function source(element, router) {
+export async function source(element, router) {
     document.title = 'LioKor | Авторизация';
     element.innerHTML = html;
-    document.getElementById('usernameInput').focus();
+    // document.getElementById('usernameInput').focus();
 
     document.getElementById('main').style.backgroundColor = 'transparent';
 
-    ajax('GET', '/api/user', null, (status, response) => {
-        if (status === 200) { // is authorized
-            router.goto('/user');
-        }
-    });
+    const response = await request('GET', '/api/user');
+    if (response.status === 200) { // authenticated => redirecting to profile
+        router.goto('/user');
+    }
 
-    document.getElementById('authForm').addEventListener('submit', (event) => {
+    const authForm = document.getElementById('authForm');
+    authForm.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const username = document.getElementById('usernameInput').value.trim();
-        const password = document.getElementById('passwordInput').value.trim();
-        if (username.length < 3) {
-            document.getElementById('usernameGroup').classList.add('error');
-            document.getElementById('usernameErrorText').innerHTML = 'Слишком короткий логин';
-            return;
-        }
 
-        ajax('POST', '/api/user/auth', { username, password }, (status, response) => {
-            if (status === 200) { // valid
-                router.goto('/user');
-            } else if (status === 400) { // invalid
-                document.getElementById('usernameErrorText').innerText = 'Запрос на сервер не по форме';
-            } else {
-                document.getElementById('usernameErrorText').innerText = 'Неправильный логин или пароль';
-            }
-        });
+        const formData = new FormData(authForm);
+        // both KoroLion and KoroLion@liokor.ru are correct usernames
+        const username = formData.get('username').toLowerCase().replace('@liokor.ru', '');
+        const password = formData.get('password');
+
+        const response = await request('POST', '/api/user/auth', { username, password });
+
+        if (response.status === 200) {
+            router.goto('/user');
+        } else {
+            document.getElementById('usernameGroup').classList.add('error');
+            document.getElementById('usernameErrorText').innerText = 'Неправильный логин или пароль';
+            document.getElementById('passwordGroup').classList.add('error');
+            document.getElementById('passwordErrorText').innerText = 'Неправильный логин или пароль';
+        }
     });
 }
