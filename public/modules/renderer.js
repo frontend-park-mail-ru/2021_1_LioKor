@@ -7,8 +7,6 @@ import * as changePassword from '../pages/change_password.html.js';
 export function render(target, path, router, callback) {
     const body = document.getElementById(target);
     try {
-        console.log(path);
-        console.log('Rendering /' + path.substring(1));
         body.style.opacity = '0%';
 
         setTimeout(() => {

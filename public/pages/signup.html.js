@@ -1,4 +1,4 @@
-import { ajax } from '../modules/ajax.js';
+import { request } from '../modules/requests.js';
 
 const html = `
 <div class="signup">
@@ -13,22 +13,22 @@ const html = `
                 <form id="signupForm">
                     <div class="form-group" id="usernameGroup">
                         <label>ЛОГИН*<span class="error-text" id="usernameErrorText"></span></label>
-                        <input name="username" type="text" class="form-control" id="usernameInput" required>
+                        <input name="username" type="text" class="form-control" required>
                         <div class="muted">Будет использоваться как часть адреса: login@liokor.ru</div>
                     </div>
                     <div class="form-group" id="passwordGroup">
                         <label>ПАРОЛЬ*<span class="error-text" id="passwordErrorText"></span></label>
-                        <input name="password" type="password" class="form-control" id="passwordInput" required>
-                        <div class="muted">8 символов, минимум 2 буквы разного регистра и 1 цифра</a>
+                        <input name="password" type="password" class="form-control" required>
+                        <div class="muted">8 символов, минимум 2 буквы разного регистра и 1 цифра</div>
                     </div>
                     <div class="form-group" id="fullnameGroup">
                         <label>ПОЛНОЕ ИМЯ<span class="error-text" id="fullnameErrorText"></span></label>
-                        <input name="fullname" type="text" class="form-control" placeholder="Иван Иванов" id="fullnameInput">
+                        <input name="fullname" type="text" class="form-control" placeholder="Иван Иванов">
                         <div class="muted">Будет отображаться у получателей писем</div>
                     </div>
-                    <div class="form-group" id="passwordGroup">
+                    <div class="form-group" id="reserveEmailGroup">
                         <label>ЗАПАСНОЙ EMAIL<span class="error-text" id="passwordErrorText"></span></label>
-                        <input name="reserveEmail" type="text" class="form-control" placeholder="wolf@liokor.ru" id="reserveEmailInput">
+                        <input name="reserveEmail" type="email" class="form-control" placeholder="wolf@liokor.ru">
                         <div class="muted">Используется для восстановления пароля, если не указан - пароль восстановить невозможно</a>
                     </div>
                     <div class="form-group">
@@ -48,21 +48,44 @@ export function source(element, router) {
 
     document.getElementById('main').style.backgroundColor = 'transparent';
 
-    document.getElementById('signupForm').addEventListener('submit', (event) => {
-        event.preventDefault();
-        const username = document.getElementById('usernameInput').value.trim();
-        const password = document.getElementById('passwordInput').value.trim();
-        const fullname = document.getElementById('fullnameInput').value.trim();
-        const reserveEmail = document.getElementById('reserveEmailInput').value.trim();
+    const validatePassword = (password) => {
+        return password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/) !== null;
+    };
 
-        ajax('POST', '/api/user', { username, password, reserveEmail, fullname }, (status, response) => {
-            if (status === 200) { // valide
-                router.goto('/user');
-            } else { // invalide
-                if (response.nicknameError) { document.getElementById('nicknameError').innerText = response.nicknameError; }
-                if (response.passwordError) { document.getElementById('passwordError').innerText = response.passwordError; }
-                if (response.emailError) { document.getElementById('emailError').innerText = response.emailError; }
+    const signupForm = document.getElementById('signupForm');
+    signupForm.addEventListener('submit', async(event) => {
+        event.preventDefault();
+
+        const formData = new FormData(signupForm);
+        const username = formData.get('username').trim();
+        const password = formData.get('password').trim();
+        const fullname = formData.get('fullname').trim();
+        const reserveEmail = formData.get('reserveEmail').trim();
+
+        if (!validatePassword(password)) {
+            document.getElementById('passwordErrorText').innerHTML = 'Пароль не удовлетворяет требованиям';
+            document.getElementById('passwordGroup').classList.add('error');
+        } else {
+            const response = await request('POST', '/api/user', {
+                username,
+                password,
+                reserveEmail,
+                fullname
+            });
+
+            switch (response.status) {
+            case 200:
+                router.goto('/auth');
+                break;
+            case 400:
+                document.getElementById('usernameErrorText').innerHTML = 'Логин некорректен';
+                document.getElementById('usernameGroup').classList.add('error');
+                break;
+            case 409:
+                document.getElementById('usernameErrorText').innerHTML = 'Логин уже занят';
+                document.getElementById('usernameGroup').classList.add('error');
+                break;
             }
-        });
+        }
     });
 }
