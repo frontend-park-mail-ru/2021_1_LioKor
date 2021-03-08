@@ -50,11 +50,12 @@ export function source(element, router) {
     document.getElementById('main').style.backgroundColor = 'transparent';
 
     const validatePassword = (password) => {
-        return password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/) !== null;
+        const validPasswordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+        return password.match(validPasswordRegex) !== null;
     };
 
     const signupForm = document.getElementById('signupForm');
-    signupForm.addEventListener('submit', async(event) => {
+    signupForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         const formData = new FormData(signupForm);

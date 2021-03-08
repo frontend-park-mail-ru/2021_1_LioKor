@@ -4,7 +4,7 @@ export function request(method, url, data = null) {
         xhr.open(method, url, true);
         xhr.withCredentials = true;
 
-        xhr.addEventListener('readystatechange', function() {
+        xhr.addEventListener('readystatechange', function () {
             if (xhr.readyState !== XMLHttpRequest.DONE) {
                 return;
             }

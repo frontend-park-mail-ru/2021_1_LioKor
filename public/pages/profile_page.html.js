@@ -86,7 +86,7 @@ export function source(element, router) {
         ajax('DELETE', '/api/user/session', {}, (status, response) => {});
     });
 
-    document.getElementById('avatarChange').addEventListener('click', async() => {
+    document.getElementById('avatarChange').addEventListener('click', async () => {
         const dataURL = await readImageAsDataURL();
         document.getElementById('avatarImage').src = dataURL;
         document.getElementById('avatarDataURL').value = dataURL;
