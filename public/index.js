@@ -14,8 +14,9 @@ ajax("GET", "/api/user", null, (status, response) => {
         document.getElementById("me/login-button").setAttribute('href', '/login');
     }*/
     console.log(location.pathname);
-    if (location.pathname === "/")
+    if (location.pathname === "/") {
         router.goto("/auth");
-    else
+    } else {
         router.goto(location.pathname);
+    }
 });
