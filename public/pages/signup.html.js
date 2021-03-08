@@ -3,7 +3,7 @@ import {ajax} from "../modules/ajax.js";
 const html = `
 <div class="signup">
     <!-- <img class="wolf" src="../images/wolf_dark.png"> -->
-    
+
     <div class="content">
         <div class="standalone-form">
             <div class="title">
@@ -43,7 +43,7 @@ const html = `
 `;
 
 export function source(element, router) {
-    document.title = "SQuest | Регистрация";
+    document.title = "LioKor | Регистрация";
     element.innerHTML = html;
 
     document.getElementById("main").style.backgroundColor = "transparent";
