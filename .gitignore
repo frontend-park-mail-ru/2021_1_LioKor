@@ -1,6 +1,10 @@
-node_modules
 .idea
+
+node_modules
+yarn-error.log
+
 public/api/swagger/*
 !public/api/swagger/swagger.yaml
 !public/api/swagger/index.html
-*.css
+
+public/styles/*.css

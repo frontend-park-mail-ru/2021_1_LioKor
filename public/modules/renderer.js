@@ -13,9 +13,9 @@ export function render (target, path, router, callback) {
 
         setTimeout(() => {
             try {
-                if (path === 'auth') {
+                if (path === '/auth') {
                     auth.source(body, router)
-                } else if (path === 'signup') {
+                } else if (path === '/signup') {
                     signup.source(body, router)
                 } else if (path === '/user') {
                     user.source(body, router)

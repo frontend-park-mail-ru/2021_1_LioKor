@@ -85,7 +85,7 @@ export function source(element, router) {
     });
 
     document.getElementById("logoutButton").addEventListener("click", (event) => {
-        ajax("POST", "/api/user/logout", {}, (status, response) => {});
+        ajax("DELETE", "/api/user/session", {}, (status, response) => {});
     });
 
     document.getElementById("avatarChange").addEventListener('click', async () => {
