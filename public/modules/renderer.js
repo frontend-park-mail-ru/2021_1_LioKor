@@ -10,19 +10,19 @@ export function render(target, path, router, callback) {
         body.style.opacity = '0%';
 
         setTimeout(() => {
-            try {
-                if (path === '/auth') {
-                    auth.source(body, router);
-                } else if (path === '/signup') {
-                    signup.source(body, router);
-                } else if (path === '/user') {
-                    user.source(body, router);
-                } else if (path.endsWith('password')) {
-                    changePassword.source(body, router);
-                }
-            } catch {
-                router.goto('/auth'); // if not exists - redirect to default page
+            if (path === '/auth') {
+                auth.source(body, router);
+            } else if (path === '/signup') {
+                signup.source(body, router);
+            } else if (path === '/user') {
+                user.source(body, router);
+            } else if (path.endsWith('password')) {
+                changePassword.source(body, router);
+            } else {
+                // path not found => redirecting to the default page
+                router.goto('/auth');
             }
+
             body.style.opacity = '100%';
             callback();
         }, 200);

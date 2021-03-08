@@ -2,7 +2,6 @@ import { ajax } from '../modules/ajax.js';
 
 const html = `
 <div class="profile">
-
     <div class="content">
         <div class="standalone-form profile">
             <div class="title">
@@ -37,8 +36,6 @@ const html = `
 export function source(element, router) {
     document.title = 'LioKor | Профиль ' + location.pathname.substring(6);
     element.innerHTML = html;
-
-    document.getElementById('main').style.backgroundColor = '#404244';
 
     ajax('GET', '/api' + location.pathname.toLowerCase(), null, (status, response) => {
         if (status === 200) { // is found

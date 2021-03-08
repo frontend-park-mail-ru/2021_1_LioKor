@@ -1,8 +1,7 @@
-import { ajax } from '../modules/ajax.js';
+import { request } from '../modules/requests.js';
 
 const html = `
 <div class="profile">
-
     <div class="content">
         <div class="standalone-form">
             <div class="title">
@@ -12,11 +11,11 @@ const html = `
                 <form id="changePasswordForm">
                     <div class="form-group" id="oldPasswordGroup">
                         <label>СТАРЫЙ ПАРОЛЬ<span class="error-text" id="oldPasswordErrorText"></span></label>
-                        <input name="oldPassword" type="password" class="form-control" id="oldPasswordInput">
+                        <input name="oldPassword" type="password" class="form-control">
                     </div>
                     <div class="form-group" id="newPasswordGroup">
                         <label>НОВЫЙ ПАРОЛЬ<span class="error-text" id="newPasswordErrorText"></span></label>
-                        <input name="newPassword" type="password" class="form-control" id="newPasswordInput">
+                        <input name="newPassword" type="password" class="form-control">
                     </div>
                     <div class="form-group">
                         <input type="submit" class="btn" value="Сменить пароль">
@@ -34,28 +33,42 @@ const html = `
 export function source(element, router) {
     document.title = 'LioKor | Cменить пароль';
     element.innerHTML = html;
-    document.getElementById('oldPasswordInput').focus();
 
-    document.getElementById('main').style.backgroundColor = '#404244';
+    const changePasswordForm = document.getElementById('changePasswordForm');
+    changePasswordForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
 
-    document.getElementById('changePasswordForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const oldPassword = document.getElementById('oldPasswordInput').value.trim();
-        const newPassword = document.getElementById('newPasswordInput').value.trim();
+        const oldPasswordGroup = document.getElementById('oldPasswordGroup');
+        const oldPasswordErrorText = document.getElementById('oldPasswordErrorText');
+        const newPasswordGroup = document.getElementById('newPasswordGroup');
+        const newPasswordErrorText = document.getElementById('newPasswordErrorText');
 
-        ajax('PUT', '/api' + location.pathname, { oldPassword, newPassword }, (status, response) => {
-            if (status === 200) { // valid
-                alert('Пароль изменён');
-                router.goto('/user');
-            } else if (status === 400) { // invalid
-                document.getElementById('oldPasswordErrorText').innerText = 'Неправильный пароль';
-            } else if (status === 401) { // invalid
-                document.getElementById('oldPasswordErrorText').innerText = 'У вас нет доступа';
-            } else if (status === 403) {
-                document.getElementById('newPasswordErrorText').innerText = 'Неправильный формат ввода';
-            } else if (status === 404) {
-                document.getElementById('oldPasswordErrorText').innerText = 'Неизвестная ошибка ' + status;
-            }
+        oldPasswordGroup.classList.remove('error');
+        oldPasswordErrorText.innerHTML = '';
+        newPasswordGroup.classList.remove('error');
+        newPasswordErrorText.innerHTML = '';
+
+        const formData = new FormData(changePasswordForm);
+        const oldPassword = formData.get('oldPassword');
+        const newPassword = formData.get('newPassword');
+
+        const response = await request('PUT', `/api${location.pathname}`, {
+            oldPassword,
+            newPassword
         });
+
+        switch (response.status) {
+        case 200:
+            router.goto('/user');
+            break;
+        case 400:
+        case 401:
+            oldPasswordGroup.classList.add('error');
+            oldPasswordErrorText.innerHTML = 'Введён неверный пароль!';
+            break;
+        case 404:
+            alert('Непредвиденная ошибка: пользователь не найден!');
+            break;
+        }
     });
 }

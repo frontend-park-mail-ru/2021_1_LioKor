@@ -2,8 +2,6 @@ import { request } from '../modules/requests.js';
 
 const html = `
 <div class="auth">
-    <!-- <img class="wolf" src="../images/wolf_dark.png"> -->
-
     <div class="content">
         <div class="standalone-form">
             <form id="authForm">
@@ -35,12 +33,10 @@ const html = `
 export async function source(element, router) {
     document.title = 'LioKor | Авторизация';
     element.innerHTML = html;
-    // document.getElementById('usernameInput').focus();
-
-    document.getElementById('main').style.backgroundColor = 'transparent';
 
     const response = await request('GET', '/api/user');
-    if (response.status === 200) { // authenticated => redirecting to profile
+    if (response.ok) {
+        // authenticated => redirecting to profile
         router.goto('/user');
     }
 
@@ -55,7 +51,7 @@ export async function source(element, router) {
 
         const response = await request('POST', '/api/user/auth', { username, password });
 
-        if (response.status === 200) {
+        if (response.ok) {
             router.goto('/user');
         } else {
             document.getElementById('usernameGroup').classList.add('error');

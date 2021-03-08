@@ -2,8 +2,6 @@ import { request } from '../modules/requests.js';
 
 const html = `
 <div class="signup">
-    <!-- <img class="wolf" src="../images/wolf_dark.png"> -->
-
     <div class="content">
         <div class="standalone-form">
             <div class="title">
@@ -46,8 +44,6 @@ const html = `
 export function source(element, router) {
     document.title = 'LioKor | Регистрация';
     element.innerHTML = html;
-
-    document.getElementById('main').style.backgroundColor = 'transparent';
 
     const validatePassword = (password) => {
         const validPasswordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;

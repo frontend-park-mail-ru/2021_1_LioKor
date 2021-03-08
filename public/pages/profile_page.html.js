@@ -1,9 +1,8 @@
-import { ajax } from '../modules/ajax.js';
+import { request } from '../modules/requests.js';
 import { readImageAsDataURL } from '../modules/images.js';
 
 const html = `
 <div class="profile">
-
     <div class="content">
         <div class="standalone-form profile">
             <div class="title">
@@ -38,9 +37,6 @@ const html = `
                     <div class="form-group">
                         <linkButton href="/auth" class="btn btn-danger" id="logoutButton">Выйти</linkButton>
                     </div>
-                    <div class="form-group" id="adminButton" style="display: none">
-                        <linkButton href="/auth" class="btn" id="adminButton">На админскую</linkButton>
-                    </div>
                 </form>
             </div>
         </div>
@@ -48,42 +44,45 @@ const html = `
 </div>
 `;
 
-export function source(element, router) {
+export async function source(element, router) {
     document.title = 'LioKor | Профиль';
     element.innerHTML = html;
 
-    document.getElementById('main').style.backgroundColor = '#404244';
-
     let username = '';
-    ajax('GET', '/api/user', null, (status, response) => {
-        if (status === 200) { // is authorized
-            document.getElementById('username').innerText = username = response.username;
-            document.getElementById('email').innerText = response.username.toLowerCase() + '@liokor.ru';
-            document.getElementById('fullnameInput').value = response.fullname;
-            document.getElementById('reserveEmailInput').value = response.reserveEmail;
-            document.getElementById('changePasswordButton').setAttribute('href', location.pathname + '/' + username + '/password');
 
-            if (response.isAdmin) { document.getElementById('adminButton').style.display = 'block'; }
-        } else { // not authorized
-            router.goto('/auth');
+    const response = await request('GET', '/api/user');
+    if (response.ok) {
+        const data = await response.json();
+
+        if (data.avatarUrl) {
+            document.getElementById('avatarImage').src = data.avatarUrl;
+        }
+        document.getElementById('username').innerText = username = data.username;
+        document.getElementById('email').innerText = data.username.toLowerCase() + '@liokor.ru';
+        document.getElementById('fullnameInput').value = data.fullname;
+        document.getElementById('reserveEmailInput').value = data.reserveEmail;
+        document.getElementById('changePasswordButton').setAttribute('href', location.pathname + '/' + username + '/password');
+    } else {
+        router.goto('/auth');
+    }
+
+    const editProfileForm = document.getElementById('editProfileForm');
+    editProfileForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(editProfileForm);
+        const avatarUrl = formData.get('avatarDataURL');
+        const fullname = formData.get('fullname').trim();
+        const reserveEmail = formData.get('reserveEmail').trim();
+
+        const response = await request('PUT', `/api/user/${username}`, { fullname, avatarUrl, reserveEmail });
+        if (!response.ok) {
+            alert('Не удалось изменить данные!');
         }
     });
 
-    document.getElementById('editProfileForm').addEventListener('submit', (event) => {
-        event.preventDefault();
-        const fullname = document.getElementById('fullnameInput').value.trim();
-        const reserveEmail = document.getElementById('reserveEmailInput').value.trim();
-        ajax('PUT', '/api/user/' + username, { fullname, reserveEmail }, (status, response) => {
-            if (status === 200) { // valid
-                alert('Не знаю, зачем тебе это, но данные изменены');
-            } else { // invalide
-                document.getElementById('fullnameErrorText').innerText = 'Неверные данные';
-            }
-        });
-    });
-
     document.getElementById('logoutButton').addEventListener('click', (event) => {
-        ajax('DELETE', '/api/user/session', {}, (status, response) => {});
+        request('DELETE', '/api/user/session');
     });
 
     document.getElementById('avatarChange').addEventListener('click', async () => {
