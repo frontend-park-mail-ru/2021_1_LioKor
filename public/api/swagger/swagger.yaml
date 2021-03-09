@@ -5,8 +5,8 @@ info:
   title: "LioKor Mail"
   contact:
     email: "korolion31@yandex.ru"
-host: "mail.liokor.ru"
-basePath: "/api"
+host: "api.mail.liokor.ru"
+basePath: "/"
 tags:
 - name: "user"
   description: "User operations"
