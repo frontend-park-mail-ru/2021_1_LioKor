@@ -1,4 +1,4 @@
-export async function request(method, url, data = {}) {
+export function request(method, url, data = {}) {
     let params = {};
     if (!['GET', 'HEAD'].includes(method) && data) {
         params = {
@@ -9,7 +9,7 @@ export async function request(method, url, data = {}) {
         };
     }
 
-    return await fetch(url, {
+    return fetch(url, {
         method: method,
         credentials: 'include',
         ...params

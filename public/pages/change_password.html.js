@@ -59,7 +59,7 @@ export function source(element, app) {
             return;
         }
 
-        const response = await app.apiRequest('PUT', `${location.pathname}`, {
+        const response = await app.apiPut(`${location.pathname}`, {
             oldPassword,
             newPassword
         });

@@ -32,7 +32,7 @@ export async function source(element, app) {
     document.title = `${app.name} | Авторизация`;
     element.innerHTML = html;
 
-    const response = await app.apiRequest('GET', '/user');
+    const response = await app.apiGet('/user');
     if (response.ok) {
         // authenticated => redirecting to profile
         app.goto('/user');
@@ -48,7 +48,7 @@ export async function source(element, app) {
         const username = formData.get('username').toLowerCase().replace('@liokor.ru', '');
         const password = formData.get('password');
 
-        const response = await app.apiRequest('POST', '/user/auth', { username, password });
+        const response = await app.apiPost('/user/auth', { username, password });
         if (response.ok) {
             app.goto('/user');
             return;

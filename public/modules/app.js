@@ -42,8 +42,24 @@ export default class App {
         this.linkButtons();
     }
 
-    async apiRequest(method, path, data = {}) {
-        return await request(method, `${this.apiUrl}${path}`, data);
+    apiRequest(method, path, data = {}) {
+        return request(method, `${this.apiUrl}${path}`, data);
+    }
+
+    apiGet(path, data = {}) {
+        return this.apiRequest('GET', path, data);
+    }
+
+    apiPost(path, data = {}) {
+        return this.apiRequest('POST', path, data);
+    }
+
+    apiPut(path, data = {}) {
+        return this.apiRequest('PUT', path, data);
+    }
+
+    apiDelete(path, data = {}) {
+        return this.apiRequest('DELETE', path, data);
     }
 
     linkButtons() {

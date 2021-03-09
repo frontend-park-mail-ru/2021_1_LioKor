@@ -71,7 +71,7 @@ export function source(element, app) {
             return;
         }
 
-        const response = await app.apiRequest('POST', '/user', {
+        const response = await app.apiPost('/user', {
             username,
             password,
             reserveEmail,

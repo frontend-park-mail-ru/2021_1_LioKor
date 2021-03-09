@@ -52,13 +52,14 @@ export async function source(element, app) {
 
     let username = '';
 
-    const response = await app.apiRequest('GET', '/user');
+    const response = await app.apiGet('/user');
     if (!response.ok) {
         app.goto('/auth');
         return;
     }
 
     const data = await response.json();
+    console.log(data);
 
     if (data.avatarUrl) {
         avatarImage.src = data.avatarUrl;
@@ -79,14 +80,14 @@ export async function source(element, app) {
         const fullname = formData.get('fullname').trim();
         const reserveEmail = formData.get('reserveEmail').trim();
 
-        const response = await app.apiRequest('PUT', `/user/${username}`, { fullname, avatarUrl, reserveEmail });
+        const response = await app.apiPut(`/user/${username}`, { fullname, avatarUrl, reserveEmail });
         if (!response.ok) {
             alert('Не удалось изменить данные!');
         }
     });
 
     document.getElementById('logoutButton').addEventListener('click', (event) => {
-        app.apiRequest('DELETE', '/user/session');
+        app.apiDelete('/user/session');
     });
 
     document.getElementById('avatarChange').addEventListener('click', async () => {
