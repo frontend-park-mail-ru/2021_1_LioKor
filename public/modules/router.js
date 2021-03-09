@@ -2,10 +2,19 @@ import * as renderer from './renderer.js';
 
 export default class Router {
     constructor() {
+        window.addEventListener('popstate', (ev) => {
+            const url = ev.state.url;
+            if (url) {
+                this.goto(url);
+            }
+        });
+
         this.resolvePaths = [
             { path: /^\/user\/.*\/password$/, renderPath: '/change_password' },
             { path: /^\/user\/.*/, renderPath: '/user_view' }
         ];
+
+        this.prevUrl = null;
         this.linkedButtons = [];
         this.linkButtons();
     }
@@ -35,7 +44,7 @@ export default class Router {
     }
 
     goto(path) {
-        history.pushState({}, '', path);
+        history.pushState({ url: path }, '', path);
         this.resolvePaths.forEach((resolvePath) => {
             if (resolvePath.path.test(path)) {
                 path = resolvePath.renderPath;
