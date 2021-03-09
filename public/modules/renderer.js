@@ -5,19 +5,20 @@ import * as changePassword from '../pages/change_password.html.js';
 // import * as userView from '../pages/user_view.html.js'
 
 export function render(target, path, router, callback) {
+    const routes = {
+        '/auth': auth.source,
+        '/signup': signup.source,
+        '/user': user.source
+    }
+
     const body = document.getElementById(target);
     try {
         body.style.opacity = '0%';
 
         setTimeout(() => {
-            if (path === '/auth') {
-                auth.source(body, router);
-            } else if (path === '/signup') {
-                signup.source(body, router);
-            } else if (path === '/user') {
-                user.source(body, router);
-            } else if (path.endsWith('password')) {
-                changePassword.source(body, router);
+            const handler = routes[path];
+            if (handler) {
+                handler(body, router);
             } else {
                 // path not found => redirecting to the default page
                 router.goto('/auth');
