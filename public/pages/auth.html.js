@@ -38,6 +38,7 @@ export async function source(element, router) {
     if (response.ok) {
         // authenticated => redirecting to profile
         router.goto('/user');
+        return;
     }
 
     const authForm = document.getElementById('authForm');

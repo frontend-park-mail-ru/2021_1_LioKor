@@ -1,5 +1,10 @@
 import * as renderer from './renderer.js';
 
+import * as auth from '../pages/auth.html.js';
+import * as user from '../pages/profile_page.html.js';
+import * as signup from '../pages/signup.html.js';
+import * as changePassword from '../pages/change_password.html.js';
+
 export default class Router {
     constructor() {
         window.addEventListener('popstate', (ev) => {
@@ -9,12 +14,25 @@ export default class Router {
             }
         });
 
-        this.resolvePaths = [
-            { path: /^\/user\/.*\/password$/, renderPath: '/change_password' },
-            { path: /^\/user\/.*/, renderPath: '/user_view' }
+        this.routes = [
+            {
+                urlRegex: /^\/auth$/,
+                handler: auth.source
+            },
+            {
+                urlRegex: /^\/signup$/,
+                handler: signup.source
+            },
+            {
+                urlRegex: /^\/user$/,
+                handler: user.source
+            },
+            {
+                urlRegex: /^\/user\/([A-Za-z0-9_]){1,}\/password$/,
+                handler: changePassword.source
+            }
         ];
 
-        this.prevUrl = null;
         this.linkedButtons = [];
         this.linkButtons();
     }
@@ -43,13 +61,21 @@ export default class Router {
         this.goto(event.currentTarget.getAttribute('href').toString());
     }
 
-    goto(path) {
+    async goto(path) {
         history.pushState({ url: path }, '', path);
-        this.resolvePaths.forEach((resolvePath) => {
-            if (resolvePath.path.test(path)) {
-                path = resolvePath.renderPath;
+
+        let handler = null;
+        for (const route of this.routes) {
+            if (path.match(route.urlRegex)) {
+                handler = route.handler;
+                break;
             }
-        });
-        renderer.render('body', path, this, () => { this.relinkButtons(); });
+        }
+        if (handler === null) {
+            this.goto('/auth');
+        }
+
+        await renderer.render('body', handler, this);
+        this.relinkButtons();
     }
 }

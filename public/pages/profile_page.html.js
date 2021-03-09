@@ -56,6 +56,7 @@ export async function source(element, router) {
     const response = await request('GET', '/api/user');
     if (!response.ok) {
         router.goto('/auth');
+        return;
     }
 
     const data = await response.json();
