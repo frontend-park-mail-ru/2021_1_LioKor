@@ -1,5 +1,3 @@
-import { request } from '../modules/requests.js';
-
 const html = `
 <div class="auth">
     <div class="content">
@@ -30,14 +28,14 @@ const html = `
 </div>
 `;
 
-export async function source(element, router) {
-    document.title = 'LioKor | Авторизация';
+export async function source(element, app) {
+    document.title = `${app.name} | Авторизация`;
     element.innerHTML = html;
 
-    const response = await request('GET', '/api/user');
+    const response = await app.apiRequest('GET', '/user');
     if (response.ok) {
         // authenticated => redirecting to profile
-        router.goto('/user');
+        app.goto('/user');
         return;
     }
 
@@ -50,9 +48,9 @@ export async function source(element, router) {
         const username = formData.get('username').toLowerCase().replace('@liokor.ru', '');
         const password = formData.get('password');
 
-        const response = await request('POST', '/api/user/auth', { username, password });
+        const response = await app.apiRequest('POST', '/user/auth', { username, password });
         if (response.ok) {
-            router.goto('/user');
+            app.goto('/user');
             return;
         }
 

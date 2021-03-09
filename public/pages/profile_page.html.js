@@ -1,4 +1,3 @@
-import { request } from '../modules/requests.js';
 import { readImageAsDataURL } from '../modules/images.js';
 
 const html = `
@@ -44,8 +43,8 @@ const html = `
 </div>
 `;
 
-export async function source(element, router) {
-    document.title = 'LioKor | Профиль';
+export async function source(element, app) {
+    document.title = `${app.name} | Профиль`;
     element.innerHTML = html;
 
     const avatarImage = document.getElementById('avatarImage');
@@ -53,9 +52,9 @@ export async function source(element, router) {
 
     let username = '';
 
-    const response = await request('GET', '/api/user');
+    const response = await app.apiRequest('GET', '/user');
     if (!response.ok) {
-        router.goto('/auth');
+        app.goto('/auth');
         return;
     }
 
@@ -80,14 +79,14 @@ export async function source(element, router) {
         const fullname = formData.get('fullname').trim();
         const reserveEmail = formData.get('reserveEmail').trim();
 
-        const response = await request('PUT', `/api/user/${username}`, { fullname, avatarUrl, reserveEmail });
+        const response = await app.apiRequest('PUT', `/user/${username}`, { fullname, avatarUrl, reserveEmail });
         if (!response.ok) {
             alert('Не удалось изменить данные!');
         }
     });
 
     document.getElementById('logoutButton').addEventListener('click', (event) => {
-        request('DELETE', '/api/user/session');
+        app.apiRequest('DELETE', '/user/session');
     });
 
     document.getElementById('avatarChange').addEventListener('click', async () => {

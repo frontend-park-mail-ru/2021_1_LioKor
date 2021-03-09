@@ -1,12 +1,17 @@
 import * as renderer from './renderer.js';
 
+import { request } from './requests.js';
+
 import * as auth from '../pages/auth.html.js';
 import * as user from '../pages/profile_page.html.js';
 import * as signup from '../pages/signup.html.js';
 import * as changePassword from '../pages/change_password.html.js';
 
-export default class Router {
-    constructor() {
+export default class App {
+    constructor(name, apiUrl) {
+        this.name = name;
+        this.apiUrl = apiUrl;
+
         window.addEventListener('popstate', (ev) => {
             const url = ev.state.url;
             if (url) {
@@ -35,6 +40,10 @@ export default class Router {
 
         this.linkedButtons = [];
         this.linkButtons();
+    }
+
+    async apiRequest(method, path, data = {}) {
+        return await request(method, `${this.apiUrl}${path}`, data);
     }
 
     linkButtons() {

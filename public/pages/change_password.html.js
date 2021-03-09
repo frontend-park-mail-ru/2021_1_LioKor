@@ -1,4 +1,3 @@
-import { request } from '../modules/requests.js';
 import { validatePassword } from '../modules/validators.js';
 
 const html = `
@@ -32,8 +31,8 @@ const html = `
 </div>
 `;
 
-export function source(element, router) {
-    document.title = 'LioKor | Cменить пароль';
+export function source(element, app) {
+    document.title = `${app.name} | Cменить пароль`;
     element.innerHTML = html;
 
     const changePasswordForm = document.getElementById('changePasswordForm');
@@ -60,14 +59,14 @@ export function source(element, router) {
             return;
         }
 
-        const response = await request('PUT', `/api${location.pathname}`, {
+        const response = await app.apiRequest('PUT', `${location.pathname}`, {
             oldPassword,
             newPassword
         });
 
         switch (response.status) {
         case 200:
-            router.goto('/user');
+            app.goto('/user');
             break;
         case 400:
         case 401:

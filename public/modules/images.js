@@ -57,12 +57,12 @@ export const readImageAsDataURL = async (maxFileSizeMB = 10) => {
     };
 
     return new Promise((resolve, reject) => {
-        createImageInput(async (changeEvent) => {
+        createImageInput(async ({ target }) => {
             try {
-                const dataURL = await inputImageToDataURL(changeEvent.target);
+                const dataURL = await inputImageToDataURL(target);
                 resolve(dataURL);
             } catch (err) {
-                changeEvent.target.remove();
+                target.remove();
                 reject(err);
             }
         }).click();

@@ -1,4 +1,3 @@
-import { request } from '../modules/requests.js';
 import { validatePassword } from '../modules/validators.js';
 
 const html = `
@@ -42,8 +41,8 @@ const html = `
 </div>
 `;
 
-export function source(element, router) {
-    document.title = 'LioKor | Регистрация';
+export function source(element, app) {
+    document.title = `${app.name} | Регистрация`;
     element.innerHTML = html;
 
     const signupForm = document.getElementById('signupForm');
@@ -72,7 +71,7 @@ export function source(element, router) {
             return;
         }
 
-        const response = await request('POST', '/api/user', {
+        const response = await app.apiRequest('POST', '/user', {
             username,
             password,
             reserveEmail,
@@ -81,7 +80,7 @@ export function source(element, router) {
 
         switch (response.status) {
         case 200:
-            router.goto('/auth');
+            app.goto('/auth');
             break;
         case 400:
             usernameGroup.classList.add('error');

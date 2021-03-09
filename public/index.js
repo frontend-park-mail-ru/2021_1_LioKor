@@ -1,13 +1,16 @@
-import Router from './modules/router.js';
+import App from './modules/app.js';
 
 function main() {
-    const router = new Router();
+    let apiUrl = 'https://mail.liokor.ru/api';
+    if (window.location.hostname === 'localhost') {
+        apiUrl = `http://${window.location.host}/api`;
+    }
+    const app = new App('LioKor', apiUrl);
 
     if (location.pathname === '/') {
-        router.goto('/auth');
+        app.goto('/auth');
         return;
     }
-
-    router.goto(location.pathname);
+    app.goto(location.pathname);
 }
 main();

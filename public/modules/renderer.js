@@ -1,4 +1,4 @@
-export function render(target, handler, router) {
+export function render(target, handler, app) {
     return new Promise((resolve, reject) => {
         const el = document.getElementById(target);
         try {
@@ -6,7 +6,7 @@ export function render(target, handler, router) {
 
             // new page animation
             setTimeout(async () => {
-                await handler(el, router);
+                await handler(el, app);
                 el.style.opacity = '100%';
                 resolve();
             }, 200);
