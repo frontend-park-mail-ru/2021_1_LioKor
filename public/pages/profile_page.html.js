@@ -50,8 +50,6 @@ export async function source(element, app) {
     const avatarImage = document.getElementById('avatarImage');
     const avatarDataURL = document.getElementById('avatarDataURL');
 
-    let username = '';
-
     const response = await app.apiGet('/user');
     if (!response.ok) {
         app.goto('/auth');
@@ -59,14 +57,14 @@ export async function source(element, app) {
     }
 
     const data = await response.json();
-    console.log(data);
+    const { username, avatarUrl } = data;
 
-    if (data.avatarUrl) {
-        avatarImage.src = data.avatarUrl;
-        avatarDataURL.value = data.avatarUrl;
+    if (avatarUrl) {
+        avatarImage.src = avatarUrl;
+        avatarDataURL.value = avatarUrl;
     }
-    document.getElementById('username').innerText = username = data.username;
-    document.getElementById('email').innerText = `${data.username.toLowerCase()}@liokor.ru`;
+    document.getElementById('username').innerText = username;
+    document.getElementById('email').innerText = `${username.toLowerCase()}@liokor.ru`;
     document.getElementById('fullnameInput').value = data.fullname;
     document.getElementById('reserveEmailInput').value = data.reserveEmail;
     document.getElementById('changePasswordButton').setAttribute('href', `${location.pathname}/${username}/password`);

@@ -21,7 +21,7 @@ export default class App {
 
         document.body.addEventListener('click', (event) => {
             const targetElem = event.target;
-            if (targetElem.tagName === "LINKBUTTON") {
+            if (targetElem.tagName === 'LINKBUTTON') {
                 event.preventDefault();
                 this.goto(event.target.getAttribute('href').toString());
             }
