@@ -91,6 +91,8 @@ export function source(element, router) {
             usernameGroup.classList.add('error');
             usernameErrorText.innerHTML = 'Логин уже занят';
             break;
+        default:
+            alert('Произошла неизвестная ошибка!');
         }
     });
 }

@@ -50,14 +50,14 @@ export async function source(element, router) {
         const password = formData.get('password');
 
         const response = await request('POST', '/api/user/auth', { username, password });
-
         if (response.ok) {
             router.goto('/user');
-        } else {
-            document.getElementById('usernameGroup').classList.add('error');
-            document.getElementById('usernameErrorText').innerText = 'Неправильный логин или пароль';
-            document.getElementById('passwordGroup').classList.add('error');
-            document.getElementById('passwordErrorText').innerText = 'Неправильный логин или пароль';
+            return;
         }
+
+        document.getElementById('usernameGroup').classList.add('error');
+        document.getElementById('usernameErrorText').innerText = 'Неправильный логин или пароль';
+        document.getElementById('passwordGroup').classList.add('error');
+        document.getElementById('passwordErrorText').innerText = 'Неправильный логин или пароль';
     });
 }

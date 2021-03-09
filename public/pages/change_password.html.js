@@ -77,6 +77,8 @@ export function source(element, router) {
         case 404:
             alert('Непредвиденная ошибка: пользователь не найден!');
             break;
+        default:
+            alert('Произошла неизвестная ошибка!');
         }
     });
 }

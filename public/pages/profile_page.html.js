@@ -54,21 +54,21 @@ export async function source(element, router) {
     let username = '';
 
     const response = await request('GET', '/api/user');
-    if (response.ok) {
-        const data = await response.json();
-
-        if (data.avatarUrl) {
-            avatarImage.src = data.avatarUrl;
-            avatarDataURL.value = data.avatarUrl;
-        }
-        document.getElementById('username').innerText = username = data.username;
-        document.getElementById('email').innerText = data.username.toLowerCase() + '@liokor.ru';
-        document.getElementById('fullnameInput').value = data.fullname;
-        document.getElementById('reserveEmailInput').value = data.reserveEmail;
-        document.getElementById('changePasswordButton').setAttribute('href', location.pathname + '/' + username + '/password');
-    } else {
+    if (!response.ok) {
         router.goto('/auth');
     }
+
+    const data = await response.json();
+
+    if (data.avatarUrl) {
+        avatarImage.src = data.avatarUrl;
+        avatarDataURL.value = data.avatarUrl;
+    }
+    document.getElementById('username').innerText = username = data.username;
+    document.getElementById('email').innerText = `${data.username.toLowerCase()}@liokor.ru`;
+    document.getElementById('fullnameInput').value = data.fullname;
+    document.getElementById('reserveEmailInput').value = data.reserveEmail;
+    document.getElementById('changePasswordButton').setAttribute('href', `${location.pathname}/${username}/password`);
 
     const editProfileForm = document.getElementById('editProfileForm');
     editProfileForm.addEventListener('submit', async (event) => {
