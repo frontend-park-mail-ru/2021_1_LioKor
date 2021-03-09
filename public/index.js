@@ -1,21 +1,16 @@
-import Router from "./modules/router.js";
-import {ajax} from "./modules/ajax.js";
+import App from './modules/app.js';
 
-const router = new Router();
+function main() {
+    let apiUrl = 'https://mail.liokor.ru/api';
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        apiUrl = `http://${window.location.host}/api`;
+    }
+    const app = new App('LioKor', apiUrl);
 
-ajax("GET", "/api/user", null, (status, response) => {
-    /*if (status == 200) { // valid
-        document.getElementById("nickname").innerText = response.nickname;
-        document.getElementById("me/login-button").setAttribute('href', '/me');
-        document.getElementById("progressbar").style.backgroundPositionX = `${100 - 100 / response.len * response.progress}%`;
-        document.getElementById("progress").innerText = response.progress;
-    } else { // invalid
-        document.getElementById("progressbar").style.backgroundPositionX = "100%";
-        document.getElementById("me/login-button").setAttribute('href', '/login');
-    }*/
-    console.log(location.pathname);
-    if (location.pathname === "/")
-        router.goto("/auth");
-    else
-        router.goto(location.pathname);
-});
+    if (location.pathname === '/') {
+        app.goto('/auth');
+        return;
+    }
+    app.goto(location.pathname);
+}
+main();

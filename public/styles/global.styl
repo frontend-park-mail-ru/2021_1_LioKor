@@ -9,6 +9,17 @@ clHighlight = #EF9900
 
 formBgColor = #404346
 
+
+form-button-padding = 10px
+form-padding = 10px
+form-margin = 125px
+form-width = 460
+
+logo-height = 55px
+logo-width = 180px
+logo-padding = 15px
+
+
 *
     box-sizing border-box
 
@@ -36,7 +47,7 @@ linkButton:hover
     color textColor1
     border-width 0
     font-size 1.1rem
-    padding 10px 20px
+    padding form-button-padding form-button-padding*2
     border-radius 3px
     cursor pointer
     transition all 0.3s ease
@@ -49,7 +60,7 @@ linkButton.btn:hover
 
 input.form-control[type="text"],
 input.form-control[type="password"]
-    padding 10px
+    padding form-button-padding
     font-size 1rem
     color textColor1
     background-color #393C3F
@@ -72,10 +83,10 @@ input.form-control.error[type="password"],
 
 div.standalone-form
     box-shadow 0 0 3px #101010
-    padding 20px 30px
+    padding form-padding*2 form-padding*3
 
-    max-width 460px
-    margin 125px auto
+    max-width form-width
+    margin form-margin-y auto
     border-radius 7px
     overflow hidden
 
@@ -134,26 +145,26 @@ body
 
         background-color transparent
         background-image none
-        img.wolf
+        /*img.wolf
             position fixed
             right 20px
             bottom 20px
             z-index -1
-            height 400px
+            height 400px*/
         header.lite
-            height 55px
-            line-height 55px
-            padding 10px
+            height logo-height
+            line-height logo-height
+            padding logo-padding
             div.logo
                 display flex
                 margin 0 auto
-                width 180px
+                width logo-width
                 text-align center
                 div.image
                     img
-                        height 55px
+                        height logo-height
                 div.text
-                    padding-left 15px
+                    padding-left logo-padding
                     color textColor1
                     font-family wr
                     font-size 2.5rem
