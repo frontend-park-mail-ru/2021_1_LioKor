@@ -19,6 +19,14 @@ export default class App {
             }
         });
 
+        document.body.addEventListener('click', (event) => {
+            const targetElem = event.target;
+            if (targetElem.tagName === "LINKBUTTON") {
+                event.preventDefault();
+                this.goto(event.target.getAttribute('href').toString());
+            }
+        });
+
         this.routes = [
             {
                 urlRegex: /^\/auth$/,
@@ -37,9 +45,6 @@ export default class App {
                 handler: changePassword.source
             }
         ];
-
-        this.linkedButtons = [];
-        this.linkButtons();
     }
 
     apiRequest(method, path, data = {}) {
@@ -62,30 +67,6 @@ export default class App {
         return this.apiRequest('DELETE', path, data);
     }
 
-    linkButtons() {
-        this.linkedButtons = document.querySelectorAll('linkButton');
-        this.linkedButtons.forEach((button) => {
-            button.addEventListener('click', (event) => {
-                this.linksListener(event);
-            });
-        });
-    }
-
-    relinkButtons() {
-        this.linkedButtons.forEach((button) => {
-            button.outerHTML = button.outerHTML.toString();
-            button.removeEventListener('click', (event) => {
-                this.linksListener(event);
-            });
-        });
-        this.linkButtons();
-    }
-
-    linksListener(event) {
-        event.preventDefault();
-        this.goto(event.currentTarget.getAttribute('href').toString());
-    }
-
     async goto(path) {
         history.pushState({ url: path }, '', path);
 
@@ -101,6 +82,5 @@ export default class App {
         }
 
         await renderer.render('body', handler, this);
-        this.relinkButtons();
     }
 }
