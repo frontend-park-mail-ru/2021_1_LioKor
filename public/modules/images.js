@@ -1,4 +1,7 @@
-export const readImageAsDataURL = async (maxFileSizeMB = 10) => {
+const DEFAULT_MAX_FILE_SIZE_MB = 10;
+const MB = 1024 * 1024;
+
+export const readImageAsDataURL = async (maxFileSizeMB = DEFAULT_MAX_FILE_SIZE_MB) => {
     const createImageInput = (changeCallback) => {
         let hasInp = true;
         let imageInput = document.getElementById('filesImageInput');
@@ -28,7 +31,7 @@ export const readImageAsDataURL = async (maxFileSizeMB = 10) => {
         if (typeSplitted.length === 0 || typeSplitted[0] !== 'image') {
             throw new Error('File is not an image!');
         }
-        if (file.size / 1048576 > maxFileSizeMB) {
+        if (file.size / MB > maxFileSizeMB) {
             throw new Error('File is bigger than allowed!');
         }
 

@@ -11,6 +11,7 @@ export async function request(method, url, data = {}) {
 
     return await fetch(url, {
         method: method,
+        credentials: 'include',
         ...params
     });
 }

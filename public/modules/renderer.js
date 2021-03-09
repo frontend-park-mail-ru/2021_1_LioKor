@@ -6,12 +6,13 @@ export function render(target, handler, app) {
 
             // new page animation
             setTimeout(async () => {
-                await handler(el, app);
+                handler(el, app);
                 el.style.opacity = '100%';
                 resolve();
             }, 200);
         } catch {
             el.innerHTML = 'Error occured while trying to render';
+            resolve();
         };
     });
 }
