@@ -22,7 +22,7 @@
 2. yarn lint --fix
 
 ### API Swagger:
-* [https://mail.liokor.ru/api/swagger](https://mail.liokor.ru/api/swagger)
+* [https://api.mail.liokor.ru/api/swagger](https://api.mail.liokor.ru/api/swagger)
 
 ### Деплой
 * [https://mail.liokor.ru/](https://mail.liokor.ru/)
