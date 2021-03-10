@@ -112,6 +112,7 @@ export function source(element, app) {
 
         switch (response.status) {
         case 200:
+            app.messageSuccess('Ура!', `Аккаунт ${username} успешно создан!`);
             app.goto('/auth');
             break;
         case 400:
@@ -123,7 +124,7 @@ export function source(element, app) {
             usernameErrorText.innerHTML = 'Логин уже занят';
             break;
         default:
-            alert('Произошла неизвестная ошибка!');
+            app.messageError(`Ошибка ${response.status}!`, 'Произошла непредвиденная ошибка!');
         }
     });
 }

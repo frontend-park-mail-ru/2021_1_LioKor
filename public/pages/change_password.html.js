@@ -80,6 +80,7 @@ export function source(element, app) {
 
         switch (response.status) {
         case 200:
+            app.messageSuccess('Успех!', 'Пароль изменён');
             app.goto('/user');
             break;
         case 400:
@@ -88,10 +89,10 @@ export function source(element, app) {
             oldPasswordErrorText.innerHTML = 'Введён неверный пароль!';
             break;
         case 404:
-            alert('Непредвиденная ошибка: пользователь не найден!');
+            app.messageError('Непредвиденная ошибка!', 'Пользователь не найден');
             break;
         default:
-            alert('Произошла неизвестная ошибка!');
+            app.messageError(`Ошибка ${response.status}!`, 'Произошла непредвиденная ошибка!');
         }
     });
 }

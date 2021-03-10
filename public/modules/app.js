@@ -8,9 +8,25 @@ import * as signup from '../pages/signup.html.js';
 import * as changePassword from '../pages/change_password.html.js';
 
 export default class App {
-    constructor(name, apiUrl) {
+    constructor(name, apiUrl, elId, messagesElId = null) {
         this.name = name;
         this.apiUrl = apiUrl;
+        this.element = elId;
+
+        this.messagesEl = null;
+        this.messageTemplate = null;
+        this.messageLastId = 1;
+        if (messagesElId) {
+            const messageHTML = `
+            <div class="popup-message {{ cls }}" id="{{ id }}">
+                <div class="title"><strong>{{ title }}</strong></div>
+                <div class="message">{{ message }}</div>
+            </div>`;
+            this.messagesEl = document.getElementById(messagesElId);
+            // because handlebars is not imported but added as script:
+            // eslint-disable-next-line
+            this.messageTemplate = Handlebars.compile(messageHTML);
+        }
 
         window.addEventListener('popstate', (ev) => {
             const url = ev.state.url;
@@ -67,6 +83,43 @@ export default class App {
         return this.apiRequest('DELETE', path, data);
     }
 
+    message(title, message = '', success = true) {
+        const dissapearAfterMs = 3000;
+        const transitionTimeMs = 500;
+
+        if (!this.messagesEl) {
+            return;
+        }
+
+        const id = `popupMessage${this.messageLastId++}`;
+        const cls = (success) ? 'success' : 'error';
+        const messageRendered = this.messageTemplate({
+            id,
+            cls,
+            title,
+            message
+        });
+        this.messagesEl.innerHTML = messageRendered + this.messagesEl.innerHTML;
+
+        setTimeout(() => {
+            const messageEl = document.getElementById(id);
+            messageEl.style.transitionDuration = `${transitionTimeMs}ms`;
+            messageEl.style.opacity = '0';
+            setTimeout(() => {
+                messageEl.remove();
+                console.log(messageEl);
+            }, transitionTimeMs);
+        }, dissapearAfterMs);
+    }
+
+    messageSuccess(title, message = '') {
+        this.message(title, message);
+    }
+
+    messageError(title, message = '') {
+        this.message(title, message, false);
+    }
+
     async goto(path) {
         history.pushState({ url: path }, '', path);
 
@@ -81,6 +134,6 @@ export default class App {
             this.goto('/auth');
         }
 
-        await renderer.render('body', handler, this);
+        await renderer.render(this.element, handler, this);
     }
 }

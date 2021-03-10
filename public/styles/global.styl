@@ -143,6 +143,25 @@ body
     background-repeat repeat-y
 
     div.main
+        div.popup-messages
+            position fixed
+            top logo-padding
+            right logo-padding
+            width 225px
+            div.popup-message
+                margin-bottom logo-padding
+                padding 10px
+                border-radius 2px
+                background-color #28A745
+                border-left 5px solid #218838
+                color textColor1
+                transition opacity 0.5s ease
+                div.title
+                    margin-bottom 5px
+            div.popup-message.error
+                background-color #E54D42
+                border-left-color #B82E24
+
         overflow auto
         min-height 100vh
 

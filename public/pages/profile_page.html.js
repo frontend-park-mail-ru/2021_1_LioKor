@@ -37,7 +37,7 @@ const html = `
                         <LinkButton href="/user/{{ username }}/password" class="btn" id="changePasswordButton">Сменить пароль</LinkButton>
                     </div>
                     <div class="form-group">
-                        <linkButton href="/auth" class="btn btn-danger" id="logoutButton">Выйти</linkButton>
+                        <button href="/auth" class="btn btn-danger" id="logoutButton">Выйти</button>
                     </div>
                 </form>
             </div>
@@ -104,12 +104,17 @@ export async function source(element, app) {
 
         const response = await app.apiPut(`/user/${username}`, { fullname, avatarUrl, reserveEmail });
         if (!response.ok) {
-            alert('Не удалось изменить данные!');
+            app.messageError(`Ошибка ${response.status}!`, 'Не удалось изменить данные!');
+            return;
         }
+        app.messageSuccess('Успех!', 'Данные успешно изменены!');
     });
 
-    document.getElementById('logoutButton').addEventListener('click', (event) => {
-        app.apiDelete('/user/session');
+    document.getElementById('logoutButton').addEventListener('click', async (event) => {
+        event.preventDefault();
+        await app.apiDelete('/user/session');
+        app.messageSuccess('До свидания!', 'Вы успешно вышли из аккаунта!');
+        app.goto('/auth');
     });
 
     const avatarImage = document.getElementById('avatarImage');
