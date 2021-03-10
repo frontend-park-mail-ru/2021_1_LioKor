@@ -1,3 +1,10 @@
+/**
+ * Renders page with animation
+ *
+ * @param target
+ * @param handler
+ * @param app
+ */
 export function render(target, handler, app) {
     return new Promise((resolve, reject) => {
         const el = document.getElementById(target);

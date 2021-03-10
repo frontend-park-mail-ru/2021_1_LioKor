@@ -28,6 +28,10 @@ const html = `
 </div>
 `;
 
+/**
+ * @param element
+ * @param app
+ */
 export async function source(element, app) {
     document.title = `${app.name} | Авторизация`;
     element.innerHTML = html;

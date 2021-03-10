@@ -35,6 +35,10 @@ const html = `
 </div>
 `;
 
+/**
+ * @param element
+ * @param app
+ */
 export function source(element, app) {
     document.title = `${app.name} | Cменить пароль`;
     element.innerHTML = html;
