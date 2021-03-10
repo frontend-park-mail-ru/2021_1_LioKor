@@ -55,21 +55,17 @@ export async function source(element, app) {
     }
     const data = await response.json();
     let { username, avatarUrl } = data;
-    if (!avatarUrl) {
-        avatarUrl = DEFAULT_AVATAR_URL;
-    }
 
     const template = Handlebars.compile(html);
     element.innerHTML = template({
         username: username,
         fullname: data.fullname,
-        reserveEmail: data.reserveEmail
+        reserveEmail: data.reserveEmail,
+        avatarUrl: (avatarUrl)? avatarUrl: DEFAULT_AVATAR_URL
     });
 
-    const avatarImage = document.getElementById('avatarImage');
     const avatarDataURL = document.getElementById('avatarDataURL');
     if (avatarUrl) {
-        avatarImage.src = avatarUrl;
         avatarDataURL.value = avatarUrl;
     }
 
@@ -92,6 +88,7 @@ export async function source(element, app) {
         app.apiDelete('/user/session');
     });
 
+    const avatarImage = document.getElementById('avatarImage');
     document.getElementById('avatarChange').addEventListener('click', async () => {
         const dataURL = await readImageAsDataURL();
         avatarImage.src = dataURL;

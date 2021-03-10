@@ -2,7 +2,7 @@ const html = `
 <div class="auth">
     <div class="content">
         <div class="standalone-form">
-            <form id="authForm">
+            <form id="authForm" novalidate>
                 <div class="title">
                     <div class="primary">Вход</div>
                     <div class="secondary">Рады видеть вас снова!</div>
@@ -39,14 +39,35 @@ export async function source(element, app) {
         return;
     }
 
+    const usernameGroup = document.getElementById('usernameGroup');
+    const usernameErrorText = document.getElementById('usernameErrorText');
+    const passwordGroup = document.getElementById('passwordGroup');
+    const passwordErrorText = document.getElementById('passwordErrorText');
+
     const authForm = document.getElementById('authForm');
     authForm.addEventListener('submit', async (event) => {
         event.preventDefault();
+
+        usernameGroup.classList.remove('error');
+        usernameErrorText.innerHTML = '';
+        passwordGroup.classList.remove('error');
+        passwordErrorText.innerHTML = '';
 
         const formData = new FormData(authForm);
         // both KoroLion and KoroLion@liokor.ru are correct usernames
         const username = formData.get('username').toLowerCase().replace('@liokor.ru', '');
         const password = formData.get('password');
+
+        if (!username) {
+            usernameGroup.classList.add('error');
+            usernameErrorText.innerHTML = 'Логин не может быть пустым';
+            return;
+        }
+        if (!password) {
+            passwordGroup.classList.add('error');
+            passwordErrorText.innerHTML = 'Пароль не может быть пустым';
+            return;
+        }
 
         const response = await app.apiPost('/user/auth', { username, password });
         if (response.ok) {
@@ -54,9 +75,9 @@ export async function source(element, app) {
             return;
         }
 
-        document.getElementById('usernameGroup').classList.add('error');
-        document.getElementById('usernameErrorText').innerText = 'Неправильный логин или пароль';
-        document.getElementById('passwordGroup').classList.add('error');
-        document.getElementById('passwordErrorText').innerText = 'Неправильный логин или пароль';
+        usernameGroup.classList.add('error');
+        usernameErrorText.innerText = 'Неправильный логин или пароль';
+        passwordGroup.classList.add('error');
+        passwordErrorText.innerText = 'Неправильный логин или пароль';
     });
 }
