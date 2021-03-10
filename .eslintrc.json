@@ -1,0 +1,22 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "standard",
+        "plugin:jsdoc/recommended"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 12,
+        "sourceType": "module"
+    },
+    "rules": {
+        "indent": ["error", 4],
+        "space-before-function-paren": ["error", { "anonymous": "always", "named": "never" }],
+        "semi": ["error", "always"]
+    },
+    "plugins": [
+        "jsdoc"
+    ]
+}

@@ -1,0 +1,10 @@
+.idea
+
+node_modules
+yarn-error.log
+
+public/api/swagger/*
+!public/api/swagger/swagger.yaml
+!public/api/swagger/index.html
+
+public/styles/*.css
