@@ -1,9 +1,10 @@
 /**
  * Renders page with animation
  *
- * @param target
- * @param handler
- * @param app
+ * @param {object} target html element to render in
+ * @param {object} handler function of a page (from .html.js)
+ * @param {object} app object of a main App class
+ * @returns {Promise} promise that will be resolved, when page is displayed
  */
 export function render(target, handler, app) {
     return new Promise((resolve, reject) => {

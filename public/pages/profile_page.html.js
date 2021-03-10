@@ -47,8 +47,10 @@ const html = `
 `;
 
 /**
- * @param element
- * @param app
+ * Renders profile page and "activating" it's js
+ *
+ * @param {object} element html element to be rendered in
+ * @param {object} app object of a main App class
  */
 export async function source(element, app) {
     document.title = `${app.name} | Профиль`;
