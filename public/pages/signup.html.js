@@ -1,4 +1,4 @@
-import { validatePassword } from '../modules/validators.js';
+import { validatePassword, validateEmail, validateFullname } from '../modules/validators.js';
 
 const html = `
 <div class="signup">
@@ -8,7 +8,7 @@ const html = `
                 <div class="primary">Регистрация</div>
             </div>
             <div class="form">
-                <form id="signupForm">
+                <form id="signupForm" novalidate>
                     <div class="form-group" id="usernameGroup">
                         <label>ЛОГИН*<span class="error-text" id="usernameErrorText"></span></label>
                         <input name="username" type="text" class="form-control" required>
@@ -20,13 +20,17 @@ const html = `
                         <input name="password" type="password" class="form-control" required>
                         <div class="muted">Минимум 8 символов, 2 буквы разного регистра и 1 цифра</div>
                     </div>
+                    <div class="form-group" id="passwordConfirmGroup">
+                        <label>ПОДТВЕРЖДЕНИЕ ПАРОЛЯ*<span class="error-text" id="passwordConfirmErrorText"></span></label>
+                        <input name="passwordConfirm" type="password" class="form-control" required>
+                    </div>
                     <div class="form-group" id="fullnameGroup">
                         <label>ПОЛНОЕ ИМЯ<span class="error-text" id="fullnameErrorText"></span></label>
                         <input name="fullname" type="text" class="form-control" placeholder="Иван Иванов">
                         <div class="muted">Будет отображаться у получателей писем</div>
                     </div>
                     <div class="form-group" id="reserveEmailGroup">
-                        <label>ЗАПАСНОЙ EMAIL<span class="error-text" id="passwordErrorText"></span></label>
+                        <label>ЗАПАСНОЙ EMAIL<span class="error-text" id="reserveEmailErrorText"></span></label>
                         <input name="reserveEmail" type="email" class="form-control" placeholder="wolf@liokor.ru">
                         <div class="muted">Используется для восстановления пароля, если не указан - пароль восстановить невозможно</a>
                     </div>
@@ -53,21 +57,49 @@ export function source(element, app) {
         const usernameErrorText = document.getElementById('usernameErrorText');
         const passwordGroup = document.getElementById('passwordGroup');
         const passwordErrorText = document.getElementById('passwordErrorText');
+        const passwordConfirmGroup = document.getElementById('passwordConfirmGroup');
+        const passwordConfirmErrorText = document.getElementById('passwordConfirmErrorText');
+        const fullnameGroup = document.getElementById('fullnameGroup');
+        const fullnameErrorText = document.getElementById('fullnameErrorText');
+        const reserveEmailGroup = document.getElementById('reserveEmailGroup');
+        const reserveEmailErrorText = document.getElementById('reserveEmailErrorText');
 
         usernameGroup.classList.remove('error');
         usernameErrorText.innerHTML = '';
         passwordGroup.classList.remove('error');
         passwordErrorText.innerHTML = '';
+        passwordConfirmGroup.classList.remove('error');
+        passwordConfirmErrorText.innerHTML = '';
+        fullnameGroup.classList.remove('error');
+        fullnameErrorText.innerHTML = '';
+        reserveEmailGroup.classList.remove('error');
+        reserveEmailErrorText.innerHTML = '';
 
         const formData = new FormData(signupForm);
         const username = formData.get('username');
         const password = formData.get('password');
+        const passwordConfirm = formData.get('passwordConfirm');
         const fullname = formData.get('fullname');
         const reserveEmail = formData.get('reserveEmail');
 
         if (!validatePassword(password)) {
             passwordGroup.classList.add('error');
             passwordErrorText.innerHTML = 'Пароль не удовлетворяет требованиям';
+            return;
+        }
+        if (passwordConfirm !== password) {
+            passwordConfirmGroup.classList.add('error');
+            passwordConfirmErrorText.innerHTML = 'Не совпадает с паролем';
+            return;
+        }
+        if (reserveEmail && !validateEmail(reserveEmail)) {
+            reserveEmailGroup.classList.add('error');
+            reserveEmailErrorText.innerHTML = 'Некорректный EMail';
+            return;
+        }
+        if (fullname && !validateFullname(fullname)) {
+            fullnameGroup.classList.add('error');
+            fullnameErrorText.innerHTML = 'Некорректное полное имя';
             return;
         }
 

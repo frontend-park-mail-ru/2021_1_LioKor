@@ -2,12 +2,12 @@ const html = `
 <div class="auth">
     <div class="content">
         <div class="standalone-form">
-            <form id="authForm" novalidate>
-                <div class="title">
-                    <div class="primary">Вход</div>
-                    <div class="secondary">Рады видеть вас снова!</div>
-                </div>
-                <div class="form">
+            <div class="title">
+                <div class="primary">Вход</div>
+                <div class="secondary">Рады видеть вас снова!</div>
+            </div>
+            <div class="form">
+                <form id="authForm" novalidate>
                     <div class="form-group" id="usernameGroup">
                         <label>ЛОГИН ИЛИ EMAIL<span class="error-text" id="usernameErrorText"></span></label>
                         <input name="username" type="text" class="form-control" id="usernameInput" required>
@@ -21,8 +21,8 @@ const html = `
                         <input type="submit" class="btn" value="Войти">
                         <div class="muted">Нужен аккаунт? <linkButton href="/signup">Создать</linkButton></div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>

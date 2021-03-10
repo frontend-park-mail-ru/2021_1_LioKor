@@ -5,5 +5,9 @@ export function validatePassword(password) {
 
 export function validateEmail(email) {
     const validEmailRegex = /^[^@ ]{1,}@[^@ ]{3,}\..{2,}$/;
-    return email.match(validPasswordRegex) !== null;
+    return email.match(validEmailRegex) !== null;
+}
+
+export function validateFullname(fullname) {
+    return fullname.length < 128;
 }

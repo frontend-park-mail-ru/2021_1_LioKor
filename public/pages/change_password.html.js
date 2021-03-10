@@ -8,7 +8,7 @@ const html = `
                 <div class="primary">Смена пароля</div>
             </div>
             <div class="form">
-                <form id="changePasswordForm">
+                <form id="changePasswordForm" novalidate>
                     <div class="form-group" id="oldPasswordGroup">
                         <label>СТАРЫЙ ПАРОЛЬ<span class="error-text" id="oldPasswordErrorText"></span></label>
                         <input name="oldPassword" type="password" class="form-control">
@@ -17,6 +17,10 @@ const html = `
                         <label>НОВЫЙ ПАРОЛЬ<span class="error-text" id="newPasswordErrorText"></span></label>
                         <input name="newPassword" type="password" class="form-control">
                         <div class="muted">Минимум 8 символов, 2 буквы разного регистра и 1 цифра</div>
+                    </div>
+                    <div class="form-group" id="confirmPasswordGroup">
+                        <label>ПОДТВЕРЖДЕНИЕ ПАРОЛЯ*<span class="error-text" id="confirmPasswordErrorText"></span></label>
+                        <input name="confirmPassword" type="password" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <input type="submit" class="btn" value="Сменить пароль">
@@ -43,19 +47,29 @@ export function source(element, app) {
         const oldPasswordErrorText = document.getElementById('oldPasswordErrorText');
         const newPasswordGroup = document.getElementById('newPasswordGroup');
         const newPasswordErrorText = document.getElementById('newPasswordErrorText');
+        const confirmPasswordGroup = document.getElementById('confirmPasswordGroup');
+        const confirmPasswordErrorText = document.getElementById('confirmPasswordErrorText');
 
         oldPasswordGroup.classList.remove('error');
         oldPasswordErrorText.innerHTML = '';
         newPasswordGroup.classList.remove('error');
         newPasswordErrorText.innerHTML = '';
+        confirmPasswordGroup.classList.remove('error');
+        confirmPasswordErrorText.innerHTML = '';
 
         const formData = new FormData(changePasswordForm);
         const oldPassword = formData.get('oldPassword');
         const newPassword = formData.get('newPassword');
+        const confirmPassword = formData.get('confirmPassword');
 
         if (!validatePassword(newPassword)) {
             newPasswordGroup.classList.add('error');
             newPasswordErrorText.innerHTML = 'Пароль не удовлетворяет требованиям';
+            return;
+        }
+        if (confirmPassword !== newPassword) {
+            confirmPasswordGroup.classList.add('error');
+            confirmPasswordErrorText.innerHTML = 'Не совпадает с паролем';
             return;
         }
 
