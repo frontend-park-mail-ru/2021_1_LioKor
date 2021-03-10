@@ -1,0 +1,219 @@
+swagger: "2.0"
+info:
+  description: "Docs for LioKor Mail API"
+  version: "1.0.0"
+  title: "LioKor Mail"
+  contact:
+    email: "korolion31@yandex.ru"
+host: "api.mail.liokor.ru"
+basePath: "/"
+tags:
+- name: "user"
+  description: "User operations"
+schemes:
+- "https"
+paths:
+  /user/auth:
+    post:
+      tags:
+      - "user"
+      summary: "Authenticates user and sets session cookie"
+      description: ""
+      operationId: "authUser"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "authData"
+        description: "User auth data"
+        required: true
+        schema:
+          $ref: "#/definitions/authData"
+      responses:
+        "200":
+          description: "Successful authentication"
+        "400":
+          description: "Invalid data in request"
+        "403":
+          description: "Invalid login or password"
+  /user/session:
+    delete:
+      tags:
+      - "user"
+      summary: "Removes user's session from db"
+      description: ""
+      operationId: "logoutUser"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        "200":
+          description: "successful operation"
+        "401":
+          description: "Not authenticated"
+  /user:
+    get:
+      tags:
+      - "user"
+      summary: "Returns authenticated user data"
+      responses:
+        "200":
+          description: "successful operation"
+        "401":
+          description: "Not authenticated"
+    post:
+      tags:
+      - "user"
+      summary: "Creates new user"
+      description: ""
+      operationId: "createUser"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: "Invalid user data provided"
+        "409":
+          description: "Username already taken"
+  /user/{username}:
+    get:
+      tags:
+      - "user"
+      summary: "Get user by username"
+      operationId: "getUserByName"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        "404":
+          description: "User not found"
+    put:
+      tags:
+      - "user"
+      summary: "Update user by username"
+      description: "Must be authenticated. To change others need to be is_admin"
+      operationId: "updateUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        description: "name that need to be updated"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Updated user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "200":
+            description: "User updated successfully"
+        "400":
+          description: "Invalid user data provided"
+        "401":
+          description: "Access denied"
+        "404":
+          description: "User not found"
+  /user/{username}/password:
+    put:
+      tags:
+      - "user"
+      summary: "Changes password of user specified by username"
+      description: "Must be authenticated. To change others need to be is_admin"
+      operationId: "updateUserPassword"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        description: "name that need to be updated"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Updated user object"
+        required: true
+        schema:
+          $ref: "#/definitions/passwordChange"
+      responses:
+        "200":
+          description: "Password changed successfully"
+        "400":
+          description: "Invalid password data provided"
+        "401":
+          description: "Access denied"
+        "404":
+          description: "User not found"
+
+definitions:
+  User:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      username:
+        type: "string"
+        example: "Wolf"
+      fullname:
+        type: "string"
+        example: "Leo Volkov"
+      avatarUrl:
+        type: "string"
+        example: "/media/avatars/wolf.jpg"
+      reserveEmail:
+        type: "string"
+        example: "wolf@liokor.ru"
+      joinedDate:
+        type: "string"
+        example: ""
+      password:
+        type: "string"
+        example: "qwerty123"
+      isAdmin:
+        type: "boolean"
+        example: false
+  authData:
+    type: "object"
+    required:
+    - "username"
+    - "password"
+    properties:
+      username:
+        type: "string"
+      password:
+        type: "string"
+  passwordChange:
+    type: "object"
+    required:
+    - "oldPassword"
+    - "newPassword"
+    properties:
+      oldPassword:
+        type: "string"
+      newPassword:
+        type: "string"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
