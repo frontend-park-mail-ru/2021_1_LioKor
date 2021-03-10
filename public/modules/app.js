@@ -107,7 +107,6 @@ export default class App {
             messageEl.style.opacity = '0';
             setTimeout(() => {
                 messageEl.remove();
-                console.log(messageEl);
             }, transitionTimeMs);
         }, dissapearAfterMs);
     }

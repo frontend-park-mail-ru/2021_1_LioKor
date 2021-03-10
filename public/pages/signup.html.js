@@ -113,7 +113,7 @@ export function source(element, app) {
         switch (response.status) {
         case 200:
             app.messageSuccess('Ура!', `Аккаунт ${username} успешно создан!`);
-            app.goto('/auth');
+            app.goto('/user');
             break;
         case 400:
             usernameGroup.classList.add('error');

@@ -1,6 +1,12 @@
 const DEFAULT_MAX_FILE_SIZE_MB = 10;
 const MB = 1024 * 1024;
 
+/**
+ * Opens user file selection (with filter to images) dialog and returns dataURL of selected image
+ *
+ * @param {number} maxFileSizeMB maximum allowed file size
+ * @returns {string} Data url of image selected by user
+ */
 export const readImageAsDataURL = async (maxFileSizeMB = DEFAULT_MAX_FILE_SIZE_MB) => {
     const createImageInput = (changeCallback) => {
         let hasInp = true;
