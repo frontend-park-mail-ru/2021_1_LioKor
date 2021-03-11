@@ -70,7 +70,7 @@ export async function source(element, app) {
         username: username,
         fullname: data.fullname,
         reserveEmail: data.reserveEmail,
-        avatarUrl: (avatarUrl.length > 0) ? avatarUrl : DEFAULT_AVATAR_URL
+        avatarUrl: (avatarUrl.length > 0) ? `${app.apiUrl}/${avatarUrl}` : DEFAULT_AVATAR_URL
     });
 
     const avatarDataURL = document.getElementById('avatarDataURL');

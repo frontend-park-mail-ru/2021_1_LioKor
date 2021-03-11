@@ -19,6 +19,7 @@ export function request(method, url, data = {}) {
 
     return fetch(url, {
         method: method,
+        mode: 'cors',
         credentials: 'include',
         ...params
     });
