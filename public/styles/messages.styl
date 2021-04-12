@@ -1,0 +1,165 @@
+color1 = #F5F5F5
+color2 = #CCC
+color3 = #AAA
+color4 = #888
+
+dialogue-color = #185d25AA
+dialogue-color-hover = #218633
+dialogue-color-active = #6b5c13
+
+bg-color-1 = #535353AA
+bg-color-2 = #393C3F77
+
+extra-small = 5px
+small = 7px
+middle = 10px
+large = 20px
+extra-large = 30px
+
+small-avatar-size = 20px
+middle-avatar-size = 40px
+large-avatar-size = 60px
+
+dialogue-preview-height = 40px
+
+dialogues-column-width = 35%
+messages-column-width = 100% - dialogues-column-width
+
+.middle-avatar
+  border-radius 50%
+  width middle-avatar-size
+  height middle-avatar-size
+
+/*
+.pad-xs
+  padding extra-small
+.pad-s
+  padding small
+.pad-m
+  padding middle
+.pad-l
+  padding large
+.pad-xl
+  padding extra-large
+*/
+
+.text-1
+  color color1
+.text-2
+  color color2
+.text-3
+  color color3
+.text-4
+  color color4
+
+.fullwidth
+  width 100%
+.fullheight
+  height 100%
+
+.floatright
+  float right
+
+.p-m
+  padding middle
+.p-l
+  padding large
+
+// --- Table:
+.table-columns
+  overflow hidden
+  display flex
+  flex-direction row
+
+.table-rows
+  overflow hidden
+  display flex
+  flex-direction column
+
+.table-column
+  height 100%
+  padding middle 0 middle 0
+  background bg-color-2
+
+.table-row
+  width 100%
+  padding 0 middle 0 middle
+  background bg-color-2
+
+// extend table:
+.dialogues-column
+  width dialogues-column-width
+  border-right 2px solid color3
+  padding-left middle
+.messages-column
+  width messages-column-width
+  padding 0
+
+.dialogues-listing
+  list-style-type none
+  margin 0
+  padding 0
+
+// --- Listing button:
+.listing-button
+  padding middle
+  border-top 1px solid color3
+  border-bottom 1px solid color3
+  background-color dialogue-color
+  cursor pointer
+
+  transition background-color ease 0.3s
+  img
+    float left
+
+
+.listing-button:hover
+  background dialogue-color-hover
+
+.listing-button.active
+  border-top 1px solid color1
+  border-bottom 1px solid color1
+  background-color dialogue-color-active
+
+.dialogue-text
+  padding-left (middle-avatar-size + small)
+.dialogue-body
+  overflow hidden
+  white-space nowrap
+  text-overflow ellipsis
+
+.end-gradient::after
+  content: ''; /* Выводим элемент */
+  position: absolute; /* Абсолютное позиционирование */
+  right: 0; top: 0; /* Положение элемента */
+  width: 40px; /* Ширина градиента*/
+  height: 100%; /* Высота родителя */
+  background: linear-gradient(to right, #FFF00022 0%, #F0C000 100%); /* Градиент */
+
+// --- message-block:
+.flex-filler
+  flex 1
+
+.messages-column
+  .header
+    padding middle
+    padding-bottom middle*1.5
+    background bg-color-1
+    color color1
+    border-bottom 1px solid color4
+
+  .body
+    color color2
+
+  .footer
+    padding middle
+    color color2
+    background bg-color-1
+    border-top 2px solid color3
+
+.message-input
+  width 80%
+  padding middle
+  background #393939
+  color color2
+  border-radius 4px

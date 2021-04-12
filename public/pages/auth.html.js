@@ -38,13 +38,6 @@ export async function source(element, app) {
     document.title = `${app.name} | Авторизация`;
     element.innerHTML = html;
 
-    const response = await app.apiGet('/user');
-    if (response.ok) {
-        // authenticated => redirecting to profile
-        app.goto('/user');
-        return;
-    }
-
     const usernameGroup = document.getElementById('usernameGroup');
     const usernameErrorText = document.getElementById('usernameErrorText');
     const passwordGroup = document.getElementById('passwordGroup');
@@ -78,7 +71,7 @@ export async function source(element, app) {
         const response = await app.apiPost('/user/auth', { username, password });
         if (response.ok) {
             app.message('Здравствуйте!', 'Вы успешно вошли в систему');
-            app.goto('/user');
+            await app.goto('/user');
             return;
         }
 

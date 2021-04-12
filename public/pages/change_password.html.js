@@ -41,7 +41,12 @@ const html = `
  * @param {object} element html element to be rendered in
  * @param {object} app object of a main App class
  */
-export function source(element, app) {
+export async function source(element, app) {
+    if (!app.storage.username) {
+        await app.goto('/auth');
+        return;
+    }
+
     document.title = `${app.name} | Cменить пароль`;
     element.innerHTML = html;
 
@@ -87,7 +92,7 @@ export function source(element, app) {
         switch (response.status) {
         case 200:
             app.messageSuccess('Успех!', 'Пароль изменён');
-            app.goto('/user');
+            await app.goto('/user');
             break;
         case 400:
         case 401:

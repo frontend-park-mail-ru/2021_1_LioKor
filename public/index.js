@@ -4,17 +4,32 @@ import App from './modules/app.js';
  * Main function (entry point) of a frontend
  *
  */
-function main() {
+async function main() {
     let apiUrl = 'https://api.mail.liokor.ru';
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         apiUrl = `http://${window.location.host}/api`;
     }
     const app = new App('LioKor', apiUrl, 'app', 'popupMessages');
 
-    if (location.pathname === '/') {
-        app.goto('/auth');
+    const response = await app.apiGet('/user');
+    if (response.ok) {
+        // authenticated => redirecting to profile
+        const data = await response.json();
+        app.storage.username = data.username;
+
+        if (location.pathname === '/') {
+            await app.goto('/user');
+            return;
+        }
+        await app.goto(location.pathname);
         return;
     }
-    app.goto(location.pathname);
+
+    if (location.pathname === '/') {
+        await app.goto('/auth');
+        return;
+    }
+    await app.goto(location.pathname);
 }
+
 main();

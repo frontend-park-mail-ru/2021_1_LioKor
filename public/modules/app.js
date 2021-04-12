@@ -3,12 +3,16 @@ import * as renderer from './renderer.js';
 import { request } from './requests.js';
 
 import * as auth from '../pages/auth.html.js';
-import * as user from '../pages/profile_page.html.js';
+import * as user from '../pages/profile.html.js';
 import * as signup from '../pages/signup.html.js';
 import * as changePassword from '../pages/change_password.html.js';
+import * as messages from '../pages/messages.html.js';
 
 export default class App {
     constructor(name, apiUrl, elId, messagesElId = null) {
+        this.storage = {
+            username: null,
+        }
         this.name = name;
         this.apiUrl = apiUrl;
         this.element = elId;
@@ -59,7 +63,11 @@ export default class App {
             {
                 urlRegex: /^\/user\/([A-Za-z0-9_]){1,}\/password$/,
                 handler: changePassword.source
-            }
+            },
+            {
+                urlRegex: /^\/messages$/,
+                handler: messages.source
+            },
         ];
     }
 
@@ -131,8 +139,8 @@ export default class App {
         }
         if (handler === null) {
             this.goto('/auth');
+            return;
         }
-
         await renderer.render(this.element, handler, this);
     }
 }

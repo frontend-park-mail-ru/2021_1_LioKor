@@ -1,4 +1,6 @@
+.gitignore
 .idea
+server/serverFull.js
 
 node_modules
 yarn-error.log
