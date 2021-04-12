@@ -18,7 +18,7 @@ const html = `
                     <div class="form-group" id="passwordGroup">
                         <label>ПАРОЛЬ*<span class="error-text" id="passwordErrorText"></span></label>
                         <input name="password" type="password" class="form-control" required>
-                        <div class="muted">Минимум 8 символов, 2 буквы разного регистра и 1 цифра</div>
+                        <div class="muted">{{ passwordRequirements }}</div>
                     </div>
                     <div class="form-group" id="passwordConfirmGroup">
                         <label>ПОДТВЕРЖДЕНИЕ ПАРОЛЯ*<span class="error-text" id="passwordConfirmErrorText"></span></label>
@@ -53,7 +53,13 @@ const html = `
  */
 export function source(element, app) {
     document.title = `${app.name} | Регистрация`;
-    element.innerHTML = html;
+
+    // because handlebars is not imported but added as script:
+    // eslint-disable-next-line
+    const template = Handlebars.compile(html);
+    element.innerHTML = template({
+        passwordRequirements: validatePassword()
+    });
 
     const signupForm = document.getElementById('signupForm');
     signupForm.addEventListener('submit', async (event) => {
