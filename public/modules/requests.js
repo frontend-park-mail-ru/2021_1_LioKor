@@ -1,3 +1,5 @@
+import { getCookie } from './cookies.js';
+
 /**
  * Sends http request with JSON data to a specified url
  *
@@ -11,7 +13,8 @@ export function request(method, url, data = {}) {
     if (!['GET', 'HEAD'].includes(method) && data) {
         params = {
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': getCookie("_csrf")
             },
             body: JSON.stringify(data)
         };

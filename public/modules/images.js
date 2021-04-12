@@ -1,5 +1,17 @@
+const DEFAULT_WIDTH = 256;
+const DEFAULT_HEIGHT = 256;
 const DEFAULT_MAX_FILE_SIZE_MB = 10;
 const MB = 1024 * 1024;
+
+const createCanvas = (width, height) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    canvas.style.display = 'none';
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    return { canvas, ctx };
+}
 
 /**
  * Opens user file selection (with filter to images) dialog and returns dataURL of selected image
@@ -7,7 +19,7 @@ const MB = 1024 * 1024;
  * @param {number} maxFileSizeMB maximum allowed file size
  * @returns {string} Data url of image selected by user
  */
-export const readImageAsDataURL = async (maxFileSizeMB = DEFAULT_MAX_FILE_SIZE_MB) => {
+export const readImageAsDataURL = async (width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT, maxFileSizeMB = DEFAULT_MAX_FILE_SIZE_MB) => {
     const createImageInput = (changeCallback) => {
         let hasInp = true;
         let imageInput = document.getElementById('filesImageInput');
@@ -56,7 +68,19 @@ export const readImageAsDataURL = async (maxFileSizeMB = DEFAULT_MAX_FILE_SIZE_M
 
             const reader = new FileReader();
             reader.addEventListener('load', (e) => {
-                resolve(e.target.result);
+                const img = new Image();
+                img.addEventListener('load', () => {
+                    const { canvas, ctx } = createCanvas(width, height);
+
+                    const imgSize = Math.min(img.width, img.height);
+                    ctx.drawImage(img, 0, 0, imgSize, imgSize, 0, 0, canvas.width, canvas.height);
+
+                    const dataURL = canvas.toDataURL();
+                    canvas.remove();
+
+                    resolve(dataURL);
+                });
+                img.src = e.target.result;
             });
             reader.addEventListener('error', (e) => {
                 reject(new Error('Unable to read file!'));
