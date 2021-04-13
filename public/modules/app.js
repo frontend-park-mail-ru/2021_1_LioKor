@@ -12,6 +12,7 @@ export default class App {
     constructor(name, apiUrl, elId, messagesElId = null) {
         this.storage = {
             username: null,
+            avatar: '',
         }
         this.name = name;
         this.apiUrl = apiUrl;
