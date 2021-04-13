@@ -25,7 +25,7 @@ export const readImageAsDataURL = async (size = DEFAULT_SIZE, maxFileSizeMB = DE
         let imageInput = document.getElementById('filesImageInput');
         if (imageInput === null) {
             hasInp = false;
-            imageInput = document.createElement('INPUT');
+            imageInput = document.createElement('input');
         }
         imageInput.id = 'filesImageInput';
         imageInput.type = 'file';

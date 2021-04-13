@@ -37,6 +37,9 @@ const html = `
                         <LinkButton href="/user/{{ username }}/password" class="btn" id="changePasswordButton">Сменить пароль</LinkButton>
                     </div>
                     <div class="form-group">
+                        <LinkButton href="/messages" class="btn" id="goToMessagesButton">Перейти в диалоги</LinkButton>
+                    </div>
+                    <div class="form-group">
                         <button href="/auth" class="btn btn-danger" id="logoutButton">Выйти</button>
                     </div>
                 </form>
@@ -53,15 +56,21 @@ const html = `
  * @param {object} app object of a main App class
  */
 export async function source(element, app) {
+    if (!app.storage.username) {
+        await app.goto('/auth');
+        return;
+    }
+
     document.title = `${app.name} | Профиль`;
 
     const response = await app.apiGet('/user');
     if (!response.ok) {
-        app.goto('/auth');
+        await app.goto('/auth');
         return;
     }
     const data = await response.json();
     const { username, avatarUrl } = data;
+    app.storage.username = username
 
     // because handlebars is not imported but added as script:
     // eslint-disable-next-line
@@ -120,7 +129,7 @@ export async function source(element, app) {
         event.preventDefault();
         await app.apiDelete('/user/session');
         app.messageSuccess('До свидания!', 'Вы успешно вышли из аккаунта!');
-        app.goto('/auth');
+        await app.goto('/auth');
     });
 
     const avatarImage = document.getElementById('avatarImage');

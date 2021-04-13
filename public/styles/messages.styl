@@ -1,0 +1,286 @@
+color1 = #F5F5F5
+color2 = #CCC
+color3 = #AAA
+color4 = #888
+color5 = #585858
+color6 = #333
+color7 = #222
+
+dialogue-color = #185d25AA
+dialogue-color-hover = #218633
+dialogue-color-active = #6b5c13
+
+plus-bg-color = #21863322
+
+bg-color-1 = #535353AA
+bg-color-2 = #393C3F77
+bg-color-3 = #3b3f4799
+bg-color-4 = #393939
+
+message-bg-1 = #3b3f4799
+message-bg-2 = #3b473b99
+
+extra-small = 5px
+small = 7px
+middle = 10px
+large = 20px
+extra-large = 30px
+
+small-avatar-size = 20px
+middle-avatar-size = 40px
+large-avatar-size = 60px
+
+dialogue-preview-height = 40px
+
+dialogues-column-width = 35%
+messages-column-width = 100% - dialogues-column-width
+
+width-border = 1px
+
+.middle-avatar
+  border-radius 50%
+  width middle-avatar-size
+  height middle-avatar-size
+
+/*
+.pad-xs
+  padding extra-small
+.pad-s
+  padding small
+.pad-m
+  padding middle
+.pad-l
+  padding large
+.pad-xl
+  padding extra-large
+*/
+
+.text-1
+  color color1
+.text-2
+  color color2
+.text-3
+  color color3
+.text-4
+  color color4
+
+.fullwidth
+  width 100%
+.fullheight
+  height 100%
+
+.floatright
+  float right
+.floatleft
+  float left
+
+.p-m
+  padding middle
+.p-l
+  padding large
+
+.center-text
+  text-align center
+
+// --- Table:
+.table-columns
+  overflow hidden
+  display flex
+  flex-direction row
+.table-rows
+  overflow hidden
+  display flex
+  flex-direction column
+
+.table-column
+  height 100%
+  padding middle 0 middle 0
+.table-row
+  width 100%
+  padding 0 middle 0 middle
+
+.bg-transparent
+  background bg-color-2
+
+// extend table:
+.dialogues-column
+  width dialogues-column-width
+  border-right width-border solid color3
+  padding 0
+.messages-column
+  width messages-column-width
+  padding 0
+
+.dialogues-listing
+  list-style-type none
+  margin 0
+  padding 0
+
+.header
+  padding middle
+  padding-bottom middle*1.5
+  background bg-color-1
+  color color1
+  box-shadow 0 4px 10px #2228
+  z-index 0
+.body
+  color color2
+  overflow-y scroll
+.footer
+  padding middle
+  color color2
+  background bg-color-1
+  border-top width-border solid color3
+  display none
+
+.tool-dialogue
+  padding middle
+  box-shadow 0 5px 10px #222C
+
+// --- Listing button:
+.listing-button
+  padding middle
+  //border-top 1px solid color3
+  border-bottom 1px solid color3
+  background-color dialogue-color
+  cursor pointer
+  transition background-color ease 0.3s
+  img
+    float left
+.listing-button:hover
+  background dialogue-color-hover
+.listing-button.active
+  //border-top 1px solid color1
+  border-bottom 1px solid color1
+  background-color dialogue-color-active
+
+.dialogue-text
+  padding-left (middle-avatar-size + small)
+.dialogue-body
+  overflow hidden
+  white-space nowrap
+  text-overflow ellipsis
+
+/*
+.end-gradient::after
+  content: '';
+  right: 0; top: 0;
+  width: 40px;
+  height: 100%;
+  background: linear-gradient(to right, #FFF00000 0%, #F0C000 100%);
+*/
+
+// --- message-block:
+.flex-filler
+  flex 1
+
+.message-block-full
+  margin extra-small
+
+.left-block
+  text-align left
+  margin-right 15%
+.right-block
+  text-align left
+  margin-left 15%
+
+.message-block
+  border-radius small
+  border-top-left-radius (middle-avatar-size/2)
+  img
+    float left
+.message-block.not-your
+  background message-bg-1
+.message-block.your
+  background message-bg-2
+
+.message-block-title
+  color color4
+  width "calc(100% - %s - %s)" % (middle middle-avatar-size)
+  margin-left middle-avatar-size + middle
+  padding-top ((middle-avatar-size - 14px)/2)
+  padding-bottom ((middle-avatar-size - 14px)/2)
+
+
+.message-body
+  color color2
+  padding extra-small
+  margin-left middle
+
+.messages-footer
+  svg
+    margin-left small
+    margin-right small
+
+.message-input
+  padding middle
+  background bg-color-4
+  color color2
+  border-radius extra-small
+  outline none
+  flex 1
+
+  border-width width-border
+  border-style inset
+
+  word-wrap break-word
+  outline: 0;
+  min-height: 36px;
+  resize: none;
+  max-height: 200px;
+  overflow-y: auto;
+  line-height: 17px;
+.message-input::placeholder
+  color color3
+  transition color ease 0.4s
+.message-input:focus::placeholder
+  color color5
+
+
+.svg-button
+  cursor pointer
+  overflow hidden
+  opacity 0.8
+  transition all 0.1s ease
+.svg-button:hover
+  opacity 1
+  transform scale(1.1)
+
+.plus-button
+  vertical-align top
+  overflow hidden
+  background plus-bg-color
+  transition 0.5s ease-out
+.plus-button:hover
+  transform rotate(90deg)
+
+.find-input
+  width calc(80% - 30px)
+  padding middle
+  background bg-color-4
+  color color2
+  border-radius extra-small
+  outline none
+
+  border-width width-border
+  border-style inset
+
+  outline 0
+  height 36px
+
+.theme-input
+  font-size 14px
+  margin-bottom extra-small
+  background #FFFFFF00
+  border none
+  outline none
+  transition all ease 0.2s
+  color color4
+.theme-input:focus
+  background bg-color-2
+  color color3
+.theme-input::placeholder
+  transition all ease 0.2s
+  color color4
+.theme-input:focus::placeholder
+  color color3

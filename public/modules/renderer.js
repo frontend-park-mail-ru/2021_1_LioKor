@@ -21,6 +21,6 @@ export function render(target, handler, app) {
         } catch {
             el.innerHTML = 'Error occured while trying to render';
             resolve();
-        };
+        }
     });
 }
