@@ -7,6 +7,7 @@ import * as user from '../pages/profile.html.js';
 import * as signup from '../pages/signup.html.js';
 import * as changePassword from '../pages/change_password.html.js';
 import * as messages from '../pages/messages.html.js';
+import * as newMessage from '../pages/new_message.html.js';
 
 export default class App {
     constructor(name, apiUrl, elId, messagesElId = null) {
@@ -46,7 +47,10 @@ export default class App {
             const targetElem = event.target;
             if (targetElem.tagName === 'LINKBUTTON') {
                 event.preventDefault();
-                this.goto(event.target.getAttribute('href').toString());
+                const href = event.target.getAttribute('href');
+                if (href) {
+                    this.goto(href.toString());
+                }
             }
         });
 
@@ -70,6 +74,10 @@ export default class App {
             {
                 urlRegex: /^\/messages$/,
                 handler: messages.source
+            },
+            {
+                urlRegex: /^\/new_message$/,
+                handler: newMessage.source
             }
         ];
     }

@@ -16,6 +16,7 @@ async function main() {
         // authenticated => redirecting to profile
         const data = await response.json();
         app.storage.username = data.username;
+        app.storage.avatar = (data.avatarUrl) ? `${app.apiUrl}/${data.avatarUrl}` : app.defaultAvatarUrl;
 
         if (location.pathname === '/') {
             await app.goto('/user');

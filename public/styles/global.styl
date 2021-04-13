@@ -60,9 +60,14 @@ linkButton:hover
 linkButton.btn:hover
     color textColor1
 
+textarea.form-control
+    resize none
+    width 100%
+    font-family Arial
 input.form-control[type="text"],
 input.form-control[type="email"],
-input.form-control[type="password"]
+input.form-control[type="password"],
+textarea.form-control
     padding form-button-padding
     font-size 1rem
     color textColor1
@@ -70,10 +75,11 @@ input.form-control[type="password"]
     border 1px solid #080808
     border-radius 3px
 
-    transition all 0.3s ease
+    transition border 0.3s ease
 input.form-control[type="text"]:focus,
 input.form-control[type="email"]:focus,
-input.form-control[type="password"]:focus
+input.form-control[type="password"]:focus,
+textarea.form-control:focus
     outline 0
     border 1px solid clHighlight
 input.form-control[type="text"]::placeholder,

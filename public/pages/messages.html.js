@@ -4,8 +4,9 @@ const html = `
 <div class="table-columns fullheight p-l">
     <div class="table-column dialogues-column table-rows bg-transparent">
         <div class="header tool-dialogue">
-            <svg class="svg-button plus-button middle-avatar" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none"><path transform="scale(2.2), translate(-1,-1)"  fill-rule="evenodd" clip-rule="evenodd" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z" fill="#F5F5F5"/></svg>
-            <input class="find-input" placeholder="Find dialogue" id="find-input">
+            <!--<linkbutton href="/new_message"><svg class="svg-button plus-button middle-avatar" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none"><path transform="scale(2.2), translate(-1,-1)"  fill-rule="evenodd" clip-rule="evenodd" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z" fill="#F5F5F5"/></svg></linkbutton>-->
+            <linkbutton href="/new_message" style="font-size: 40px; color: #818F9A;" class="svg-button">+</linkbutton>
+            <input class="find-input" placeholder="Найти диалог" id="find-input">
             <svg class="svg-button" id="clear-find-button" xmlns="http://www.w3.org/2000/svg" height="24" width="24"><g fill="none" fill-rule="evenodd"><path d="m0 0h24v24h-24z"/><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z" fill="#8594A0" fill-rule="evenodd" clip-rule="evenodd"/></g></svg>
         </div>
 
@@ -16,7 +17,7 @@ const html = `
     <div class="table-column table-rows messages-column bg-transparent">
         <div class="header">
             <span class="text-1" id="dialogue-header-title"></span>
-            <span class="text-3" id="dialogue-header-time" style="padding-left: 10px">Let's open dialogue</span>
+            <span class="text-3" id="dialogue-header-time" style="padding-left: 10px">Выберите диалог</span>
         </div>
 
         <div class="body flex-filler table-rows" id="messages-field">
@@ -24,8 +25,8 @@ const html = `
             <div class="center-text">
                 <svg width="56" height="56" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z" fill="#8594A0"></path></svg>
                 <div class="message">
-                    Open dialogue <br>
-                    or create new
+                    Выберите диалог <br>
+                    или создайте новый
                 </div>
             </div>
             <div class="flex-filler"></div>
@@ -34,8 +35,8 @@ const html = `
         <div class="footer messages-footer" id="messages-footer">
             <div class="table-rows fullwidth">
                 <div class="table-row text-4 table-columns">
-                    <span>Theme: </span>
-                    <input class="theme-input flex-filler" id="theme-input" placeholder="no theme">
+                    <span>Тема: </span>
+                    <input class="theme-input flex-filler" id="theme-input" placeholder="No theme">
                 </div>
                 <div class="table-row table-columns">
                     <!--div class="table-rows">
@@ -153,6 +154,7 @@ export async function source(element, app) {
                         <div class="message-block `;
                     if (messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase()) {
                         messageBlockElem.classList.add('message-block-full', 'right-block');
+                        messageBlock.avatarUrl = app.storage.avatar;
                         innerHTML += 'your';
                     } else {
                         messageBlockElem.classList.add('message-block-full', 'left-block');
