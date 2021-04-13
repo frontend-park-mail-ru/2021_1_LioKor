@@ -1,8 +1,6 @@
 import { readImageAsDataURL } from '../modules/images.js';
 import { validateEmail, validateFullname } from '../modules/validators.js';
 
-const DEFAULT_AVATAR_URL = '../images/default-avatar.jpg';
-
 const html = `
 <div class="profile">
     <div class="content">
@@ -79,7 +77,7 @@ export async function source(element, app) {
         username: username,
         fullname: data.fullname,
         reserveEmail: data.reserveEmail,
-        avatarUrl: (avatarUrl.length > 0) ? `${app.apiUrl}/${avatarUrl}` : DEFAULT_AVATAR_URL
+        avatarUrl: (avatarUrl.length > 0) ? `${app.apiUrl}/${avatarUrl}` : app.defaultAvatarUrl
     });
 
     const avatarDataURL = document.getElementById('avatarDataURL');

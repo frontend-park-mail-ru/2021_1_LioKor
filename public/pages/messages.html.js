@@ -1,3 +1,5 @@
+import ParsedDate from '../modules/date.js';
+
 const html = `
 <div class="table-columns fullheight p-l">
     <div class="table-column dialogues-column table-rows bg-transparent">
@@ -6,17 +8,17 @@ const html = `
             <input class="find-input" placeholder="Find dialogue" id="find-input">
             <svg class="svg-button" id="clear-find-button" xmlns="http://www.w3.org/2000/svg" height="24" width="24"><g fill="none" fill-rule="evenodd"><path d="m0 0h24v24h-24z"/><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z" fill="#8594A0" fill-rule="evenodd" clip-rule="evenodd"/></g></svg>
         </div>
- 
+
         <ul class="table-rows dialogues-listing" id="dialogues">
         </ul>
     </div>
-    
+
     <div class="table-column table-rows messages-column bg-transparent">
         <div class="header">
             <span class="text-1" id="dialogue-header-title"></span>
             <span class="text-3" id="dialogue-header-time" style="padding-left: 10px">Let's open dialogue</span>
         </div>
-         
+
         <div class="body flex-filler table-rows" id="messages-field">
             <div class="flex-filler"></div>
             <div class="center-text">
@@ -28,7 +30,7 @@ const html = `
             </div>
             <div class="flex-filler"></div>
         </div>
-        
+
         <div class="footer messages-footer" id="messages-footer">
             <div class="table-rows fullwidth">
                 <div class="table-row text-4 table-columns">
@@ -73,24 +75,19 @@ export async function source(element, app) {
     document.title = `${app.name} | Диалоги`;
     element.innerHTML = html;
 
-    const response = await app.apiGet('/dialogues');
-    const data = await response.json();
-
     const dialoguePreviewsGroup = document.getElementById('dialogues');
-
     const dialogueHeader = document.getElementById('dialogue-header-title');
     const dialogueTime = document.getElementById('dialogue-header-time');
 
     const messagesField = document.getElementById('messages-field');
     const messagesFooter = document.getElementById('messages-footer');
-    const messageInput = document.getElementById('message-input');
+
     const findInput = document.getElementById('find-input');
     const themeInput = document.getElementById('theme-input');
+    const messageInput = document.getElementById('message-input');
 
-    const dialogues = data['dialogues'];
     let dialogueId = -1;
-    let currentDialogueElem = dialoguePreviewsGroup;
-
+    let dialogues = [];
     let lastMessage = {
         elem: undefined,
         id: undefined,
@@ -98,85 +95,112 @@ export async function source(element, app) {
         username: undefined,
         title: undefined,
     };
+    let messages = {};
 
-    const messages = {};
+    const response = await app.apiGet('/email/dialogues');
+    if (response.ok) {
+        const data = await response.json();
 
-    dialogues.forEach((dialogue, id) => {
-        const dialogueElem = document.createElement("li");
-        dialogueElem.id = id;
-        dialogueElem.classList.add('listing-button');
-        dialogueElem.innerHTML = `
-            <img src="${dialogue.avatar}" alt="avatar" class="middle-avatar">
-            <div class="floatright text-4">${dialogue.time}</div>
-            <div class="dialogue-text">
-                <div class="text-1">${dialogue.username}</div>
-                <div class="dialogue-body text-2">${dialogue.body}</div>
-            </div>
-        `;
-        dialoguePreviewsGroup.appendChild(dialogueElem);
+        dialogues = data;
+        let currentDialogueElem = dialoguePreviewsGroup;
 
-        dialogueElem.addEventListener('click', async (event) => {
-            messagesFooter.style.display = 'flex';
-
-            let currentElem = event.currentTarget
-            if (currentElem.id === dialogueId)
-                return;
-            dialogueId = currentElem.id
-
-            currentDialogueElem.classList.remove('active');
-            currentDialogueElem = currentElem;
-            currentDialogueElem.classList.add('active');
-
-            const dialogue = dialogues[dialogueId];
-            dialogueHeader.innerText = dialogue.username;
-            dialogueTime.innerText = dialogue.time;
-
-            if (!messages[dialogue.username]) {
-                const response = await app.apiGet('/emails?with=' + dialogue.username);
-                messages[dialogue.username] = await response.json();
+        dialogues.forEach((dialogue, id) => {
+            if (!dialogue.avatarUrl) {
+                dialogue.avatarUrl = app.defaultAvatarUrl;
             }
+            const dialogueUpdatedDt = new ParsedDate(dialogue.time);
+            const dialogueUpdatedDtStr = dialogueUpdatedDt.getShortDateString();
 
-            messagesField.innerHTML = '<div class="flex-filler"></div>';
-            messages[dialogue.username].forEach((messageBlock, id) => {
-                const messageBlockElem = document.createElement("div");
-                messageBlockElem.id = id;
+            const dialogueElem = document.createElement("li");
+            dialogueElem.id = id;
+            dialogueElem.classList.add('listing-button');
+            dialogueElem.innerHTML = `
+                <img src="${dialogue.avatarUrl}" alt="avatar" class="middle-avatar">
+                <div class="floatright text-4">${dialogueUpdatedDtStr}</div>
+                <div class="dialogue-text">
+                    <div class="text-1">${dialogue.username}</div>
+                    <div class="dialogue-body text-2">${dialogue.body}</div>
+                </div>
+            `;
+            dialoguePreviewsGroup.appendChild(dialogueElem);
 
-                let innerHTML = `
-                    <div class="message-block `
-                if (messageBlock.username === app.storage.username) {
-                    messageBlockElem.classList.add('message-block-full', 'right-block');
-                    innerHTML += 'your';
-                } else {
-                    messageBlockElem.classList.add('message-block-full', 'left-block');
-                    innerHTML += 'not-your';
+            dialogueElem.addEventListener('click', async (event) => {
+                messagesFooter.style.display = 'flex';
+
+                let currentElem = event.currentTarget
+                if (currentElem.id === dialogueId)
+                    return;
+                dialogueId = currentElem.id
+
+                currentDialogueElem.classList.remove('active');
+                currentDialogueElem = currentElem;
+                currentDialogueElem.classList.add('active');
+
+                const dialogue = dialogues[dialogueId];
+                dialogueHeader.innerText = dialogue.username;
+                dialogueTime.innerText = dialogueUpdatedDtStr;
+
+                if (!messages[dialogue.username]) {
+                    const response = await app.apiGet(`/email/emails?with=${dialogue.username}`);
+                    messages[dialogue.username] = await response.json();
                 }
 
-                innerHTML += `" >
-                        <img src="${messageBlock.avatar}" alt="avatar" class="middle-avatar">
-                        <div class="floatright text-4 p-m">${messageBlock.time}</div>
-                        <div class="message-block-title">${messageBlock.title}</div>
-                        <div class="message-block-body">
-                    </div>`;
-                messageBlock.body.forEach((message, id) => {
-                    innerHTML += `<div id="${id}" class="message-body">${message}</div>`;
-                    lastMessage.id = id;
-                });
-                innerHTML += '</div>';
-                messageBlockElem.innerHTML = innerHTML;
-                messagesField.appendChild(messageBlockElem);
+                messagesField.innerHTML = '<div class="flex-filler"></div>';
+                messages[dialogue.username].forEach((messageBlock, id) => {
+                    const messageBlockElem = document.createElement("div");
+                    messageBlockElem.id = id;
 
-                lastMessage.elem = messageBlockElem;
-                lastMessage.blockId = id;
-                lastMessage.title = messageBlock.title;
-                lastMessage.username = messageBlock.username;
+                    let innerHTML = `
+                        <div class="message-block `
+                    if (messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase()) {
+                        messageBlockElem.classList.add('message-block-full', 'right-block');
+                        innerHTML += 'your';
+                    } else {
+                        messageBlockElem.classList.add('message-block-full', 'left-block');
+                        innerHTML += 'not-your';
+                    }
+
+                    const sentDt = new ParsedDate(messageBlock.time);
+                    if (!messageBlock.avatarUrl) {
+                        messageBlock.avatarUrl = app.defaultAvatarUrl;
+                    }
+                    innerHTML += `" >
+                            <img src="${messageBlock.avatarUrl}" alt="avatar" class="middle-avatar">
+                            <div class="floatright text-4 p-m">${sentDt.getDateString()}</div>
+                            <div class="message-block-title">${messageBlock.title}</div>
+                            <div class="message-block-body">
+                        </div>`;
+                    /*messageBlock.body.forEach((message, id) => {
+                        innerHTML += `<div id="${id}" class="message-body">${message}</div>`;
+                        lastMessage.id = id;
+                    });*/
+                    innerHTML += `<div id="${id}" class="message-body">${messageBlock.body}</div>`;
+                    innerHTML += '</div>';
+                    messageBlockElem.innerHTML = innerHTML;
+                    messagesField.appendChild(messageBlockElem);
+
+                    lastMessage.elem = messageBlockElem;
+                    lastMessage.blockId = id;
+                    lastMessage.title = messageBlock.title;
+                    lastMessage.username = messageBlock.sender;
+                });
             });
         });
-    });
+
+        document.getElementById('message-send-button').addEventListener('click', (event) => sendMessage(event, 1));
+        messageInput.addEventListener('keydown', (event) => sendMessage(event, 0));
+
+        document.getElementById('clear-find-button').addEventListener('click', (event) => {
+            findInput.value = '';
+        });
+    }
 
     function sendMessage(event, passKeys) {
-        if (!passKeys)
-            if (!event.ctrlKey || event.keyCode !== 13)
+        if (!passKeys) {
+            if (!event.ctrlKey || event.keyCode !== 13) {
                 return;
+            }
+        }
 
         let currentTitle = themeInput.value;
         if (currentTitle === '')
@@ -184,7 +208,7 @@ export async function source(element, app) {
         const message = messageInput.innerText;
         if (message === '')
             return;
-        app.apiPost('/emails', {
+        app.apiPost('/email', {
             recipient: dialogues[dialogueId].username,
             subject: currentTitle,
             body: message,
@@ -228,11 +252,4 @@ export async function source(element, app) {
         }
         messagesField.scrollTop = messagesField.scrollHeight;
     }
-
-    document.getElementById('message-send-button').addEventListener('click', (event) => sendMessage(event, 1));
-    messageInput.addEventListener('keydown', (event) => sendMessage(event, 0));
-
-    document.getElementById('clear-find-button').addEventListener('click', (event) => {
-        findInput.value = '';
-    });
 }

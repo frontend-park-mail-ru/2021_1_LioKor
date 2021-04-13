@@ -33,6 +33,8 @@ export default class App {
             this.messageTemplate = Handlebars.compile(messageHTML);
         }
 
+        this.defaultAvatarUrl = '/images/default-avatar.jpg';
+
         window.addEventListener('popstate', (ev) => {
             const url = ev.state.url;
             if (url) {
