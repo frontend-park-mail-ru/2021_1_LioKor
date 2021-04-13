@@ -5,5 +5,5 @@
  * @returns {string} value of a cookie
  */
 export function getCookie(name) {
-    return document.cookie.match(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`)?.pop() || ''
+    return document.cookie.match(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`)?.pop() || '';
 }

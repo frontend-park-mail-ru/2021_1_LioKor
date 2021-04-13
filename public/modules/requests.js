@@ -14,7 +14,7 @@ export function request(method, url, data = {}) {
         params = {
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-Token': getCookie("_csrf")
+                'X-CSRF-Token': getCookie('_csrf')
             },
             body: JSON.stringify(data)
         };

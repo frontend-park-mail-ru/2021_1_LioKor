@@ -1,5 +1,4 @@
-const DEFAULT_WIDTH = 256;
-const DEFAULT_HEIGHT = 256;
+const DEFAULT_SIZE = 256;
 const DEFAULT_MAX_FILE_SIZE_MB = 10;
 const MB = 1024 * 1024;
 
@@ -11,15 +10,16 @@ const createCanvas = (width, height) => {
     document.body.appendChild(canvas);
     const ctx = canvas.getContext('2d');
     return { canvas, ctx };
-}
+};
 
 /**
  * Opens user file selection (with filter to images) dialog and returns dataURL of selected image
  *
+ * @param {number} size size of resulting image (square size x size)
  * @param {number} maxFileSizeMB maximum allowed file size
  * @returns {string} Data url of image selected by user
  */
-export const readImageAsDataURL = async (width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT, maxFileSizeMB = DEFAULT_MAX_FILE_SIZE_MB) => {
+export const readImageAsDataURL = async (size = DEFAULT_SIZE, maxFileSizeMB = DEFAULT_MAX_FILE_SIZE_MB) => {
     const createImageInput = (changeCallback) => {
         let hasInp = true;
         let imageInput = document.getElementById('filesImageInput');
@@ -70,7 +70,7 @@ export const readImageAsDataURL = async (width = DEFAULT_WIDTH, height = DEFAULT
             reader.addEventListener('load', (e) => {
                 const img = new Image();
                 img.addEventListener('load', () => {
-                    const { canvas, ctx } = createCanvas(width, height);
+                    const { canvas, ctx } = createCanvas(size, size);
 
                     const imgSize = Math.min(img.width, img.height);
                     ctx.drawImage(img, 0, 0, imgSize, imgSize, 0, 0, canvas.width, canvas.height);
