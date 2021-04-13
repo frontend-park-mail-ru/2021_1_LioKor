@@ -88,14 +88,14 @@ export async function source(element, app) {
 
     let dialogueId = -1;
     let dialogues = [];
-    let lastMessage = {
+    const lastMessage = {
         elem: undefined,
         id: undefined,
         blockId: undefined,
         username: undefined,
-        title: undefined,
+        title: undefined
     };
-    let messages = {};
+    const messages = {};
 
     const response = await app.apiGet('/email/dialogues');
     if (response.ok) {
@@ -111,7 +111,7 @@ export async function source(element, app) {
             const dialogueUpdatedDt = new ParsedDate(dialogue.time);
             const dialogueUpdatedDtStr = dialogueUpdatedDt.getShortDateString();
 
-            const dialogueElem = document.createElement("li");
+            const dialogueElem = document.createElement('li');
             dialogueElem.id = id;
             dialogueElem.classList.add('listing-button');
             dialogueElem.innerHTML = `
@@ -127,10 +127,9 @@ export async function source(element, app) {
             dialogueElem.addEventListener('click', async (event) => {
                 messagesFooter.style.display = 'flex';
 
-                let currentElem = event.currentTarget
-                if (currentElem.id === dialogueId)
-                    return;
-                dialogueId = currentElem.id
+                const currentElem = event.currentTarget;
+                if (currentElem.id === dialogueId) { return; }
+                dialogueId = currentElem.id;
 
                 currentDialogueElem.classList.remove('active');
                 currentDialogueElem = currentElem;
@@ -147,11 +146,11 @@ export async function source(element, app) {
 
                 messagesField.innerHTML = '<div class="flex-filler"></div>';
                 messages[dialogue.username].forEach((messageBlock, id) => {
-                    const messageBlockElem = document.createElement("div");
+                    const messageBlockElem = document.createElement('div');
                     messageBlockElem.id = id;
 
                     let innerHTML = `
-                        <div class="message-block `
+                        <div class="message-block `;
                     if (messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase()) {
                         messageBlockElem.classList.add('message-block-full', 'right-block');
                         innerHTML += 'your';
@@ -170,10 +169,10 @@ export async function source(element, app) {
                             <div class="message-block-title">${messageBlock.title}</div>
                             <div class="message-block-body">
                         </div>`;
-                    /*messageBlock.body.forEach((message, id) => {
+                    /* messageBlock.body.forEach((message, id) => {
                         innerHTML += `<div id="${id}" class="message-body">${message}</div>`;
                         lastMessage.id = id;
-                    });*/
+                    }); */
                     innerHTML += `<div id="${id}" class="message-body">${messageBlock.body}</div>`;
                     innerHTML += '</div>';
                     messageBlockElem.innerHTML = innerHTML;
@@ -187,31 +186,30 @@ export async function source(element, app) {
             });
         });
 
-        document.getElementById('message-send-button').addEventListener('click', (event) => sendMessage(event, 1));
-        messageInput.addEventListener('keydown', (event) => sendMessage(event, 0));
+        document.getElementById('message-send-button').addEventListener('click', sendMessage);
+        messageInput.addEventListener('keydown', (event) => {
+            if (event.ctrlKey && event.keyCode === 13) {
+                sendMessage();
+            }
+        });
 
         document.getElementById('clear-find-button').addEventListener('click', (event) => {
             findInput.value = '';
         });
     }
 
-    function sendMessage(event, passKeys) {
-        if (!passKeys) {
-            if (!event.ctrlKey || event.keyCode !== 13) {
-                return;
-            }
-        }
-
+    /**
+     * Sends email
+     */
+    function sendMessage() {
         let currentTitle = themeInput.value;
-        if (currentTitle === '')
-            currentTitle = 'No theme';
+        if (currentTitle === '') { currentTitle = 'No theme'; }
         const message = messageInput.innerText;
-        if (message === '')
-            return;
+        if (message === '') { return; }
         app.apiPost('/email', {
             recipient: dialogues[dialogueId].username,
             subject: currentTitle,
-            body: message,
+            body: message
         });
         messageInput.innerText = '';
         if (lastMessage.username === app.storage.username && lastMessage.title === currentTitle) {
@@ -225,7 +223,7 @@ export async function source(element, app) {
             lastMessage.username = app.storage.username;
             lastMessage.title = currentTitle;
 
-            const messageBlockElem = document.createElement("div");
+            const messageBlockElem = document.createElement('div');
             messageBlockElem.id = lastMessage.blockId;
             messageBlockElem.classList.add('message-block-full', 'right-block');
 
@@ -247,7 +245,7 @@ export async function source(element, app) {
                 username: app.storage.username,
                 title: currentTitle,
                 time: currentTime,
-                body: [message],
+                body: [message]
             });
         }
         messagesField.scrollTop = messagesField.scrollHeight;

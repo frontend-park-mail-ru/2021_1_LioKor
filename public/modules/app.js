@@ -12,8 +12,8 @@ export default class App {
     constructor(name, apiUrl, elId, messagesElId = null) {
         this.storage = {
             username: null,
-            avatar: '',
-        }
+            avatar: ''
+        };
         this.name = name;
         this.apiUrl = apiUrl;
         this.element = elId;
@@ -70,7 +70,7 @@ export default class App {
             {
                 urlRegex: /^\/messages$/,
                 handler: messages.source
-            },
+            }
         ];
     }
 

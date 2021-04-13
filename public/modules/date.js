@@ -1,6 +1,6 @@
 export default class ParsedDate {
     constructor(dateString = null) {
-        this.dt;
+        this.dt = null;
         if (dateString) {
             this.dt = new Date(dateString);
         } else {
@@ -13,7 +13,7 @@ export default class ParsedDate {
         this.yearShort = this.dt.getFullYear().toString().slice(2).padStart(2, '0');
         this.hour = this.dt.getHours().toString().padStart(2, '0');
         this.minute = this.dt.getMinutes().toString().padStart(2, '0');
-        this.second =this.dt.getSeconds().toString().padStart(2, '0');
+        this.second = this.dt.getSeconds().toString().padStart(2, '0');
     }
 
     getDateString() {

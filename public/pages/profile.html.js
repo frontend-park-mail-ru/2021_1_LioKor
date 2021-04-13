@@ -68,7 +68,7 @@ export async function source(element, app) {
     }
     const data = await response.json();
     const { username, avatarUrl } = data;
-    app.storage.username = username
+    app.storage.username = username;
 
     // because handlebars is not imported but added as script:
     // eslint-disable-next-line
