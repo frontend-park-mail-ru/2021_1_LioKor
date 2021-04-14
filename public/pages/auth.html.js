@@ -73,11 +73,17 @@ export async function source(element, app) {
             app.message('Здравствуйте!', 'Вы успешно вошли в систему');
             await app.goto('/user');
             return;
+        } else {
+            switch (response.status) {
+            case 401:
+                usernameGroup.classList.add('error');
+                usernameErrorText.innerText = 'Неправильный логин или пароль';
+                passwordGroup.classList.add('error');
+                passwordErrorText.innerText = 'Неправильный логин или пароль';
+                break;
+            default:
+                app.messageError(`Ошибка ${response.status}!`, 'Произошла непредвиденная ошибка!');
+            }
         }
-
-        usernameGroup.classList.add('error');
-        usernameErrorText.innerText = 'Неправильный логин или пароль';
-        passwordGroup.classList.add('error');
-        passwordErrorText.innerText = 'Неправильный логин или пароль';
     });
 }

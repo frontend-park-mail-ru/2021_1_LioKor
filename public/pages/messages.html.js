@@ -171,7 +171,7 @@ export async function source(element, app) {
 
     // create find keydown event-listener
     let lastFindInputValue = '';
-    findInput.addEventListener('keydown', async (event) => {
+    findInput.addEventListener('keyup', async (event) => {
         if (findInput.value === lastFindInputValue) { return; }
         lastFindInputValue = findInput.value;
         if (lastFindInputValue === '') {
