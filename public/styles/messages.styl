@@ -11,14 +11,15 @@ dialogue-color-hover = #218633
 dialogue-color-active = #6b5c13
 
 plus-bg-color = #21863322
+confirm-bg-color = #21863355
 
-bg-color-1 = #535353AA
-bg-color-2 = #393C3F77
+bg-color-1 = #60606099
+bg-color-2 = #393C3FCC
 bg-color-3 = #3b3f4799
 bg-color-4 = #393939
 
-message-bg-1 = #3b3f4799
-message-bg-2 = #3b473b99
+message-bg-1 = #3f444c
+message-bg-2 = #3f4a3f
 
 extra-small = 5px
 small = 7px
@@ -30,9 +31,9 @@ small-avatar-size = 20px
 middle-avatar-size = 40px
 large-avatar-size = 60px
 
-dialogue-preview-height = 60px
+dialogue-preview-height = 62px
 
-dialogues-column-width = 35%
+dialogues-column-width = 30%
 messages-column-width = 100% - dialogues-column-width
 
 width-border = 1px
@@ -41,6 +42,7 @@ width-border = 1px
   border-radius 50%
   width middle-avatar-size
   height middle-avatar-size
+  overflow hidden
 
 /*
 .pad-xs
@@ -54,6 +56,10 @@ width-border = 1px
 .pad-xl
   padding extra-large
 */
+
+
+.bg-transparent
+  background bg-color-2
 
 .text-1
   color color1
@@ -99,9 +105,6 @@ width-border = 1px
   width 100%
   padding 0 middle 0 middle
 
-.bg-transparent
-  background bg-color-2
-
 // extend table:
 .dialogues-column
   width dialogues-column-width
@@ -115,6 +118,7 @@ width-border = 1px
   list-style-type none
   margin 0
   padding 0
+  overflow-y scroll
 
 .header
   padding middle
@@ -136,10 +140,11 @@ width-border = 1px
 .tool-dialogue
   padding middle
   box-shadow 0 5px 10px #222C
+  min-height dialogue-preview-height
 
 // --- Listing button:
 .listing-button
-  height dialogue-preview-height
+  min-height dialogue-preview-height
   overflow hidden
   padding middle
   //border-top 1px solid color3
@@ -221,13 +226,14 @@ width-border = 1px
   border-radius extra-small
   outline none
   flex 1
+  font 400 15px Arial;
 
   border-width width-border
   border-style inset
 
   word-wrap break-word
   outline: 0;
-  min-height: 36px;
+  min-height: 30px;
   resize: none;
   max-height: 200px;
   overflow-y: auto;
@@ -248,14 +254,26 @@ width-border = 1px
   opacity 1
   transform scale(1.1)
 
-.plus-button
-  vertical-align top
-  overflow hidden
-  background plus-bg-color
-  transition 0.5s ease-out
+
+.add-button
   margin-right small
-.plus-button:hover
-  transform rotate(90deg)
+  overflow hidden
+.add-button.switched > *
+  transform translateY(-40px)
+
+.plus-button
+  display block
+  vertical-align top
+  background plus-bg-color
+  transition all 0.5s ease-out
+/*.plus-button:hover
+  transform rotate(90deg)*/
+.confirm-button
+  display block
+  vertical-align top
+  background plus-bg-color
+  transition all 0.5s ease-out
+
 
 .find-input
   padding middle

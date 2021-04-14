@@ -22,7 +22,7 @@ async function main() {
             await app.goto('/user');
             return;
         }
-        await app.goto(location.pathname);
+        await app.goto(location.pathname + location.search);
         return;
     }
 
@@ -30,7 +30,7 @@ async function main() {
         await app.goto('/auth');
         return;
     }
-    await app.goto(location.pathname);
+    await app.goto(location.pathname + location.search);
 }
 
 main();

@@ -1,10 +1,13 @@
 import ParsedDate from '../modules/date.js';
 
 const html = `
-<div class="table-columns fullheight p-l">
+<div class="table-columns fullheight p-l bg-5">
     <div class="table-column dialogues-column table-rows bg-transparent">
         <div class="header tool-dialogue table-columns">
-            <linkbutton class="middle-avatar svg-button plus-button" href="/new_message" pointer-events="auto"><svg pointer-events="none" class="middle-avatar" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none"><path transform="scale(2.2), translate(-1,-1)"  fill-rule="evenodd" clip-rule="evenodd" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z" fill="#F5F5F5"/></svg></linkbutton>
+            <div class="middle-avatar add-button" id="add-dialogue-button">
+                <svg class="svg-button plus-button" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none"><path transform="scale(2.2) translate(-1,-1)"  fill-rule="evenodd" clip-rule="evenodd" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z" fill="#F5F5F5"/></svg>
+                <svg class="svg-button confirm-button" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#F5F5F5"><g transform="scale(1.8) translate(2, -1)"><path fill-rule="evenodd" d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>
+            </div>
             <!--linkbutton href="/new_message" style="font-size: 40px; color: #818F9A;" class="svg-button">+</linkbutton-->
             <input class="find-input flex-filler" placeholder="Найти диалог" id="find-input">
             <svg class="svg-button" id="clear-find-button" xmlns="http://www.w3.org/2000/svg" height="24" width="24"><g fill="none" fill-rule="evenodd"><path d="m0 0h24v24h-24z"/><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z" fill="#8594A0" fill-rule="evenodd" clip-rule="evenodd"/></g></svg>
@@ -15,9 +18,10 @@ const html = `
     </div>
 
     <div class="table-column table-rows messages-column bg-transparent">
-        <div class="header">
+        <div class="header table-columns">
             <span class="text-1" id="dialogue-header-title"></span>
-            <span class="text-3" id="dialogue-header-time" style="padding-left: 10px">Выберите диалог</span>
+            <span class="text-3 flex-filler" id="dialogue-header-time" style="margin-left: 10px">Выберите диалог</span>
+            <linkbutton class="svg-button" href="/user" pointer-events="auto"><svg pointer-events="none" id="clear-find-button" style="margin-right: 10px" xmlns="http://www.w3.org/2000/svg" height="20" width="20"><g transform="scale(1.2)" fill="none" fill-rule="evenodd"><path d="m0 0h20v20h-20z" opacity=".1"/><path d="m3.0000001 14.5c0-3.1424487 3.08132567-4.50000038 6.9999999-4.50000038 3.9186742 0 6.9999999 1.35755168 6.9999999 4.50000038 0 1.615596-1.0761803 2.5000004-2.3000001 2.5000004h-9.39999961c-1.22381984 0-2.30000009-.8844044-2.30000009-2.5000004zm1.8 0c0 .5349234.20087263.7000004.50000009.7000004h9.39999961c.2991275 0 .5000001-.165077.5000001-.7000004 0-1.7450508-2.1675128-2.7000004-5.1999999-2.7000004-3.03248714 0-5.1999999.9549496-5.1999999 2.7000004zm9.0999999-9.5c0 2.15455627-1.7454437 3.9-3.9 3.9-2.15455627 0-3.9-1.74544373-3.9-3.9s1.74544373-3.9 3.9-3.9c2.1545563 0 3.9 1.74544373 3.9 3.9zm-1.8 0c0-1.16044373-.9395563-2.1-2.1-2.1-1.16044373 0-2.1.93955627-2.1 2.1s.93955627 2.1 2.1 2.1c1.1604437 0 2.1-.93955627 2.1-2.1z" fill="#828a99" fill-rule="nonzero"/></g></svg></linkbutton>
         </div>
 
         <div class="body flex-filler table-rows" id="messages-field">
@@ -43,7 +47,7 @@ const html = `
                         <div class="flex-filler"></div>
                         <svg class="svg-button" id="change-theme-button" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#99A2AD"><g transform="scale(1.2)"><path d="M9.56 4.1h3.54a.9.9 0 110 1.8H9.6c-1 0-1.69 0-2.23.04-.52.05-.82.13-1.05.24a2.6 2.6 0 00-1.14 1.14c-.11.23-.2.53-.24 1.05-.04.54-.04 1.24-.04 2.23v3.8c0 1 0 1.69.04 2.23.05.52.13.82.24 1.05.25.49.65.89 1.14 1.14.23.11.53.2 1.05.24.54.04 1.24.04 2.23.04h3.8c1 0 1.69 0 2.23-.04.52-.05.82-.13 1.05-.24a2.6 2.6 0 001.14-1.14c.11-.23.2-.53.24-1.05.04-.54.04-1.24.04-2.23v-3.5a.9.9 0 111.8 0v3.54c0 .95 0 1.71-.05 2.33a4.5 4.5 0 01-.43 1.73 4.4 4.4 0 01-1.92 1.92 4.5 4.5 0 01-1.73.43c-.62.05-1.38.05-2.33.05H9.56c-.95 0-1.71 0-2.33-.05a4.5 4.5 0 01-1.73-.43 4.4 4.4 0 01-1.92-1.92 4.51 4.51 0 01-.43-1.73c-.05-.62-.05-1.38-.05-2.33v-3.88c0-.95 0-1.71.05-2.33.05-.64.16-1.2.43-1.73A4.4 4.4 0 015.5 4.58a4.51 4.51 0 011.73-.43c.62-.05 1.38-.05 2.33-.05z"/><path d="M19.12 3.33a1.1 1.1 0 111.56 1.55l-.35.35a.4.4 0 01-.57 0l-.99-.99a.4.4 0 010-.56l.35-.35zm-.6 2.57l-.42-.42c-.44-.44-.72-.42-1.13 0l-5.13 5.12c-1.95 1.96-3.19 3.89-2.76 4.32.43.43 2.37-.8 4.32-2.76l5.12-5.13c.44-.44.42-.72 0-1.13z"/></g></svg>
                     </div-->
-                    <div class="message-input" id="message-input" tabindex="0" contenteditable="true" role="textbox" aria-multiline="true"></div>
+                    <textarea class="message-input text-1" id="message-input" tabindex="0" placeholder="Ваше сообщение..." contenteditable="true" role="textbox" aria-multiline="true"></textarea>
                     <div class="table-rows">
                         <div class="flex-filler"></div>
                         <svg class="svg-button" id="attach-photo-button" xmlns="http://www.w3.org/2000/svg" height="35" width="35"><g transform="scale(1.3)" fill="none" stroke="#828a99" stroke-width="1.7"><path d="m14.134 3.65c.853 0 1.46.278 1.988.899.017.019.494.61.66.815.228.281.674.536.945.536h.41c2.419 0 3.863 1.563 3.863 4.05v5.85c0 2.241-2 4.2-4.273 4.2h-11.454c-2.267 0-4.223-1.953-4.223-4.2v-5.85c0-2.496 1.4-4.05 3.814-4.05h.409c.271 0 .717-.255.945-.536.166-.204.643-.796.66-.815.528-.621 1.135-.899 1.988-.899z"/><circle cx="12" cy="12" r="3.85"/></g></svg>
@@ -89,6 +93,7 @@ export async function source(element, app) {
     const messageInput = document.getElementById('message-input');
     // --- Big containers
     let dialogues = [];
+    let foundDialogues = [];
     const messages = {};
     // --- 1 element containers
     const currentDialogue = {
@@ -135,60 +140,19 @@ export async function source(element, app) {
         return;
     }
     dialogues = await response.json();
-
+    
     // --- Draw dialogues
-    dialogues.forEach((dialogue, htmlId) => {
-        // check dialogue fields
-        if (!dialogue.avatarUrl) {
-            dialogue.avatarUrl = app.defaultAvatarUrl;
-        }
-        dialogue.time = (new ParsedDate(dialogue.time)).getShortDateString(); // convert DateTime format to string
+    redrawDialogues(dialogues);
 
-        // create dialogue HTML-element
-        const dialogueElem = document.createElement('li');
-        dialogueElem.id = htmlId;
-        dialogueElem.classList.add('listing-button');
-        dialogueElem.innerHTML = dialogueInnerHTMLTemplate({
-            avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body});
-        dialoguePreviewsGroup.appendChild(dialogueElem);
-
-        // create Event-listener on dialogue element
-        dialogueElem.addEventListener('click', async (event) => {
-            messagesFooter.style.display = 'flex'; // show message input
-
-            // get dialogue id
-            const currentElem = event.currentTarget;
-            if (currentElem.id === currentDialogue.htmlId) { return; }
-            currentDialogue.htmlId = currentElem.id;
-
-            currentDialogue.elem.classList.remove('active'); // "deactivate" previous dialogue
-            currentDialogue.elem = currentElem;
-            currentDialogue.elem.classList.add('active'); // "activate" current dialogue
-
-            // update dialogue header
-            const dialogue = dialogues[currentDialogue.htmlId]; // get dialogue data
-            dialogueHeader.innerText = currentDialogue.title = dialogue.username;
-            dialogueTime.innerText = currentDialogue.time = dialogue.time;
-
-            // update currentDialogue data
-            currentDialogue.realId = dialogue.id;
-            currentDialogue.avatar = dialogue.avatarUrl;
-            currentDialogue.username = dialogue.username;
-
-            // get dialogue messages
-            if (!messages[dialogue.username]) {
-                const response = await app.apiGet(`/email/emails?with=${dialogue.username}`);
-                if (!response.ok) {
-                    app.messageError('Сессия истекла', 'или диалога нет. Обновите страницу');
-                }
-                messages[dialogue.username] = await response.json();
-            }
-
-            showDialogue(dialogue.username);
-        });
-    });
-
-    // send message event-listener
+    // if we have get-parameters => go to dialogue
+    const gottenUsername = window.location.search.substring(6);
+    if (gottenUsername !== '') {
+        const dialogue = dialogues.find(item => item.username === gottenUsername);
+        if (dialogue)
+            await setActiveDialogue(dialogue.elem);
+    }
+    
+    // create send message event-listener
     document.getElementById('message-send-button').addEventListener('click', sendMessage);
     messageInput.addEventListener('keydown', (event) => {
         if (event.ctrlKey && event.keyCode === 13) {
@@ -196,16 +160,159 @@ export async function source(element, app) {
         }
     });
 
+
+    let isCreateDialogue = false;
+    const addButton = document.getElementById('add-dialogue-button');
+    // create clear-find event-listener
     document.getElementById('clear-find-button').addEventListener('click', (event) => {
         findInput.value = '';
+        redrawDialogues(dialogues);
+    });
+
+    // create find keydown event-listener
+    let lastFindInputValue = '';
+    findInput.addEventListener('keydown', async (event) => {
+        if (findInput.value === lastFindInputValue) { return; }
+        lastFindInputValue = findInput.value;
+        if (lastFindInputValue === '') {
+            redrawDialogues(dialogues);
+            return;
+        }
+        const response = await app.apiGet('/email/dialogues?find=' + lastFindInputValue);
+        if (!response.ok) {
+            app.messageError('Сессия истекла', 'Обновите страницу');
+            return;
+        }
+        foundDialogues = await response.json();
+
+        redrawDialogues(foundDialogues);
+    });
+
+    // create add-dialog event-listeners
+    addButton.addEventListener('click', (event) => {
+        if (!isCreateDialogue) {
+            isCreateDialogue = true;
+            findInput.focus();
+            addButton.classList.add('switched');
+            findInput.placeholder = 'Кому пишем?';
+        } else {
+            isCreateDialogue = false;
+            addButton.classList.remove('switched');
+            findInput.placeholder = 'Найти диалог';
+            const username = findInput.value;
+            if (username === '') { return; }
+
+            const dialogue = {
+                username: username,
+                body: '',
+                time: new Date(),
+            };
+            messages[username] = [];
+
+            addDialogueToList(dialogue, dialogues.length);
+            dialogues.push(dialogue);
+            findInput.value = '';
+
+            setActiveDialogue(dialogue.elem);
+        }
     });
 
 
+    function redrawDialogues(dialogues) {
+        dialoguePreviewsGroup.innerHTML = '';
+        dialogues.forEach((dialogue, htmlId) => {
+            addDialogueToList(dialogue, htmlId);
+        });
+    }
+
+    /**
+     * Add dialogue to dialogues listing
+     * @param dialogue
+     * @param htmlId
+     * @returns {Promise<void>}
+     */
+    async function addDialogueToList(dialogue, htmlId) {
+        // check dialogue fields
+        if (!dialogue.avatarUrl) {
+            dialogue.avatarUrl = app.defaultAvatarUrl;
+        }
+        dialogue.time = (new ParsedDate(dialogue.time)).getShortDateString(); // convert DateTime format to string
+
+        // create dialogue HTML-element
+        dialogue.elem = document.createElement('li');
+        dialogue.elem.id = htmlId;
+        dialogue.elem.classList.add('listing-button');
+        dialogue.elem.innerHTML = dialogueInnerHTMLTemplate({
+            avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body});
+        dialoguePreviewsGroup.appendChild(dialogue.elem);
+
+        // create Event-listener on dialogue element
+        dialogue.elem.addEventListener('click', async (event) => {
+            // get dialogue id
+            const currentElem = event.currentTarget;
+            await setActiveDialogue(currentElem);
+        });
+    }
+
+    /**
+     * Set dialog active and draw it
+     * @param currentElem
+     */
+    async function setActiveDialogue(currentElem) {
+        if (currentElem.id === currentDialogue.htmlId) { return; }
+        currentDialogue.htmlId = currentElem.id;
+
+        messagesFooter.style.display = 'flex'; // show message input
+
+        currentDialogue.elem.classList.remove('active'); // "deactivate" previous dialogue
+        currentDialogue.elem = currentElem;
+        currentDialogue.elem.classList.add('active'); // "activate" current dialogue
+
+        // update dialogue header
+        const dialogue = dialogues[currentDialogue.htmlId]; // get dialogue data
+        dialogueHeader.innerText = currentDialogue.title = dialogue.username;
+        dialogueTime.innerText = currentDialogue.time = dialogue.time;
+
+        // update currentDialogue data
+        currentDialogue.realId = dialogue.id;
+        currentDialogue.avatar = dialogue.avatarUrl;
+        currentDialogue.username = dialogue.username;
+
+        // get dialogue messages
+        if (!messages[dialogue.username]) {
+            const response = await app.apiGet(`/email/emails?with=${dialogue.username}`);
+            if (!response.ok) {
+                //app.messageError('Сессия истекла', 'или диалога нет. Обновите страницу'); Просто открыт новый диалог
+                messages[dialogue.username] = [];
+            } else {
+                messages[dialogue.username] = await response.json();
+                messages[dialogue.username].forEach((message) => {
+                    message.time = (new ParsedDate(message.time)).getShortDateString();
+                    //message.body = [message.body]; - for only one-message blocks
+                });
+            }
+        }
+
+        //set dialogue url
+        const currentPath = window.location.pathname + `?with=${currentDialogue.username}`;
+        history.pushState({ url: currentPath }, '', currentPath);
+        document.title = `${app.name} | Диалоги | ${currentDialogue.username}`;
+
+        showDialogue(dialogue.username);
+    }
+    
     /**
      * draw all dialogue messages
      */
     function showDialogue(username) {
         messagesField.innerHTML = '<div class="flex-filler"></div>'; // fill top
+        // delete all lastMessage properties
+        lastMessage.htmlId = undefined;
+        lastMessage.realId = undefined;
+        lastMessage.elem = undefined;
+        lastMessage.blockId = -1;
+        lastMessage.username = '';
+        lastMessage.title = '';
         messages[username].forEach((messageBlock, id) => {
             // create block of messages HTML-element
             const messageBlockElem = document.createElement('div');
@@ -242,7 +349,7 @@ export async function source(element, app) {
         // check inputs
         let currentTitle = themeInput.value;
         if (currentTitle === '') { currentTitle = 'Без темы'; }
-        const message = messageInput.innerText;
+        const message = messageInput.value;
         if (message === '') { return; }
 
         // send message request
@@ -257,7 +364,7 @@ export async function source(element, app) {
         }
 
         // clear input
-        messageInput.innerText = '';
+        messageInput.value = '';
 
         // add message HTML-block
         if (lastMessage.username.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
@@ -270,8 +377,7 @@ export async function source(element, app) {
             const messageBlockElem = document.createElement('div');
             messageBlockElem.id = lastMessage.blockId;
             messageBlockElem.classList.add('message-block-full', 'right-block');
-            const datetime = new Date();
-            const currentTime = datetime.getHours() + ':' + datetime.getMinutes();
+            const currentTime = getCurrentTime();
             messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate({
                 side: 'your', avatar: app.storage.avatar, time: currentTime, title: currentTitle, body: [message]});
             messagesField.appendChild(messageBlockElem);
@@ -285,12 +391,20 @@ export async function source(element, app) {
 
             // add block to messages list
             messages[currentDialogue.username].push({
-                username: `${app.storage.username}@liokor.ru`,
+                sender: `${app.storage.username}@liokor.ru`,
                 title: currentTitle,
                 time: currentTime,
                 body: [message]
             });
         }
         messagesField.scrollTop = messagesField.scrollHeight; // scroll to bottom
+    }
+
+    /**
+     * Returns current time in string format
+     * @returns {string}
+     */
+    function getCurrentTime() {
+        return (new ParsedDate(new Date())).getShortDateString();
     }
 }

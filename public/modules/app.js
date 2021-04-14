@@ -7,7 +7,6 @@ import * as user from '../pages/profile.html.js';
 import * as signup from '../pages/signup.html.js';
 import * as changePassword from '../pages/change_password.html.js';
 import * as messages from '../pages/messages.html.js';
-import * as newMessage from '../pages/new_message.html.js';
 
 export default class App {
     constructor(name, apiUrl, elId, messagesElId = null) {
@@ -72,12 +71,8 @@ export default class App {
                 handler: changePassword.source
             },
             {
-                urlRegex: /^\/messages$/,
+                urlRegex: /^\/messages(\?with=.*)?$/,
                 handler: messages.source
-            },
-            {
-                urlRegex: /^\/new_message$/,
-                handler: newMessage.source
             }
         ];
     }
@@ -139,6 +134,7 @@ export default class App {
     }
 
     async goto(path) {
+        console.log(path);
         history.pushState({ url: path }, '', path);
 
         let handler = null;
