@@ -104,7 +104,7 @@ export async function source(element, app) {
         time: undefined,
         avatar: undefined,
         username: undefined
-    }
+    };
     const lastMessage = {
         htmlId: undefined,
         realId: undefined,
@@ -113,7 +113,10 @@ export async function source(element, app) {
         username: undefined,
         title: undefined
     };
+
     // --- Handlebars templates
+    // because handlebars is not imported but added as script:
+    // eslint-disable-next-line
     const messageBlockInnerHTMLTemplate = Handlebars.compile(`
         <div class="message-block {{ side }}">
             <img src="{{ avatar }}" alt="avatar" class="middle-avatar">
@@ -126,6 +129,7 @@ export async function source(element, app) {
             </div>
         </div>`);
 
+    // eslint-disable-next-line
     const dialogueInnerHTMLTemplate = Handlebars.compile(`
         <img src="{{ avatar }}" alt="avatar" class="middle-avatar">
         <div class="floatright text-4">{{ time }}</div>
@@ -149,8 +153,7 @@ export async function source(element, app) {
     const gottenUsername = window.location.search.substring(6);
     if (gottenUsername !== '') {
         const dialogue = dialogues.find(item => item.username === gottenUsername);
-        if (dialogue)
-            await setActiveDialogue(dialogue.elem);
+        if (dialogue) { await setActiveDialogue(dialogue.elem); }
     }
 
     // create send message event-listener
@@ -160,7 +163,6 @@ export async function source(element, app) {
             sendMessage();
         }
     });
-
 
     let isCreateDialogue = false;
     const addButton = document.getElementById('add-dialogue-button');
@@ -213,21 +215,21 @@ export async function source(element, app) {
             const dialogue = {
                 username: username,
                 body: '',
-                time: getCurrentTime(),
+                time: getCurrentTime()
             };
             messages[username] = [];
             dialogues.push(dialogue);
 
-            addDialogueToList(dialogue, dialogues.length-1);
+            addDialogueToList(dialogue, dialogues.length - 1);
             setActiveDialogue(dialogue.elem);
             redrawDialogues(dialogues);
         }
     });
 
-
     /**
      * Clear dialogues list and show new
-     * @param dialogues
+     *
+     * @param {object} dialogues dialogues to redraw
      */
     function redrawDialogues(dialogues) {
         dialoguePreviewsGroup.innerHTML = '';
@@ -237,10 +239,11 @@ export async function source(element, app) {
     }
 
     /**
-     * Converts DateTime format to string
-     * @param dialogues
+     * Converts DateTime format to string in all dialogues
+     *
+     * @param {object} dialogues dialogues to replace time in
      */
-    function convertDialoguesTimeToStr (dialogues) {
+    function convertDialoguesTimeToStr(dialogues) {
         dialogues.forEach((dialogue) => {
             dialogue.time = dialogue.time = (new ParsedDate(dialogue.time)).getShortDateString();
         });
@@ -248,11 +251,11 @@ export async function source(element, app) {
 
     /**
      * Add dialogue to dialogues listing
-     * @param dialogue
-     * @param htmlId
-     * @returns {Promise<void>}
+     *
+     * @param {object} dialogue ?
+     * @param {(string|number)} htmlId html id to set to dialogue element
      */
-    async function addDialogueToList(dialogue, htmlId) {
+    function addDialogueToList(dialogue, htmlId) {
         // check dialogue fields
         if (!dialogue.avatarUrl) {
             dialogue.avatarUrl = app.defaultAvatarUrl;
@@ -262,11 +265,16 @@ export async function source(element, app) {
         dialogue.elem = document.createElement('li');
         dialogue.elem.id = htmlId;
         dialogue.elem.classList.add('listing-button');
-        console.log(dialogue.username, currentDialogue.username)
-        if (dialogue.username === currentDialogue.username)
+
+        if (dialogue.username === currentDialogue.username) {
             dialogue.elem.classList.add('active');
+        }
         dialogue.elem.innerHTML = dialogueInnerHTMLTemplate({
-            avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body});
+            avatar: dialogue.avatarUrl,
+            time: dialogue.time,
+            title: dialogue.username,
+            body: dialogue.body
+        });
         dialoguePreviewsGroup.appendChild(dialogue.elem);
 
         // create Event-listener on dialogue element
@@ -279,6 +287,7 @@ export async function source(element, app) {
 
     /**
      * Set dialog active and draw it
+     *
      * @param currentElem
      */
     async function setActiveDialogue(currentElem) {
@@ -305,18 +314,18 @@ export async function source(element, app) {
         if (!messages[dialogue.username]) {
             const response = await app.apiGet(`/email/emails?with=${dialogue.username}`);
             if (!response.ok) {
-                //app.messageError('Сессия истекла', 'или диалога нет. Обновите страницу'); Просто открыт новый диалог
+                // app.messageError('Сессия истекла', 'или диалога нет. Обновите страницу'); Просто открыт новый диалог
                 messages[dialogue.username] = [];
             } else {
                 messages[dialogue.username] = await response.json();
                 messages[dialogue.username].forEach((message) => {
                     message.time = (new ParsedDate(message.time)).getShortDateString();
-                    //message.body = [message.body]; - for only one-message blocks
+                    // message.body = [message.body]; - for only one-message blocks
                 });
             }
         }
 
-        //set dialogue url
+        // set dialogue url
         const currentPath = window.location.pathname + `?with=${currentDialogue.username}`;
         history.pushState({ url: currentPath }, '', currentPath);
         document.title = `${app.name} | Диалоги | ${currentDialogue.username}`;
@@ -326,6 +335,8 @@ export async function source(element, app) {
 
     /**
      * draw all dialogue messages
+     *
+     * @param username
      */
     function showDialogue(username) {
         messagesField.innerHTML = '<div class="flex-filler"></div>'; // fill top
@@ -391,7 +402,8 @@ export async function source(element, app) {
             body: message
         });
         if (!response.ok) {
-            app.messageError('Сообщение не отправилось', 'проверьте подключение к интернету');
+            const data = await response.json();
+            app.messageError(`Ошибка ${response.status}`, `Не удалось отправить письмо: ${data.message}`);
             return;
         }
 
@@ -410,8 +422,7 @@ export async function source(element, app) {
             messageBlockElem.id = lastMessage.blockId;
             messageBlockElem.classList.add('message-block-full', 'right-block');
             const currentTime = getCurrentTime();
-            messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate({
-                side: 'your', avatar: app.storage.avatar, time: currentTime, title: currentTitle, body: [message]});
+            messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate({ side: 'your', avatar: app.storage.avatar, time: currentTime, title: currentTitle, body: [message] });
             messagesField.appendChild(messageBlockElem);
 
             // update lastMessage data
@@ -434,6 +445,7 @@ export async function source(element, app) {
 
     /**
      * Returns current time in string format
+     *
      * @returns {string}
      */
     function getCurrentTime() {

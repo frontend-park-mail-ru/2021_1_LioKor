@@ -72,7 +72,6 @@ export async function source(element, app) {
         if (response.ok) {
             app.message('Здравствуйте!', 'Вы успешно вошли в систему');
             await app.goto('/user');
-            return;
         } else {
             switch (response.status) {
             case 401:
