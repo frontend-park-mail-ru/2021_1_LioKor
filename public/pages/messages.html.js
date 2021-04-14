@@ -13,7 +13,7 @@ const html = `
             <svg class="svg-button" id="clear-find-button" xmlns="http://www.w3.org/2000/svg" height="24" width="24"><g fill="none" fill-rule="evenodd"><path d="m0 0h24v24h-24z"/><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z" fill="#8594A0" fill-rule="evenodd" clip-rule="evenodd"/></g></svg>
         </div>
 
-        <ul class="table-rows dialogues-listing" id="dialogues">
+        <ul class="table-rows dialogues-listing scrollable" id="dialogues">
         </ul>
     </div>
 
@@ -24,7 +24,7 @@ const html = `
             <linkbutton class="svg-button" href="/user" pointer-events="auto"><svg pointer-events="none" id="clear-find-button" style="margin-right: 10px" xmlns="http://www.w3.org/2000/svg" height="20" width="20"><g transform="scale(1.2)" fill="none" fill-rule="evenodd"><path d="m0 0h20v20h-20z" opacity=".1"/><path d="m3.0000001 14.5c0-3.1424487 3.08132567-4.50000038 6.9999999-4.50000038 3.9186742 0 6.9999999 1.35755168 6.9999999 4.50000038 0 1.615596-1.0761803 2.5000004-2.3000001 2.5000004h-9.39999961c-1.22381984 0-2.30000009-.8844044-2.30000009-2.5000004zm1.8 0c0 .5349234.20087263.7000004.50000009.7000004h9.39999961c.2991275 0 .5000001-.165077.5000001-.7000004 0-1.7450508-2.1675128-2.7000004-5.1999999-2.7000004-3.03248714 0-5.1999999.9549496-5.1999999 2.7000004zm9.0999999-9.5c0 2.15455627-1.7454437 3.9-3.9 3.9-2.15455627 0-3.9-1.74544373-3.9-3.9s1.74544373-3.9 3.9-3.9c2.1545563 0 3.9 1.74544373 3.9 3.9zm-1.8 0c0-1.16044373-.9395563-2.1-2.1-2.1-1.16044373 0-2.1.93955627-2.1 2.1s.93955627 2.1 2.1 2.1c1.1604437 0 2.1-.93955627 2.1-2.1z" fill="#828a99" fill-rule="nonzero"/></g></svg></linkbutton>
         </div>
 
-        <div class="body flex-filler table-rows" id="messages-field">
+        <div class="body flex-filler table-rows scrollable" id="messages-field">
             <div class="flex-filler"></div>
             <div class="center-text">
                 <svg width="56" height="56" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z" fill="#8594A0"></path></svg>
@@ -201,6 +201,7 @@ export async function source(element, app) {
             addButton.classList.remove('switched');
             findInput.placeholder = 'Поиск диалога';
             const username = findInput.value;
+            findInput.value = '';
             if (username === '') { return; }
 
             const dialogue = {
@@ -209,11 +210,9 @@ export async function source(element, app) {
                 time: new Date(),
             };
             messages[username] = [];
+            dialogues.push(dialogue);
 
             addDialogueToList(dialogue, dialogues.length);
-            dialogues.push(dialogue);
-            findInput.value = '';
-
             setActiveDialogue(dialogue.elem);
         }
     });
@@ -262,7 +261,7 @@ export async function source(element, app) {
 
         // create Event-listener on dialogue element
         dialogue.elem.addEventListener('click', async (event) => {
-            // get dialogue id
+            // set this dialogue active
             const currentElem = event.currentTarget;
             await setActiveDialogue(currentElem);
         });

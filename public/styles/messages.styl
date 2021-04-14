@@ -18,6 +18,9 @@ bg-color-2 = #393C3FCC
 bg-color-3 = #3b3f4799
 bg-color-4 = #393939
 
+scroll-thumb-color = #80808080
+scroll-thumb-color-hover = #707070
+
 message-bg-1 = #3f444c
 message-bg-2 = #3f4a3f
 
@@ -118,7 +121,6 @@ width-border = 1px
   list-style-type none
   margin 0
   padding 0
-  overflow-y scroll
 
 .header
   padding middle
@@ -129,7 +131,6 @@ width-border = 1px
   z-index 0
 .body
   color color2
-  overflow-y scroll
 .footer
   padding middle
   color color2
@@ -303,3 +304,28 @@ width-border = 1px
   color color4
 .theme-input:focus::placeholder
   color color3
+
+.scrollable
+  overflow-y scroll
+
+  --scrollbarBg: #00000000
+  --scrollbarThumb: scroll-thumb-color
+  --scrollbarWidth: 6px;
+  --scrollbarBorder: 1px solid var(--scrollbarBg);
+  --scrollbarBorderRadius: calc(var(--scrollbarWidth) / 2);
+
+  scrollbar-width: var(--scrollbarWidth);
+  scrollbar-color: var(--scrollbarThumb) var(--scrollbarBg);
+
+.scrollable:hover
+  --scrollbarThumb: scroll-thumb-color-hover
+
+.scrollable::-webkit-scrollbar
+  width: var(--scrollbarWidth);
+.scrollable::-webkit-scrollbar-track
+  background: var(--scrollbarBg);
+  border-radius: var(--scrollbarBorderRadius);
+.scrollable::-webkit-scrollbar-thumb
+  background-color: var(--scrollbarThumb);
+  border-radius: var(--scrollbarBorderRadius);
+  border: var(--scrollbarBorder);
