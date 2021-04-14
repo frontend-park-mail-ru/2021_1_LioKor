@@ -136,11 +136,11 @@ export async function source(element, app) {
     // --- Get dialogues
     const response = await app.apiGet('/email/dialogues');
     if (!response.ok) {
-        app.messageError('Сессия истекла', 'Обновите страницу');
+        app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список диалогов!');
         return;
     }
     dialogues = await response.json();
-    
+
     // --- Draw dialogues
     redrawDialogues(dialogues);
 
@@ -151,7 +151,7 @@ export async function source(element, app) {
         if (dialogue)
             await setActiveDialogue(dialogue.elem);
     }
-    
+
     // create send message event-listener
     document.getElementById('message-send-button').addEventListener('click', sendMessage);
     messageInput.addEventListener('keydown', (event) => {
@@ -180,7 +180,7 @@ export async function source(element, app) {
         }
         const response = await app.apiGet('/email/dialogues?find=' + lastFindInputValue);
         if (!response.ok) {
-            app.messageError('Сессия истекла', 'Обновите страницу');
+            app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список писем!');
             return;
         }
         foundDialogues = await response.json();
@@ -194,11 +194,11 @@ export async function source(element, app) {
             isCreateDialogue = true;
             findInput.focus();
             addButton.classList.add('switched');
-            findInput.placeholder = 'Кому пишем?';
+            findInput.placeholder = 'Введите адрес получателя';
         } else {
             isCreateDialogue = false;
             addButton.classList.remove('switched');
-            findInput.placeholder = 'Найти диалог';
+            findInput.placeholder = 'Поиск диалога';
             const username = findInput.value;
             if (username === '') { return; }
 
@@ -300,7 +300,7 @@ export async function source(element, app) {
 
         showDialogue(dialogue.username);
     }
-    
+
     /**
      * draw all dialogue messages
      */
@@ -318,16 +318,25 @@ export async function source(element, app) {
             const messageBlockElem = document.createElement('div');
             messageBlockElem.id = id;
 
-
             // render message on right or left side
             if (messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase()) {
                 messageBlockElem.classList.add('message-block-full', 'right-block');
                 messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate({
-                    side: 'your', avatar: app.storage.avatar, time: messageBlock.time, title: messageBlock.title, body: messageBlock.body});
+                    side: 'your',
+                    avatar: app.storage.avatar,
+                    time: messageBlock.time,
+                    title: messageBlock.title,
+                    body: [messageBlock.body]
+                });
             } else {
                 messageBlockElem.classList.add('message-block-full', 'left-block');
                 messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate({
-                    side: 'not-your', avatar: currentDialogue.avatar, time: messageBlock.time, title: messageBlock.title, body: [messageBlock.body]});
+                    side: 'not-your',
+                    avatar: currentDialogue.avatar,
+                    time: messageBlock.time,
+                    title: messageBlock.title,
+                    body: [messageBlock.body]
+                });
             }
             messagesField.appendChild(messageBlockElem);
 
