@@ -11,5 +11,4 @@ public/api/swagger/*
 
 public/styles/*.css
 
-build/assets
-build/bundle.min.js
+build
