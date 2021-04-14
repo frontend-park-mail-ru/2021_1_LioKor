@@ -5,5 +5,10 @@
  * @returns {string} value of a cookie
  */
 export function getCookie(name) {
-    return document.cookie.match(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`)?.pop() || '';
+    const matches = document.cookie.match(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`);
+    if (matches && matches.length > 0) {
+        return matches.pop()
+    } else {
+        return '';
+    }
 }
