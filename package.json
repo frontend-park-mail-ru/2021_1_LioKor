@@ -5,7 +5,7 @@
     "license": "UNLICENSED",
     "private": true,
     "scripts": {
-        "dev": "concurrently \"node ./server/server.js\" \"stylus public/styles -w\" --kill-others",
+        "dev": "concurrently \"node ./server/server.js\" \"rollup -c -w\" --kill-others",
         "lint": "eslint public/modules/*.js public/index.js server/server.js public/pages/*.js",
         "dist": "rollup -c"
     },

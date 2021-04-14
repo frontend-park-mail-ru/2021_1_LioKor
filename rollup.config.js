@@ -12,7 +12,7 @@ export default {
     },
     plugins: [
         styles({
-            mode: ['extract', 'styles.css'],
+            mode: ['extract', 'styles.min.css'],
             minimize: true
         }),
         // nodeResolve(),
