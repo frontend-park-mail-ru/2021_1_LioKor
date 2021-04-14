@@ -20,7 +20,8 @@ export default {
         copy({
             targets: [
                 { src: 'public/images/*', dest: 'build/images' },
-                { src: 'public/index.html', dest: 'build/' }
+                { src: 'public/index.html', dest: 'build/' },
+                { src: 'node_modules/handlebars/dist/handlebars.min.js', dest: 'build/' }
             ]
         })
     ]
