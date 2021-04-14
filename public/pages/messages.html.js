@@ -140,7 +140,8 @@ export async function source(element, app) {
         return;
     }
     dialogues = await response.json();
-    
+    convertDialoguesTimeToStr(dialogues);
+
     // --- Draw dialogues
     redrawDialogues(dialogues);
 
@@ -184,7 +185,7 @@ export async function source(element, app) {
             return;
         }
         foundDialogues = await response.json();
-
+        convertDialoguesTimeToStr(foundDialogues);
         redrawDialogues(foundDialogues);
     });
 
@@ -218,10 +219,24 @@ export async function source(element, app) {
     });
 
 
+    /**
+     * Clear dialogues list and show new
+     * @param dialogues
+     */
     function redrawDialogues(dialogues) {
         dialoguePreviewsGroup.innerHTML = '';
         dialogues.forEach((dialogue, htmlId) => {
             addDialogueToList(dialogue, htmlId);
+        });
+    }
+
+    /**
+     * Converts DateTime format to string
+     * @param dialogues
+     */
+    function convertDialoguesTimeToStr (dialogues) {
+        dialogues.forEach((dialogue) => {
+            dialogue.time = dialogue.time = (new ParsedDate(dialogue.time)).getShortDateString();
         });
     }
 
@@ -236,7 +251,6 @@ export async function source(element, app) {
         if (!dialogue.avatarUrl) {
             dialogue.avatarUrl = app.defaultAvatarUrl;
         }
-        dialogue.time = (new ParsedDate(dialogue.time)).getShortDateString(); // convert DateTime format to string
 
         // create dialogue HTML-element
         dialogue.elem = document.createElement('li');
