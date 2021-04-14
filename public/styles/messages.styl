@@ -27,6 +27,7 @@ message-bg-2 = #3f4a3f
 extra-small = 5px
 small = 7px
 middle = 10px
+middle-large = 15px
 large = 20px
 extra-large = 30px
 
@@ -123,8 +124,7 @@ width-border = 1px
   padding 0
 
 .header
-  padding middle
-  padding-bottom middle*1.5
+  padding middle-large
   background bg-color-1
   color color1
   box-shadow 0 4px 10px #2228
@@ -251,6 +251,11 @@ width-border = 1px
   overflow hidden
   opacity 0.8
   transition all 0.1s ease
+  fill #F5F5F5
+  fill-rule evenodd
+  clip-rule evenodd
+.svg-button.transparent
+  fill #969dab
 .svg-button:hover
   opacity 1
   transform scale(1.1)
@@ -259,21 +264,13 @@ width-border = 1px
 .add-button
   margin-right small
   overflow hidden
+.add-button > *
+  display block
+  vertical-align top
+  background plus-bg-color
+  transition all 0.3s ease-out
 .add-button.switched > *
   transform translateY(-40px)
-
-.plus-button
-  display block
-  vertical-align top
-  background plus-bg-color
-  transition all 0.5s ease-out
-/*.plus-button:hover
-  transform rotate(90deg)*/
-.confirm-button
-  display block
-  vertical-align top
-  background plus-bg-color
-  transition all 0.5s ease-out
 
 
 .find-input
@@ -295,7 +292,7 @@ width-border = 1px
   border none
   outline none
   transition all ease 0.2s
-  color color4
+  color color2
 .theme-input:focus
   background bg-color-2
   color color3
