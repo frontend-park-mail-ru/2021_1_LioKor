@@ -10,3 +10,6 @@ public/api/swagger/*
 !public/api/swagger/index.html
 
 public/styles/*.css
+
+build/assets
+build/bundle.min.js

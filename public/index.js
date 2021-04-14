@@ -1,3 +1,7 @@
+import './styles/global.styl';
+import './styles/profile.styl';
+import './styles/messages.styl';
+
 import App from './modules/app.js';
 
 /**
