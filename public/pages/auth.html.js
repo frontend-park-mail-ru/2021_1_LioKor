@@ -10,11 +10,11 @@ const html = `
                 <form id="authForm" novalidate>
                     <div class="form-group" id="usernameGroup">
                         <label>ЛОГИН ИЛИ EMAIL<span class="error-text" id="usernameErrorText"></span></label>
-                        <input name="username" type="text" class="form-control" id="usernameInput" required>
+                        <input name="username" type="text" class="form-control" id="usernameInput" required autocomplete="on">
                     </div>
                     <div class="form-group" id="passwordGroup">
                         <label>ПАРОЛЬ<span class="error-text" id="passwordErrorText"></span></label>
-                        <input name="password" type="password" class="form-control" required>
+                        <input name="password" type="password" class="form-control" required autocomplete="on">
                         <!-- <div class="muted"><linkButton href="#">Забыли пароль?</linkButton> -->
                     </div>
                     <div class="form-group">

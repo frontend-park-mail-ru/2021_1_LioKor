@@ -3,10 +3,10 @@ import ParsedDate from '../modules/date.js';
 const html = `
 <div class="table-columns fullheight p-l">
     <div class="table-column dialogues-column table-rows bg-transparent">
-        <div class="header tool-dialogue">
-            <!--<linkbutton href="/new_message"><svg class="svg-button plus-button middle-avatar" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none"><path transform="scale(2.2), translate(-1,-1)"  fill-rule="evenodd" clip-rule="evenodd" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z" fill="#F5F5F5"/></svg></linkbutton>-->
-            <linkbutton href="/new_message" style="font-size: 40px; color: #818F9A;" class="svg-button">+</linkbutton>
-            <input class="find-input" placeholder="Найти диалог" id="find-input">
+        <div class="header tool-dialogue table-columns">
+            <linkbutton class="middle-avatar svg-button plus-button" href="/new_message" pointer-events="auto"><svg pointer-events="none" class="middle-avatar" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none"><path transform="scale(2.2), translate(-1,-1)"  fill-rule="evenodd" clip-rule="evenodd" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z" fill="#F5F5F5"/></svg></linkbutton>
+            <!--linkbutton href="/new_message" style="font-size: 40px; color: #818F9A;" class="svg-button">+</linkbutton-->
+            <input class="find-input flex-filler" placeholder="Найти диалог" id="find-input">
             <svg class="svg-button" id="clear-find-button" xmlns="http://www.w3.org/2000/svg" height="24" width="24"><g fill="none" fill-rule="evenodd"><path d="m0 0h24v24h-24z"/><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z" fill="#8594A0" fill-rule="evenodd" clip-rule="evenodd"/></g></svg>
         </div>
 
@@ -36,7 +36,7 @@ const html = `
             <div class="table-rows fullwidth">
                 <div class="table-row text-4 table-columns">
                     <span>Тема: </span>
-                    <input class="theme-input flex-filler" id="theme-input" placeholder="No theme">
+                    <input class="theme-input flex-filler" id="theme-input" placeholder="Без темы">
                 </div>
                 <div class="table-row table-columns">
                     <!--div class="table-rows">
@@ -76,6 +76,7 @@ export async function source(element, app) {
     document.title = `${app.name} | Диалоги`;
     element.innerHTML = html;
 
+    // --- HTML elements
     const dialoguePreviewsGroup = document.getElementById('dialogues');
     const dialogueHeader = document.getElementById('dialogue-header-title');
     const dialogueTime = document.getElementById('dialogue-header-time');
@@ -86,170 +87,210 @@ export async function source(element, app) {
     const findInput = document.getElementById('find-input');
     const themeInput = document.getElementById('theme-input');
     const messageInput = document.getElementById('message-input');
-
-    let dialogueId = -1;
+    // --- Big containers
     let dialogues = [];
+    const messages = {};
+    // --- 1 element containers
+    const currentDialogue = {
+        htmlId: undefined,
+        realId: undefined,
+        elem: dialoguePreviewsGroup,
+        title: undefined,
+        time: undefined,
+        avatar: undefined,
+        username: undefined
+    }
     const lastMessage = {
+        htmlId: undefined,
+        realId: undefined,
         elem: undefined,
-        id: undefined,
         blockId: undefined,
         username: undefined,
         title: undefined
     };
-    const messages = {};
+    // --- Handlebars templates
+    const messageBlockInnerHTMLTemplate = Handlebars.compile(`
+        <div class="message-block {{ side }}">
+            <img src="{{ avatar }}" alt="avatar" class="middle-avatar">
+            <div class="floatright text-4 p-m">{{ time }}</div>
+            <div class="message-block-title">{{ title }}</div>
+            <div class="message-block-body">
+            {{#each body}}
+                <div id="{{ @index }}" class="message-body">{{ this }}</div>
+            {{/each}}
+            </div>
+        </div>`);
 
+    const dialogueInnerHTMLTemplate = Handlebars.compile(`
+        <img src="{{ avatar }}" alt="avatar" class="middle-avatar">
+        <div class="floatright text-4">{{ time }}</div>
+        <div class="dialogue-text">
+            <div class="text-1">{{ title }}</div>
+            <div class="dialogue-body text-2">{{ body }}</div>
+        </div>`);
+    // --- Get dialogues
     const response = await app.apiGet('/email/dialogues');
-    if (response.ok) {
-        const data = await response.json();
+    if (!response.ok) {
+        app.messageError('Сессия истекла', 'Обновите страницу');
+        return;
+    }
+    dialogues = await response.json();
 
-        dialogues = data;
-        let currentDialogueElem = dialoguePreviewsGroup;
+    // --- Draw dialogues
+    dialogues.forEach((dialogue, htmlId) => {
+        // check dialogue fields
+        if (!dialogue.avatarUrl) {
+            dialogue.avatarUrl = app.defaultAvatarUrl;
+        }
+        dialogue.time = (new ParsedDate(dialogue.time)).getShortDateString(); // convert DateTime format to string
 
-        dialogues.forEach((dialogue, id) => {
-            if (!dialogue.avatarUrl) {
-                dialogue.avatarUrl = app.defaultAvatarUrl;
-            }
-            const dialogueUpdatedDt = new ParsedDate(dialogue.time);
-            const dialogueUpdatedDtStr = dialogueUpdatedDt.getShortDateString();
+        // create dialogue HTML-element
+        const dialogueElem = document.createElement('li');
+        dialogueElem.id = htmlId;
+        dialogueElem.classList.add('listing-button');
+        dialogueElem.innerHTML = dialogueInnerHTMLTemplate({
+            avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body});
+        dialoguePreviewsGroup.appendChild(dialogueElem);
 
-            const dialogueElem = document.createElement('li');
-            dialogueElem.id = id;
-            dialogueElem.classList.add('listing-button');
-            dialogueElem.innerHTML = `
-                <img src="${dialogue.avatarUrl}" alt="avatar" class="middle-avatar">
-                <div class="floatright text-4">${dialogueUpdatedDtStr}</div>
-                <div class="dialogue-text">
-                    <div class="text-1">${dialogue.username}</div>
-                    <div class="dialogue-body text-2">${dialogue.body}</div>
-                </div>
-            `;
-            dialoguePreviewsGroup.appendChild(dialogueElem);
+        // create Event-listener on dialogue element
+        dialogueElem.addEventListener('click', async (event) => {
+            messagesFooter.style.display = 'flex'; // show message input
 
-            dialogueElem.addEventListener('click', async (event) => {
-                messagesFooter.style.display = 'flex';
+            // get dialogue id
+            const currentElem = event.currentTarget;
+            if (currentElem.id === currentDialogue.htmlId) { return; }
+            currentDialogue.htmlId = currentElem.id;
 
-                const currentElem = event.currentTarget;
-                if (currentElem.id === dialogueId) { return; }
-                dialogueId = currentElem.id;
+            currentDialogue.elem.classList.remove('active'); // "deactivate" previous dialogue
+            currentDialogue.elem = currentElem;
+            currentDialogue.elem.classList.add('active'); // "activate" current dialogue
 
-                currentDialogueElem.classList.remove('active');
-                currentDialogueElem = currentElem;
-                currentDialogueElem.classList.add('active');
+            // update dialogue header
+            const dialogue = dialogues[currentDialogue.htmlId]; // get dialogue data
+            dialogueHeader.innerText = currentDialogue.title = dialogue.username;
+            dialogueTime.innerText = currentDialogue.time = dialogue.time;
 
-                const dialogue = dialogues[dialogueId];
-                dialogueHeader.innerText = dialogue.username;
-                dialogueTime.innerText = dialogueUpdatedDtStr;
+            // update currentDialogue data
+            currentDialogue.realId = dialogue.id;
+            currentDialogue.avatar = dialogue.avatarUrl;
+            currentDialogue.username = dialogue.username;
 
-                if (!messages[dialogue.username]) {
-                    const response = await app.apiGet(`/email/emails?with=${dialogue.username}`);
-                    messages[dialogue.username] = await response.json();
+            // get dialogue messages
+            if (!messages[dialogue.username]) {
+                const response = await app.apiGet(`/email/emails?with=${dialogue.username}`);
+                if (!response.ok) {
+                    app.messageError('Сессия истекла', 'или диалога нет. Обновите страницу');
                 }
-
-                messagesField.innerHTML = '<div class="flex-filler"></div>';
-                messages[dialogue.username].forEach((messageBlock, id) => {
-                    const messageBlockElem = document.createElement('div');
-                    messageBlockElem.id = id;
-
-                    let innerHTML = `
-                        <div class="message-block `;
-                    if (messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase()) {
-                        messageBlockElem.classList.add('message-block-full', 'right-block');
-                        messageBlock.avatarUrl = app.storage.avatar;
-                        innerHTML += 'your';
-                    } else {
-                        messageBlockElem.classList.add('message-block-full', 'left-block');
-                        innerHTML += 'not-your';
-                    }
-
-                    const sentDt = new ParsedDate(messageBlock.time);
-                    if (!messageBlock.avatarUrl) {
-                        messageBlock.avatarUrl = app.defaultAvatarUrl;
-                    }
-                    innerHTML += `" >
-                            <img src="${messageBlock.avatarUrl}" alt="avatar" class="middle-avatar">
-                            <div class="floatright text-4 p-m">${sentDt.getDateString()}</div>
-                            <div class="message-block-title">${messageBlock.title}</div>
-                            <div class="message-block-body">
-                        </div>`;
-                    /* messageBlock.body.forEach((message, id) => {
-                        innerHTML += `<div id="${id}" class="message-body">${message}</div>`;
-                        lastMessage.id = id;
-                    }); */
-                    innerHTML += `<div id="${id}" class="message-body">${messageBlock.body}</div>`;
-                    innerHTML += '</div>';
-                    messageBlockElem.innerHTML = innerHTML;
-                    messagesField.appendChild(messageBlockElem);
-
-                    lastMessage.elem = messageBlockElem;
-                    lastMessage.blockId = id;
-                    lastMessage.title = messageBlock.title;
-                    lastMessage.username = messageBlock.sender;
-                });
-            });
-        });
-
-        document.getElementById('message-send-button').addEventListener('click', sendMessage);
-        messageInput.addEventListener('keydown', (event) => {
-            if (event.ctrlKey && event.keyCode === 13) {
-                sendMessage();
+                messages[dialogue.username] = await response.json();
             }
-        });
 
-        document.getElementById('clear-find-button').addEventListener('click', (event) => {
-            findInput.value = '';
+            showDialogue(dialogue.username);
         });
+    });
+
+    // send message event-listener
+    document.getElementById('message-send-button').addEventListener('click', sendMessage);
+    messageInput.addEventListener('keydown', (event) => {
+        if (event.ctrlKey && event.keyCode === 13) {
+            sendMessage();
+        }
+    });
+
+    document.getElementById('clear-find-button').addEventListener('click', (event) => {
+        findInput.value = '';
+    });
+
+
+    /**
+     * draw all dialogue messages
+     */
+    function showDialogue(username) {
+        messagesField.innerHTML = '<div class="flex-filler"></div>'; // fill top
+        messages[username].forEach((messageBlock, id) => {
+            // create block of messages HTML-element
+            const messageBlockElem = document.createElement('div');
+            messageBlockElem.id = id;
+
+
+            // render message on right or left side
+            if (messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase()) {
+                messageBlockElem.classList.add('message-block-full', 'right-block');
+                messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate({
+                    side: 'your', avatar: app.storage.avatar, time: messageBlock.time, title: messageBlock.title, body: messageBlock.body});
+            } else {
+                messageBlockElem.classList.add('message-block-full', 'left-block');
+                messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate({
+                    side: 'not-your', avatar: currentDialogue.avatar, time: messageBlock.time, title: messageBlock.title, body: [messageBlock.body]});
+            }
+            messagesField.appendChild(messageBlockElem);
+
+            // update lastMessage data
+            lastMessage.htmlId = 0;
+            lastMessage.realId = messageBlock.id;
+            lastMessage.elem = messageBlockElem;
+            lastMessage.blockId = id;
+            lastMessage.title = messageBlock.title;
+            lastMessage.username = messageBlock.sender;
+        });
+        messagesField.scrollTop = messagesField.scrollHeight; // scroll to bottom
     }
 
     /**
      * Sends email
      */
-    function sendMessage() {
+    async function sendMessage() {
+        // check inputs
         let currentTitle = themeInput.value;
-        if (currentTitle === '') { currentTitle = 'No theme'; }
+        if (currentTitle === '') { currentTitle = 'Без темы'; }
         const message = messageInput.innerText;
         if (message === '') { return; }
-        app.apiPost('/email', {
-            recipient: dialogues[dialogueId].username,
+
+        // send message request
+        const response = await app.apiPost('/email', {
+            recipient: currentDialogue.username,
             subject: currentTitle,
             body: message
         });
+        if (!response.ok) {
+            app.messageError('Сообщение не отправилось', 'проверьте подключение к интернету');
+            return;
+        }
+
+        // clear input
         messageInput.innerText = '';
-        if (lastMessage.username === app.storage.username && lastMessage.title === currentTitle) {
+
+        // add message HTML-block
+        if (lastMessage.username.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
             lastMessage.id += 1;
             lastMessage.elem.firstElementChild.innerHTML += `<div id="${lastMessage.id}" class="message-body">${message}</div>`;
 
-            messages[dialogues[dialogueId].username][lastMessage.blockId].body.push(message);
+            messages[currentDialogue.username][lastMessage.blockId].body.push(message);
         } else {
-            lastMessage.id = 0;
-            lastMessage.blockId += 1;
-            lastMessage.username = app.storage.username;
-            lastMessage.title = currentTitle;
-
+            // create new messages block HTML-element
             const messageBlockElem = document.createElement('div');
             messageBlockElem.id = lastMessage.blockId;
             messageBlockElem.classList.add('message-block-full', 'right-block');
-
             const datetime = new Date();
             const currentTime = datetime.getHours() + ':' + datetime.getMinutes();
-            messageBlockElem.innerHTML = `
-                <div class="message-block your">
-                    <img src="${app.storage.avatar}" alt="avatar" class="middle-avatar">
-                    <div class="floatright text-4 p-m">${currentTime}</div>
-                    <div class="message-block-title">${currentTitle}</div>
-                    <div class="message-block-body"></div>
-                    <div id="0" class="message-body">${message}</div>
-                </div>`;
+            messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate({
+                side: 'your', avatar: app.storage.avatar, time: currentTime, title: currentTitle, body: [message]});
             messagesField.appendChild(messageBlockElem);
 
+            // update lastMessage data
+            lastMessage.id = 0;
+            lastMessage.blockId += 1;
+            lastMessage.username = `${app.storage.username}@liokor.ru`;
+            lastMessage.title = currentTitle;
             lastMessage.elem = messageBlockElem;
 
-            messages[dialogues[dialogueId].username].push({
-                username: app.storage.username,
+            // add block to messages list
+            messages[currentDialogue.username].push({
+                username: `${app.storage.username}@liokor.ru`,
                 title: currentTitle,
                 time: currentTime,
                 body: [message]
             });
         }
-        messagesField.scrollTop = messagesField.scrollHeight;
+        messagesField.scrollTop = messagesField.scrollHeight; // scroll to bottom
     }
 }
