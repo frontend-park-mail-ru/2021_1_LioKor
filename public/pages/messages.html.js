@@ -8,7 +8,6 @@ const html = `
                 <svg class="svg-button" xmlns="http://www.w3.org/2000/svg" width="40" height="40"><path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z" fill="#F5F5F5"/></svg>
                 <svg class="svg-button" xmlns="http://www.w3.org/2000/svg" width="40" height="40"><g transform="scale(1.8) translate(2, -1)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>
             </div>
-            <!--linkbutton href="/new_message" style="font-size: 40px; color: #818F9A;" class="svg-button">+</linkbutton-->
             <input class="find-input flex-filler" placeholder="Найти диалог" id="find-input">
             <svg class="svg-button transparent" id="clear-find-button" xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z"/></svg>
         </div>
@@ -25,10 +24,10 @@ const html = `
         </div>
 
         <div class="body flex-filler table-rows scrollable" id="messages-field">
-            <div class="flex-filler"></div>
+            <div class="flex-filler center-text"></div>
             <div class="center-text">
-                <svg class="svg-button" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></svg>
-                <div class="message">
+                <svg class="svg-button" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></svg>
+                <div class="text-1">
                     Выберите диалог <br>
                     или создайте новый
                 </div>
@@ -83,6 +82,8 @@ export async function source(element, app) {
     // --- Configs
     const dialoguesByRequest = 15;
     const messagesByRequest = 10;
+    const messagesScrollLoadOffset = 0;
+    const dialoguesScrollLoadOffset = 20;
 
     // --- HTML elements
     const dialoguePreviewsGroup = document.getElementById('dialogues');
@@ -158,12 +159,16 @@ export async function source(element, app) {
     }
 
     // create send message event-listener
-    document.getElementById('message-send-button').addEventListener('click', sendMessage);
+    document.getElementById('message-send-button').addEventListener('click', (event) => {
+        sendMessage();
+        messageInput.dispatchEvent(new Event('input')); // trigger resize event-listener
+    });
+    // create send message event-listener by ctrl+Enter
     messageInput.addEventListener('keydown', async (event) => {
         // check hotkey
         if (event.ctrlKey && event.keyCode === 13) {
             await sendMessage();
-            messageInput.dispatchEvent(new Event('input')); // run input event (resize)
+            messageInput.dispatchEvent(new Event('input')); // trigger resize event-listener
         }
     });
     // create resize message input event-listener
@@ -240,12 +245,19 @@ export async function source(element, app) {
     // create dialogues scroll event-listener to upload new dialogues
     dialoguePreviewsGroup.addEventListener('scroll', async (event) => {
         // if it not scrolled to bottom
-        if (dialoguePreviewsGroup.scrollTop + dialoguePreviewsGroup.clientHeight !== dialoguePreviewsGroup.scrollHeight) {
+        if (dialoguePreviewsGroup.scrollTop + dialoguePreviewsGroup.clientHeight < dialoguePreviewsGroup.scrollHeight - dialoguesScrollLoadOffset) {
             return;
         }
         // Get new dialogues
         const newDialogues = await getDialogues(lastDialogue.realId + 1, dialoguesByRequest);
+        const isEnd = dialogues?.end;
         dialogues = dialogues.concat(newDialogues);
+        if (isEnd === true) {
+            dialogues.end = true;
+        } else {
+            dialoguePreviewsGroup.lastElementChild.remove()
+        }
+
         if (newDialogues.length !== 0)
             lastDialogue.realId = newDialogues[newDialogues.length - 1].id;
         const dialoguesCount = dialoguePreviewsGroup.childElementCount;
@@ -254,24 +266,37 @@ export async function source(element, app) {
         });
 
         if (newDialogues.length < dialoguesByRequest) {
-            // TODO: plug-element
-            addEndDialoguesElem(dialoguePreviewsGroup);
+            if (dialogues?.end !== true) {
+                addEndDialoguesElem(dialoguePreviewsGroup);
+                dialogues.end = true;
+            }
+        } else {
+            addLoadingElem(dialoguePreviewsGroup, false, 'empty-dialogue');
         }
     });
 
     // create messages scroll event-listener to upload new messages
     messagesField.addEventListener('scroll', async (event) => {
         // if it not scrolled to top
-        if (messagesField.scrollTop !== 0) {
+        if (messagesField.scrollTop >  messagesScrollLoadOffset) {
             return;
         }
-        const dialogueMessages = messages[currentDialogue.username];
+        let dialogueMessages = messages[currentDialogue.username];
+        let since = 0;
+        if (dialogueMessages.length !== 0)
+            since = dialogueMessages[dialogueMessages.length - 1].id + 1;
         // Get new messages
-        const newMessages = await getMessages(currentDialogue.username, dialogueMessages[dialogueMessages.length - 1].id + 1, messagesByRequest);
+        const newMessages = await getMessages(currentDialogue.username, since, messagesByRequest);
 
         const heightToBottom = messagesField.clientHeight;
         const messagesCount = dialogueMessages.length;
         messages[currentDialogue.username] = dialogueMessages.concat(newMessages);
+
+        if (dialogueMessages?.end === true) {
+            messages[currentDialogue.username].end = true;
+        } else {
+            messagesField.firstElementChild.remove();
+        }
         newMessages.forEach((message, htmlId) => {
             addMessageToField(message, messagesCount + htmlId);
         });
@@ -280,8 +305,12 @@ export async function source(element, app) {
         messagesField.scrollTop = messagesField.clientHeight - heightToBottom;
 
         if (newMessages.length < messagesByRequest) {
-            // TODO: plug-element
+            if (messagesField.childElementCount !== 0)
+                messagesField.firstElementChild.remove();
             addEndMessagesElem(messagesField);
+            messages[currentDialogue.username].end = true;
+        } else {
+            addLoadingElem(messagesField, true, 'flex-filler');
         }
     });
 
@@ -294,6 +323,10 @@ export async function source(element, app) {
         dialogues.forEach((dialogue, htmlId) => {
             addDialogueToList(dialogue, htmlId);
         });
+        if (dialogues?.end === true)
+            addEndDialoguesElem(dialoguePreviewsGroup);
+        else
+            addLoadingElem(dialoguePreviewsGroup, false, 'empty-dialogue');
     }
 
     /**
@@ -415,7 +448,7 @@ export async function source(element, app) {
      * draw all dialogue messages
      */
     function showDialogue(username) {
-        messagesField.innerHTML = '<div class="flex-filler"></div>'; // fill top
+        messagesField.innerHTML = '';
         // delete all lastMessage properties
         lastMessage.htmlId = undefined;
         lastMessage.realId = undefined;
@@ -424,23 +457,31 @@ export async function source(element, app) {
         lastMessage.username = '';
         lastMessage.title = '';
 
-        // create bottom message block
-        const messageBlock = messages[username][0];
-        const messageBlockElem = addMessageToField(messageBlock, 0);
+        if (messages[username].length !== 0) {
+            // create bottom message block
+            const messageBlock = messages[username][0];
+            const messageBlockElem = addMessageToField(messageBlock, 0);
 
-        // update lastMessage data
-        lastMessage.htmlId = 0;
-        lastMessage.realId = messageBlock.id;
-        lastMessage.elem = messageBlockElem;
-        lastMessage.blockId = 0;
-        lastMessage.title = messageBlock.title;
-        lastMessage.username = messageBlock.sender;
+            // update lastMessage data
+            lastMessage.htmlId = 0;
+            lastMessage.realId = messageBlock.id;
+            lastMessage.elem = messageBlockElem;
+            lastMessage.blockId = 0;
+            lastMessage.title = messageBlock.title;
+            lastMessage.username = messageBlock.sender;
 
-        // create other messages blocks
-        messages[username].slice(1).forEach((messageBlock, htmlId) => {
-            addMessageToField(messageBlock, htmlId);
-        });
+            // create other messages blocks
+            messages[username].slice(1).forEach((messageBlock, htmlId) => {
+                addMessageToField(messageBlock, htmlId);
+            });
+
+            addLoadingElem(messagesField, true, 'flex-filler');
+        } else {
+            messagesField.innerHTML = '';
+            addEndMessagesElem(messagesField);
+        }
         scrollToBottom(messagesField);
+        messagesField.dispatchEvent(new Event('scroll')); // trigger resize event-listener
     }
 
     /**
@@ -550,5 +591,47 @@ export async function source(element, app) {
      */
     function scrollToBottom(element) {
         element.scrollTop = element.scrollHeight;
+    }
+
+
+    /**
+     * Add plug-end of messages element
+     * @param messagesField
+     */
+    function addEndMessagesElem(messagesField) {
+        let elem = document.createElement('div');
+        elem.classList.add('center-text', 'flex-filler');
+        elem.innerHTML = `
+                <svg class="svg-button" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></svg>
+                <div class="text-1">Это начало истории сообщений</div>`;
+        messagesField.insertBefore(elem, messagesField.firstChild);
+    }
+
+    /**
+     * Add plug-end of dialogues element
+     * @param dialoguesListing
+     */
+    function addEndDialoguesElem(dialoguesListing) {
+        const elem = document.createElement('div');
+        elem.classList.add('center-text', 'empty-dialogue');
+        elem.innerHTML = `
+                <svg class="svg-button" pointer-events="none" width="40" height="30" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.6)"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></g></svg>
+                <div class="text-3">Больше диалогов нет</div>`;
+        dialoguesListing.appendChild(elem);
+    }
+
+    /**
+     * Add plug-loading element
+     * @param listingElem
+     * @param isAddToTop
+     */
+    function addLoadingElem(listingElem, isAddToTop, addClasses) {
+        const elem = document.createElement('div');
+        elem.classList.add('center-text', 'load-animation', addClasses);
+        elem.innerHTML = `<div class="dot-pulse"></div>`;
+        if (isAddToTop === true)
+            listingElem.insertBefore(elem, listingElem.firstChild);
+        else
+            listingElem.appendChild(elem);
     }
 }
