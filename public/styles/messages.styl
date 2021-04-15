@@ -237,7 +237,7 @@ width-border = 1px
   min-height: 30px;
   resize: none;
   max-height: 200px;
-  overflow-y: auto;
+  overflow-y: hidden;
   line-height: 17px;
 .message-input::placeholder
   color color3
@@ -282,6 +282,9 @@ width-border = 1px
 
   border-width width-border
   border-style inset
+
+  overflow hidden
+  text-overflow ellipsis
 
   outline 0
 
