@@ -6,6 +6,8 @@ color5 = #585858
 color6 = #333
 color7 = #222
 
+loading-color = #84adff
+
 dialogue-color = #185d25AA
 dialogue-color-hover = #218633
 dialogue-color-active = #6b5c13
@@ -17,6 +19,7 @@ bg-color-1 = #60606099
 bg-color-2 = #393C3FCC
 bg-color-3 = #3b3f4799
 bg-color-4 = #393939
+bg-color-5 = #4b5b4bAA
 
 scroll-thumb-color = #80808080
 scroll-thumb-color-hover = #707070
@@ -161,6 +164,14 @@ width-border = 1px
   //border-top 1px solid color1
   border-bottom 1px solid color1
   background-color dialogue-color-active
+
+.empty-dialogue
+  min-height dialogue-preview-height
+  overflow hidden
+  padding small
+  //border-top 1px solid color3
+  border-bottom 1px solid color3
+  background-color bg-color-5
 
 .dialogue-text
   padding-left (middle-avatar-size + small)
@@ -329,3 +340,107 @@ width-border = 1px
   background-color: var(--scrollbarThumb);
   border-radius: var(--scrollbarBorderRadius);
   border: var(--scrollbarBorder);
+
+
+.load-animation
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 2rem 0;
+  margin: 0 -5%;
+  overflow: hidden;
+  height: 50px;
+/**
+ * ==============================================
+ * Dot Pulse
+ * ==============================================
+ */
+.dot-pulse {
+  position: relative;
+  left: -9999px;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background-color: loading-color;
+  color: loading-color;
+  box-shadow: 9999px 0 0 -4px loading-color;
+  animation: dot-pulse 1.5s infinite linear;
+  animation-delay: .25s;
+}
+
+.dot-pulse::before, .dot-pulse::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  background-color: loading-color;
+  color: loading-color;
+}
+.dot-pulse::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+}
+.dot-pulse::after {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+}
+
+.dot-pulse::before {
+  box-shadow: 9975px 0 0 -3px loading-color;
+  animation: dot-pulse-before 1.5s infinite linear;
+  animation-delay: 0s;
+}
+
+.dot-pulse::after {
+  box-shadow: 10014px 0 0 -5px loading-color;
+  animation: dot-pulse-after 1.5s infinite linear;
+  animation-delay: .5s;
+}
+
+@keyframes dot-pulse-before {
+  0% {
+    box-shadow: 9975px 0 0 -3px loading-color;
+  }
+  30% {
+    box-shadow: 9975px 0 0 1px loading-color;
+  }
+  60%,
+  100% {
+    box-shadow: 9975px 0 0 -3px loading-color;
+  }
+}
+
+@keyframes dot-pulse {
+  0% {
+    box-shadow: 9999px 0 0 -4px loading-color;
+  }
+  30% {
+    box-shadow: 9999px 0 0 3px loading-color;
+  }
+  55%,
+  100% {
+    box-shadow: 9999px 0 0 -4px loading-color;
+  }
+}
+
+@keyframes dot-pulse-after {
+  0% {
+    box-shadow: 10014px 0 0 -5px loading-color;
+  }
+  25% {
+    box-shadow: 10014px 0 0 3px loading-color;
+  }
+  45% {
+    box-shadow: 10014px 0 0 4px loading-color;
+  }
+  60%,
+  100% {
+    box-shadow: 10014px 0 0 -5px loading-color;
+  }
+}
+/**
+* ==================================
+**/
