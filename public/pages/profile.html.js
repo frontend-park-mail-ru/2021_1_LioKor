@@ -1,5 +1,5 @@
 import { readImageAsDataURL } from '../modules/images.js';
-import { validateEmail, validateFullname } from '../modules/validators.js';
+import { validateEmail, validateFullname } from '../modules/validators';
 
 const html = `
 <div class="profile">

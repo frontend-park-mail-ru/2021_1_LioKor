@@ -1,4 +1,4 @@
-import ParsedDate from '../modules/date.js';
+import ParsedDate from '../modules/date';
 
 const html = `
 <div class="table-columns fullheight p-l bg-5">

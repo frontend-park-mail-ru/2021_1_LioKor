@@ -10,6 +10,7 @@
         "dist": "rollup -c"
     },
     "devDependencies": {
+        "@rollup/plugin-typescript": "^8.2.1",
         "concurrently": "^6.0.0",
         "cssnano": "^5.0.1",
         "eslint": "^7.21.0",
@@ -25,7 +26,8 @@
         "rollup-plugin-copy": "^3.4.0",
         "rollup-plugin-styles": "^3.14.1",
         "rollup-plugin-uglify": "^6.0.4",
-        "stylus": "^0.54.8"
+        "stylus": "^0.54.8",
+        "typescript": "^4.2.4"
     },
     "dependencies": {
         "handlebars": "^4.7.7"

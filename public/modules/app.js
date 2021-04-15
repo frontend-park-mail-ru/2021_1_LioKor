@@ -1,6 +1,6 @@
 import * as renderer from './renderer.js';
 
-import { request } from './requests.js';
+import { request } from './requests';
 
 import * as auth from '../pages/auth.html.js';
 import * as user from '../pages/profile.html.js';

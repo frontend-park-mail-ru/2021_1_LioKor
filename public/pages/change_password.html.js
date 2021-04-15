@@ -1,4 +1,4 @@
-import { validatePassword } from '../modules/validators.js';
+import { validatePassword } from '../modules/validators';
 
 const html = `
 <div class="profile">

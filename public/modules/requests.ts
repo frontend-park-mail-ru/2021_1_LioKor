@@ -1,4 +1,4 @@
-import { getCookie } from './cookies.js';
+import { getCookie } from './cookies';
 
 /**
  * Sends http request with JSON data to a specified url
@@ -8,7 +8,7 @@ import { getCookie } from './cookies.js';
  * @param {object} data post/put/delete dict, that will be JSONed
  * @returns {object} returns fetch's response
  */
-export function request(method, url, data = {}) {
+export function request(method: string, url: string, data = {}) {
     let params = {};
     if (!['GET', 'HEAD'].includes(method) && data) {
         params = {

@@ -1,4 +1,4 @@
-import { validatePassword, validateEmail, validateFullname } from '../modules/validators.js';
+import { validatePassword, validateEmail, validateFullname } from '../modules/validators';
 
 const html = `
 <div class="signup">
