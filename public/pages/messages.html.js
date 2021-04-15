@@ -274,7 +274,7 @@ export async function source(element, app) {
             addLoadingElem(dialoguePreviewsGroup, false, 'empty-dialogue');
         }
     });
-    dialoguePreviewsGroup.dispatchEvent(new Event('scroll')); // trigger scroll event-listener
+    // dialoguePreviewsGroup.dispatchEvent(new Event('scroll')); // trigger scroll event-listener
 
     // create messages scroll event-listener to upload new messages
     messagesField.addEventListener('scroll', async (event) => {
