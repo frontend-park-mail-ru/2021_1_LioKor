@@ -18,7 +18,7 @@ export default {
             minimize: true
         }),
         // nodeResolve(),
-        uglify(),
+        // uglify(),
         copy({
             targets: [
                 { src: 'public/images/*', dest: 'build/images' },

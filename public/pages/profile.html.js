@@ -116,6 +116,7 @@ export async function source(element, app) {
             app.messageError(`Ошибка ${response.status}!`, 'Не удалось изменить данные!');
             return;
         }
+        app.storage.avatar = avatarUrl;
         app.messageSuccess('Успех!', 'Данные успешно изменены!');
     });
 
