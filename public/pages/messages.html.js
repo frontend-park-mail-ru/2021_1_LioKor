@@ -100,10 +100,10 @@ export async function source(element, app) {
     const plugStates = {
         loading: 0,
         end: 1,
-        none: 2,
+        none: 2
     };
     // --- Big containers
-    let dialogues = {
+    const dialogues = {
         storage: [],
         plug: plugStates.loading
     };
@@ -155,12 +155,11 @@ export async function source(element, app) {
             <div class="dialogue-body text-2">{{ body }}</div>
         </div>`);
 
-    const getMaxId = (objList) => Math.max(...objList.map(({id}) => id));
+    const getMaxId = (objList) => Math.max(...objList.map(({ id }) => id));
 
     // --- Get dialogues
     dialogues.storage = await getDialogues(0, dialoguesByRequest);
-    if (dialogues.storage.length > 0)
-        lastDialogue.realId = getMaxId(dialogues.storage);
+    if (dialogues.storage.length > 0) { lastDialogue.realId = getMaxId(dialogues.storage); }
 
     // --- Draw dialogues
     redrawDialogues(dialogues.storage);
@@ -268,8 +267,7 @@ export async function source(element, app) {
         const newDialogues = await getDialogues(lastDialogue.realId + 1, dialoguesByRequest);
         dialogues.storage = dialogues.storage.concat(newDialogues);
 
-        if (newDialogues.length !== 0)
-            lastDialogue.realId = newDialogues[newDialogues.length - 1].id;
+        if (newDialogues.length !== 0) { lastDialogue.realId = newDialogues[newDialogues.length - 1].id; }
         const dialoguesCount = dialoguePreviewsGroup.childElementCount;
         newDialogues.forEach((dialogue, htmlId) => {
             addDialogueToList(dialogue, dialoguesCount + htmlId);
@@ -287,13 +285,12 @@ export async function source(element, app) {
     // create messages scroll event-listener to upload new messages
     messagesField.addEventListener('scroll', async (event) => {
         // if it not scrolled to top
-        if (messagesField.scrollTop >  messagesScrollLoadOffset) {
+        if (messagesField.scrollTop > messagesScrollLoadOffset) {
             return;
         }
-        let dialogueMessages = messages[currentDialogue.username];
+        const dialogueMessages = messages[currentDialogue.username];
         let since = 0;
-        if (dialogueMessages.length !== 0)
-            since = dialogueMessages[dialogueMessages.length - 1].id + 1;
+        if (dialogueMessages.length !== 0) { since = dialogueMessages[dialogueMessages.length - 1].id + 1; }
         // Get new messages
         const newMessages = await getMessages(currentDialogue.username, since, messagesByRequest);
 
@@ -329,40 +326,45 @@ export async function source(element, app) {
 
         redrawDialoguesPlug();
     }
+    /**
+     *
+     */
     function redrawDialoguesPlug() {
         const plug = document.getElementById('dialogues-plug');
-        if (plug)
-            plug.remove();
+        if (plug) { plug.remove(); }
         switch (dialogues.plug) {
-            case plugStates.end:
-                addEndDialoguesElem(dialoguePreviewsGroup, 'dialogues-plug');
-                break;
-            case plugStates.loading:
-                addLoadingElem(dialoguePreviewsGroup, false, 'empty-dialogue', 'dialogues-plug');
-                break;
+        case plugStates.end:
+            addEndDialoguesElem(dialoguePreviewsGroup, 'dialogues-plug');
+            break;
+        case plugStates.loading:
+            addLoadingElem(dialoguePreviewsGroup, false, 'empty-dialogue', 'dialogues-plug');
+            break;
         }
     }
+    /**
+     * @param message
+     */
     function redrawMessagesPlug(message) {
         const plug = document.getElementById('messages-plug');
-        if (plug)
-            plug.remove();
+        if (plug) { plug.remove(); }
 
         switch (message.plug) {
-            case plugStates.end:
-                addEndMessagesElem(messagesField, 'messages-plug');
-                break;
-            case plugStates.loading:
-                addLoadingElem(messagesField, true, 'flex-filler', 'messages-plug');
-                break;
-            case plugStates.none:
-                addFlexFillerElem(messagesField, 'messages-plug');
-                break;
+        case plugStates.end:
+            addEndMessagesElem(messagesField, 'messages-plug');
+            break;
+        case plugStates.loading:
+            addLoadingElem(messagesField, true, 'flex-filler', 'messages-plug');
+            break;
+        case plugStates.none:
+            addFlexFillerElem(messagesField, 'messages-plug');
+            break;
         }
     }
     /**
      * Converts DateTime format to string in all dialogues
      *
      * @param {object} dialogues dialogues to replace time in
+     * @param array
      */
     function convertTimesToStr(array) {
         array.forEach((elem) => {
@@ -372,29 +374,31 @@ export async function source(element, app) {
 
     /**
      * Get new dialogues list
+     *
      * @param since
      * @param amount
+     * @param find
      * @returns {Promise<*>}
      */
     async function getDialogues(since, amount, find) {
         let path = `/email/dialogues?last=${since}&amount=${dialoguesByRequest}`;
-        if (find && find !== '')
-            path += '&find=' + find;
+        if (find && find !== '') { path += '&find=' + find; }
         const response = await app.apiGet(path);
         if (!response.ok) {
             app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список диалогов!');
             return [];
         }
         const dialogues = await response.json();
-        if (!dialogues)
-            return [];
+        if (!dialogues) { return []; }
         convertTimesToStr(dialogues);
         return dialogues;
     }
 
     /**
      * Get new messages list
+     *
      * @param from
+     * @param withUsername
      * @param since
      * @param amount
      * @returns {Promise<*>}
@@ -406,8 +410,7 @@ export async function source(element, app) {
             return [];
         }
         const messages = await response.json();
-        if (!messages)
-            return [];
+        if (!messages) { return []; }
         convertTimesToStr(messages);
         messages.forEach((message) => { message.body = [message.body]; }); // - for only one-message blocks
         return messages;
@@ -474,10 +477,7 @@ export async function source(element, app) {
         if (!messages[dialogue.username]) {
             messages[dialogue.username] = await getMessages(dialogue.username, 0, messagesByRequest);
         }
-        if (messages[dialogue.username].length < messagesByRequest)
-            messages[dialogue.username].plug = plugStates.end;
-        else
-            messages[dialogue.username].plug = plugStates.loading;
+        if (messages[dialogue.username].length < messagesByRequest) { messages[dialogue.username].plug = plugStates.end; } else { messages[dialogue.username].plug = plugStates.loading; }
 
         // set dialogue url
         const currentPath = window.location.pathname + `?with=${currentDialogue.username}`;
@@ -526,6 +526,7 @@ export async function source(element, app) {
 
     /**
      * Add message to messages field
+     *
      * @param messageBlock
      * @param htmlId
      * @returns {HTMLDivElement}
@@ -629,19 +630,21 @@ export async function source(element, app) {
 
     /**
      * Scroll scrollable element to top
+     *
      * @param element
      */
     function scrollToBottom(element) {
         element.scrollTop = element.scrollHeight;
     }
 
-
     /**
      * Add plug-end of messages element
+     *
      * @param parent
+     * @param id
      */
     function addEndMessagesElem(parent, id) {
-        let elem = document.createElement('div');
+        const elem = document.createElement('div');
         elem.classList.add('center-text', 'top-filler');
         elem.id = id;
         elem.innerHTML = `
@@ -650,17 +653,22 @@ export async function source(element, app) {
                 `;
         parent.insertBefore(elem, parent.firstChild);
     }
+    /**
+     * @param parent
+     * @param id
+     */
     function addFlexFillerElem(parent, id) {
-        let elem = document.createElement('div');
+        const elem = document.createElement('div');
         elem.classList.add('flex-filler');
-        if (id !== '')
-            elem.id = id;
+        if (id !== '') { elem.id = id; }
         parent.insertBefore(elem, parent.firstChild);
     }
 
     /**
      * Add plug-end of dialogues element
+     *
      * @param parent
+     * @param id
      */
     function addEndDialoguesElem(parent, id) {
         const elem = document.createElement('div');
@@ -674,17 +682,17 @@ export async function source(element, app) {
 
     /**
      * Add plug-loading element
+     *
      * @param listingElem
      * @param isAddToTop
+     * @param addClasses
+     * @param id
      */
     function addLoadingElem(listingElem, isAddToTop, addClasses, id) {
         const elem = document.createElement('div');
         elem.classList.add('center-text', 'load-animation', addClasses);
         elem.id = id;
-        elem.innerHTML = `<div class="dot-pulse"></div>`;
-        if (isAddToTop === true)
-            listingElem.insertBefore(elem, listingElem.firstChild);
-        else
-            listingElem.appendChild(elem);
+        elem.innerHTML = '<div class="dot-pulse"></div>';
+        if (isAddToTop === true) { listingElem.insertBefore(elem, listingElem.firstChild); } else { listingElem.appendChild(elem); }
     }
 }
