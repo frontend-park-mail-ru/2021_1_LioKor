@@ -5,8 +5,9 @@ const html = `
     <div class="table-column dialogues-column table-rows bg-transparent">
         <div class="header tool-dialogue table-columns">
             <div class="middle-avatar add-button" id="add-dialogue-button">
-                <svg class="svg-button" xmlns="http://www.w3.org/2000/svg" width="40" height="40"><path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z" fill="#F5F5F5"/></svg>
-                <svg class="svg-button" xmlns="http://www.w3.org/2000/svg" width="40" height="40"><g transform="scale(1.8) translate(2, -1)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>
+                <!--svg class="svg-button" xmlns="http://www.w3.org/2000/svg" width="40" height="40"><path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z"/></svg-->
+                <svg class="svg-button middle-avatar" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.6) translate(8, 8)"><path d="M50,24H28V2a2,2,0,0,0-4,0V24H2a2,2,0,0,0,0,4H24V50a2,2,0,0,0,4,0V28H50a2,2,0,0,0,0-4Z"/></g></svg>
+                <svg class="svg-button  middle-avatar" xmlns="http://www.w3.org/2000/svg"><g transform="scale(1.8) translate(2, -1)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>
             </div>
             <input class="find-input flex-filler" placeholder="Найти диалог" id="find-input">
             <svg class="svg-button transparent" id="clear-find-button" xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z"/></svg>
@@ -42,19 +43,10 @@ const html = `
                     <input class="theme-input flex-filler" id="theme-input" placeholder="Без темы">
                 </div>
                 <div class="table-row table-columns">
-                    <!--div class="table-rows">
-                        <div class="flex-filler"></div>
-                        <svg class="svg-button" id="change-theme-button" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#99A2AD"><g transform="scale(1.2)"><path d="M9.56 4.1h3.54a.9.9 0 110 1.8H9.6c-1 0-1.69 0-2.23.04-.52.05-.82.13-1.05.24a2.6 2.6 0 00-1.14 1.14c-.11.23-.2.53-.24 1.05-.04.54-.04 1.24-.04 2.23v3.8c0 1 0 1.69.04 2.23.05.52.13.82.24 1.05.25.49.65.89 1.14 1.14.23.11.53.2 1.05.24.54.04 1.24.04 2.23.04h3.8c1 0 1.69 0 2.23-.04.52-.05.82-.13 1.05-.24a2.6 2.6 0 001.14-1.14c.11-.23.2-.53.24-1.05.04-.54.04-1.24.04-2.23v-3.5a.9.9 0 111.8 0v3.54c0 .95 0 1.71-.05 2.33a4.5 4.5 0 01-.43 1.73 4.4 4.4 0 01-1.92 1.92 4.5 4.5 0 01-1.73.43c-.62.05-1.38.05-2.33.05H9.56c-.95 0-1.71 0-2.33-.05a4.5 4.5 0 01-1.73-.43 4.4 4.4 0 01-1.92-1.92 4.51 4.51 0 01-.43-1.73c-.05-.62-.05-1.38-.05-2.33v-3.88c0-.95 0-1.71.05-2.33.05-.64.16-1.2.43-1.73A4.4 4.4 0 015.5 4.58a4.51 4.51 0 011.73-.43c.62-.05 1.38-.05 2.33-.05z"/><path d="M19.12 3.33a1.1 1.1 0 111.56 1.55l-.35.35a.4.4 0 01-.57 0l-.99-.99a.4.4 0 010-.56l.35-.35zm-.6 2.57l-.42-.42c-.44-.44-.72-.42-1.13 0l-5.13 5.12c-1.95 1.96-3.19 3.89-2.76 4.32.43.43 2.37-.8 4.32-2.76l5.12-5.13c.44-.44.42-.72 0-1.13z"/></g></svg>
-                    </div-->
+                    <!--svg class="svg-button top-filler" id="change-theme-button" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#99A2AD"><g transform="scale(1.2)"><path d="M9.56 4.1h3.54a.9.9 0 110 1.8H9.6c-1 0-1.69 0-2.23.04-.52.05-.82.13-1.05.24a2.6 2.6 0 00-1.14 1.14c-.11.23-.2.53-.24 1.05-.04.54-.04 1.24-.04 2.23v3.8c0 1 0 1.69.04 2.23.05.52.13.82.24 1.05.25.49.65.89 1.14 1.14.23.11.53.2 1.05.24.54.04 1.24.04 2.23.04h3.8c1 0 1.69 0 2.23-.04.52-.05.82-.13 1.05-.24a2.6 2.6 0 001.14-1.14c.11-.23.2-.53.24-1.05.04-.54.04-1.24.04-2.23v-3.5a.9.9 0 111.8 0v3.54c0 .95 0 1.71-.05 2.33a4.5 4.5 0 01-.43 1.73 4.4 4.4 0 01-1.92 1.92 4.5 4.5 0 01-1.73.43c-.62.05-1.38.05-2.33.05H9.56c-.95 0-1.71 0-2.33-.05a4.5 4.5 0 01-1.73-.43 4.4 4.4 0 01-1.92-1.92 4.51 4.51 0 01-.43-1.73c-.05-.62-.05-1.38-.05-2.33v-3.88c0-.95 0-1.71.05-2.33.05-.64.16-1.2.43-1.73A4.4 4.4 0 015.5 4.58a4.51 4.51 0 011.73-.43c.62-.05 1.38-.05 2.33-.05z"/><path d="M19.12 3.33a1.1 1.1 0 111.56 1.55l-.35.35a.4.4 0 01-.57 0l-.99-.99a.4.4 0 010-.56l.35-.35zm-.6 2.57l-.42-.42c-.44-.44-.72-.42-1.13 0l-5.13 5.12c-1.95 1.96-3.19 3.89-2.76 4.32.43.43 2.37-.8 4.32-2.76l5.12-5.13c.44-.44.42-.72 0-1.13z"/></g></svg-->
                     <textarea class="message-input text-1 scrollable" rows="1" id="message-input" tabindex="0" placeholder="Ваше сообщение..."></textarea>
-                    <!--div class="table-rows">
-                        <div class="flex-filler"></div>
-                        <svg class="svg-button" id="attach-photo-button" xmlns="http://www.w3.org/2000/svg" height="35" width="35"><g transform="scale(1.3)" fill="none" stroke="#828a99" stroke-width="1.7"><path d="m14.134 3.65c.853 0 1.46.278 1.988.899.017.019.494.61.66.815.228.281.674.536.945.536h.41c2.419 0 3.863 1.563 3.863 4.05v5.85c0 2.241-2 4.2-4.273 4.2h-11.454c-2.267 0-4.223-1.953-4.223-4.2v-5.85c0-2.496 1.4-4.05 3.814-4.05h.409c.271 0 .717-.255.945-.536.166-.204.643-.796.66-.815.528-.621 1.135-.899 1.988-.899z"/><circle cx="12" cy="12" r="3.85"/></g></svg>
-                    </div-->
-                    <div class="table-rows">
-                        <div class="flex-filler"></div>
-                        <svg class="svg-button transparent" id="message-send-button" xmlns="http://www.w3.org/2000/svg" width="35" height="35"><path transform="scale(1.3)" d="m12.1 7.87v-3.47a1.32 1.32 0 0 1 2.17-1l8.94 7.6a1.32 1.32 0 0 1 .15 1.86l-.15.15-8.94 7.6a1.32 1.32 0 0 1 -2.17-1v-3.45c-4.68.11-8 1.09-9.89 2.87a1.15 1.15 0 0 1 -1.9-1.11c1.53-6.36 5.51-9.76 11.79-10.05zm1.8-2.42v4.2h-.9c-5.3 0-8.72 2.25-10.39 6.86 2.45-1.45 5.92-2.16 10.39-2.16h.9v4.2l7.71-6.55z"/></svg>
-                    </div>
+                    <!--svg class="svg-button top-filler" id="attach-photo-button" xmlns="http://www.w3.org/2000/svg" height="35" width="35"><g transform="scale(1.3)" fill="none" stroke="#828a99" stroke-width="1.7"><path d="m14.134 3.65c.853 0 1.46.278 1.988.899.017.019.494.61.66.815.228.281.674.536.945.536h.41c2.419 0 3.863 1.563 3.863 4.05v5.85c0 2.241-2 4.2-4.273 4.2h-11.454c-2.267 0-4.223-1.953-4.223-4.2v-5.85c0-2.496 1.4-4.05 3.814-4.05h.409c.271 0 .717-.255.945-.536.166-.204.643-.796.66-.815.528-.621 1.135-.899 1.988-.899z"/><circle cx="12" cy="12" r="3.85"/></g></svg-->
+                    <svg class="svg-button transparent top-filler" id="message-send-button" xmlns="http://www.w3.org/2000/svg" width="35" height="35"><path transform="scale(1.3)" d="m12.1 7.87v-3.47a1.32 1.32 0 0 1 2.17-1l8.94 7.6a1.32 1.32 0 0 1 .15 1.86l-.15.15-8.94 7.6a1.32 1.32 0 0 1 -2.17-1v-3.45c-4.68.11-8 1.09-9.89 2.87a1.15 1.15 0 0 1 -1.9-1.11c1.53-6.36 5.51-9.76 11.79-10.05zm1.8-2.42v4.2h-.9c-5.3 0-8.72 2.25-10.39 6.86 2.45-1.45 5.92-2.16 10.39-2.16h.9v4.2l7.71-6.55z"/></svg>
                 </div>
             </div>
         </div>
@@ -66,9 +58,9 @@ const html = `
 // <svg class="svg-button" id="change-theme-button" viewBox="711 15 24 24" xmlns="http://www.w3.org/2000/svg" height="30" width="30"><g fill="none" fill-rule="evenodd"><path d="m711 15h24v24h-24z"/><path d="m712 31h7m-7-5h12m-12-5h17m-5 10h10m-5-5v10" stroke="#828a99" stroke-linecap="round" stroke-width="2"/></g></svg>
 /**
  * Renders auth page and "activating" it's js
- *
- * @param {object} element html element to be rendered in
- * @param {object} app object of a main App class
+ * @param element
+ * @param app
+ * @returns {Promise<void>}
  */
 export async function source(element, app) {
     if (!app.storage.username) {
@@ -109,22 +101,17 @@ export async function source(element, app) {
     };
     let foundDialogues = [];
     const messages = {};
-    // --- 1 element containers
+    // --- One-element containers
     const currentDialogue = {
-        htmlId: undefined,
-        realId: undefined,
+        id: undefined,
         elem: dialoguePreviewsGroup,
         title: undefined,
         time: undefined,
         avatar: undefined,
         username: undefined
     };
-    const lastDialogue = {
-        realId: -1
-    };
     const lastMessage = {
-        htmlId: undefined,
-        realId: undefined,
+        id: undefined,
         elem: undefined,
         blockId: undefined,
         username: undefined,
@@ -139,11 +126,9 @@ export async function source(element, app) {
             <img src="{{ avatar }}" alt="avatar" class="middle-avatar">
             <div class="floatright text-4 p-m">{{ time }}</div>
             <div class="message-block-title">{{ title }}</div>
-            <div class="message-block-body">
             {{#each body}}
                 <div id="{{ @index }}" class="message-body">{{ this }}</div>
             {{/each}}
-            </div>
         </div>`);
 
     // eslint-disable-next-line
@@ -158,8 +143,7 @@ export async function source(element, app) {
     const getMaxId = (objList) => Math.max(...objList.map(({ id }) => id));
 
     // --- Get dialogues
-    dialogues.storage = await getDialogues(0, dialoguesByRequest);
-    if (dialogues.storage.length > 0) { lastDialogue.realId = getMaxId(dialogues.storage); }
+    dialogues.storage = await getDialogues(-1, dialoguesByRequest);
 
     // --- Draw dialogues
     redrawDialogues(dialogues.storage);
@@ -174,8 +158,8 @@ export async function source(element, app) {
     }
 
     // create send message event-listener
-    document.getElementById('message-send-button').addEventListener('click', (event) => {
-        sendMessage();
+    document.getElementById('message-send-button').addEventListener('click', async (event) => {
+        await sendMessage();
         messageInput.dispatchEvent(new Event('input')); // trigger resize event-listener
     });
     // create send message event-listener by ctrl+Enter
@@ -250,7 +234,7 @@ export async function source(element, app) {
             messages[username] = [];
             dialogues.storage.push(dialogue);
 
-            addDialogueToList(dialogue, dialogues.storage.length - 1);
+            addDialogueToList(dialogue);
             setActiveDialogue(dialogue.elem);
             redrawDialogues(dialogues.storage);
             scrollToBottom(dialoguePreviewsGroup);
@@ -264,13 +248,11 @@ export async function source(element, app) {
             return;
         }
         // Get new dialogues
-        const newDialogues = await getDialogues(lastDialogue.realId + 1, dialoguesByRequest);
+        const newDialogues = await getDialogues(getMaxId(dialogues.storage), dialoguesByRequest);
         dialogues.storage = dialogues.storage.concat(newDialogues);
 
-        if (newDialogues.length !== 0) { lastDialogue.realId = newDialogues[newDialogues.length - 1].id; }
-        const dialoguesCount = dialoguePreviewsGroup.childElementCount;
-        newDialogues.forEach((dialogue, htmlId) => {
-            addDialogueToList(dialogue, dialoguesCount + htmlId);
+        newDialogues.forEach((dialogue) => {
+            addDialogueToList(dialogue);
         });
 
         if (newDialogues.length < dialoguesByRequest) {
@@ -290,16 +272,15 @@ export async function source(element, app) {
         }
         const dialogueMessages = messages[currentDialogue.username];
         let since = 0;
-        if (dialogueMessages.length !== 0) { since = dialogueMessages[dialogueMessages.length - 1].id + 1; }
+        if (dialogueMessages.length !== 0) { since = dialogueMessages[dialogueMessages.length - 1].id; }
         // Get new messages
         const newMessages = await getMessages(currentDialogue.username, since, messagesByRequest);
 
         const heightToBottom = messagesField.clientHeight;
-        const messagesCount = dialogueMessages.length;
         messages[currentDialogue.username] = dialogueMessages.concat(newMessages);
 
-        newMessages.forEach((message, htmlId) => {
-            addMessageToField(message, messagesCount + htmlId);
+        newMessages.forEach((message) => {
+            addMessageToField(message);
         });
 
         // TODO: Scroll to previous place
@@ -320,14 +301,15 @@ export async function source(element, app) {
      */
     function redrawDialogues(dialogues) {
         dialoguePreviewsGroup.innerHTML = '';
-        dialogues.forEach((dialogue, htmlId) => {
-            addDialogueToList(dialogue, htmlId);
+        dialogues.forEach((dialogue) => {
+            addDialogueToList(dialogue);
         });
 
         redrawDialoguesPlug();
     }
+
     /**
-     *
+     * Delete dialogues plug and set new
      */
     function redrawDialoguesPlug() {
         const plug = document.getElementById('dialogues-plug');
@@ -341,7 +323,10 @@ export async function source(element, app) {
             break;
         }
     }
+
     /**
+     * Delete messages plug and set new
+     *
      * @param message
      */
     function redrawMessagesPlug(message) {
@@ -360,11 +345,11 @@ export async function source(element, app) {
             break;
         }
     }
+
     /**
-     * Converts DateTime format to string in all dialogues
+     * Converts DateTime format to string in all array elements
      *
-     * @param {object} dialogues dialogues to replace time in
-     * @param array
+     * @param array to replace time in
      */
     function convertTimesToStr(array) {
         array.forEach((elem) => {
@@ -397,7 +382,6 @@ export async function source(element, app) {
     /**
      * Get new messages list
      *
-     * @param from
      * @param withUsername
      * @param since
      * @param amount
@@ -420,9 +404,8 @@ export async function source(element, app) {
      * Add dialogue to dialogues listing
      *
      * @param {object} dialogue ?
-     * @param {(string|number)} htmlId html id to set to dialogue element
      */
-    function addDialogueToList(dialogue, htmlId) {
+    function addDialogueToList(dialogue) {
         // check dialogue fields
         if (!dialogue.avatarUrl) {
             dialogue.avatarUrl = app.defaultAvatarUrl;
@@ -430,7 +413,7 @@ export async function source(element, app) {
 
         // create dialogue HTML-element
         dialogue.elem = document.createElement('li');
-        dialogue.elem.id = htmlId;
+        dialogue.elem.id = dialogue.id;
         dialogue.elem.classList.add('listing-button');
         if (dialogue.username === currentDialogue.username) {
             dialogue.elem.classList.add('active');
@@ -454,8 +437,8 @@ export async function source(element, app) {
      * @param currentElem
      */
     async function setActiveDialogue(currentElem) {
-        if (currentElem.id === currentDialogue.htmlId) { return; }
-        currentDialogue.htmlId = currentElem.id;
+        if (currentElem.id === currentDialogue.id) { return; }
+        currentDialogue.id = currentElem.id;
 
         messagesFooter.style.display = 'flex'; // show message input
 
@@ -464,12 +447,12 @@ export async function source(element, app) {
         currentDialogue.elem.classList.add('active'); // "activate" current dialogue
 
         // update messages header
-        const dialogue = dialogues.storage[currentDialogue.htmlId]; // get dialogue data
+        const dialogue = dialogues.storage[currentDialogue.id]; // get dialogue data
         dialogueHeader.innerText = currentDialogue.title = dialogue.username;
         dialogueTime.innerText = currentDialogue.time = dialogue.time;
 
         // update currentDialogue data
-        currentDialogue.realId = dialogue.id;
+        currentDialogue.id = dialogue.id;
         currentDialogue.avatar = dialogue.avatarUrl;
         currentDialogue.username = dialogue.username;
 
@@ -495,8 +478,7 @@ export async function source(element, app) {
     function showDialogue(username) {
         messagesField.innerHTML = '';
         // delete all lastMessage properties
-        lastMessage.htmlId = undefined;
-        lastMessage.realId = undefined;
+        lastMessage.id = undefined;
         lastMessage.elem = undefined;
         lastMessage.blockId = -1;
         lastMessage.username = '';
@@ -505,19 +487,18 @@ export async function source(element, app) {
         if (messages[username].length !== 0) {
             // create bottom message block
             const messageBlock = messages[username][0];
-            const messageBlockElem = addMessageToField(messageBlock, 0);
+            const messageBlockElem = addMessageToField(messageBlock);
 
             // update lastMessage data
-            lastMessage.htmlId = 0;
-            lastMessage.realId = messageBlock.id;
+            lastMessage.id = messageBlock.id;
             lastMessage.elem = messageBlockElem;
             lastMessage.blockId = 0;
             lastMessage.title = messageBlock.title;
             lastMessage.username = messageBlock.sender;
 
             // create other messages blocks
-            messages[username].slice(1).forEach((messageBlock, htmlId) => {
-                addMessageToField(messageBlock, htmlId);
+            messages[username].slice(1).forEach((messageBlock) => {
+                addMessageToField(messageBlock);
             });
         }
         redrawMessagesPlug(messages[username]);
@@ -528,13 +509,12 @@ export async function source(element, app) {
      * Add message to messages field
      *
      * @param messageBlock
-     * @param htmlId
      * @returns {HTMLDivElement}
      */
-    function addMessageToField(messageBlock, htmlId) {
+    function addMessageToField(messageBlock) {
         // create block of messages HTML-element
         const messageBlockElem = document.createElement('div');
-        messageBlockElem.id = htmlId;
+        messageBlockElem.id = messageBlock.id;
 
         // render message on right or left side
         if (messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase()) {
@@ -584,6 +564,9 @@ export async function source(element, app) {
 
         // clear input
         messageInput.value = '';
+
+        // update dialogue preview
+        currentDialogue.elem.lastElementChild.lastElementChild.innerText = message;
 
         // add message HTML-block
         if (lastMessage.username.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
