@@ -96,8 +96,17 @@ export async function source(element, app) {
     const findInput = document.getElementById('find-input');
     const themeInput = document.getElementById('theme-input');
     const messageInput = document.getElementById('message-input');
+    // --- Plug-elements
+    const plugStates = {
+        loading: 0,
+        end: 1,
+        none: 2,
+    };
     // --- Big containers
-    let dialogues = [];
+    let dialogues = {
+        storage: [],
+        plug: plugStates.loading
+    };
     let foundDialogues = [];
     const messages = {};
     // --- 1 element containers
@@ -111,7 +120,7 @@ export async function source(element, app) {
         username: undefined
     };
     const lastDialogue = {
-        realId: 0
+        realId: -1
     };
     const lastMessage = {
         htmlId: undefined,
@@ -121,6 +130,7 @@ export async function source(element, app) {
         username: undefined,
         title: undefined
     };
+
     // --- Handlebars templates
     const messageBlockInnerHTMLTemplate = Handlebars.compile(`
         <div class="message-block {{ side }}">
@@ -143,16 +153,17 @@ export async function source(element, app) {
         </div>`);
 
     // --- Get dialogues
-    dialogues = await getDialogues(0, dialoguesByRequest);
-    lastDialogue.realId = dialogues[dialogues.length - 1].id;
+    dialogues.storage = await getDialogues(0, dialoguesByRequest);
+    if (dialogues.storage.length > 0)
+        lastDialogue.realId = dialogues.storage[dialogues.storage.length - 1].id;
 
     // --- Draw dialogues
-    redrawDialogues(dialogues);
+    redrawDialogues(dialogues.storage);
 
     // if we have get-parameters in url => go to dialogue
     const gottenUsername = window.location.search.substring(6);
     if (gottenUsername !== '') {
-        const dialogue = dialogues.find(item => item.username === gottenUsername);
+        const dialogue = dialogues.storage.find(item => item.username === gottenUsername);
         if (dialogue) {
             await setActiveDialogue(dialogue.elem);
         }
@@ -184,7 +195,7 @@ export async function source(element, app) {
     // create clear-find event-listener
     document.getElementById('clear-find-button').addEventListener('click', (event) => {
         findInput.value = '';
-        redrawDialogues(dialogues);
+        redrawDialogues(dialogues.storage);
     });
 
     // create find keydown event-listener
@@ -193,7 +204,7 @@ export async function source(element, app) {
         if (findInput.value === lastFindInputValue) { return; }
         lastFindInputValue = findInput.value;
         if (lastFindInputValue === '') {
-            redrawDialogues(dialogues);
+            redrawDialogues(dialogues.storage);
             return;
         }
         const response = await app.apiGet('/email/dialogues?find=' + lastFindInputValue);
@@ -220,10 +231,10 @@ export async function source(element, app) {
             const username = findInput.value;
             findInput.value = '';
             if (username === '') { return; }
-            const foundDialogue = dialogues.find(item => item.username === username);
+            const foundDialogue = dialogues.storage.find(item => item.username === username);
             if (foundDialogue) {
                 setActiveDialogue(foundDialogue.elem);
-                redrawDialogues(dialogues);
+                redrawDialogues(dialogues.storage);
                 return;
             }
 
@@ -233,11 +244,11 @@ export async function source(element, app) {
                 time: getCurrentTime()
             };
             messages[username] = [];
-            dialogues.push(dialogue);
+            dialogues.storage.push(dialogue);
 
-            addDialogueToList(dialogue, dialogues.length - 1);
+            addDialogueToList(dialogue, dialogues.storage.length - 1);
             setActiveDialogue(dialogue.elem);
-            redrawDialogues(dialogues);
+            redrawDialogues(dialogues.storage);
             scrollToBottom(dialoguePreviewsGroup);
         }
     });
@@ -250,13 +261,7 @@ export async function source(element, app) {
         }
         // Get new dialogues
         const newDialogues = await getDialogues(lastDialogue.realId + 1, dialoguesByRequest);
-        const isEnd = dialogues?.end;
-        dialogues = dialogues.concat(newDialogues);
-        if (isEnd === true) {
-            dialogues.end = true;
-        } else {
-            dialoguePreviewsGroup.lastElementChild.remove()
-        }
+        dialogues.storage = dialogues.storage.concat(newDialogues);
 
         if (newDialogues.length !== 0)
             lastDialogue.realId = newDialogues[newDialogues.length - 1].id;
@@ -266,14 +271,13 @@ export async function source(element, app) {
         });
 
         if (newDialogues.length < dialoguesByRequest) {
-            if (dialogues?.end !== true) {
-                addEndDialoguesElem(dialoguePreviewsGroup);
-                dialogues.end = true;
-            }
+            dialogues.plug = plugStates.end;
         } else {
-            addLoadingElem(dialoguePreviewsGroup, false, 'empty-dialogue');
+            dialogues.plug = plugStates.loading;
         }
+        redrawDialoguesPlug();
     });
+    dialoguePreviewsGroup.dispatchEvent(new Event('scroll')); // trigger scroll event-listener
 
     // create messages scroll event-listener to upload new messages
     messagesField.addEventListener('scroll', async (event) => {
@@ -292,11 +296,6 @@ export async function source(element, app) {
         const messagesCount = dialogueMessages.length;
         messages[currentDialogue.username] = dialogueMessages.concat(newMessages);
 
-        if (dialogueMessages?.end === true) {
-            messages[currentDialogue.username].end = true;
-        } else {
-            messagesField.firstElementChild.remove();
-        }
         newMessages.forEach((message, htmlId) => {
             addMessageToField(message, messagesCount + htmlId);
         });
@@ -305,13 +304,11 @@ export async function source(element, app) {
         messagesField.scrollTop = messagesField.clientHeight - heightToBottom;
 
         if (newMessages.length < messagesByRequest) {
-            if (messagesField.childElementCount !== 0)
-                messagesField.firstElementChild.remove();
-            addEndMessagesElem(messagesField);
-            messages[currentDialogue.username].end = true;
+            messages[currentDialogue.username].plug = plugStates.end;
         } else {
-            addLoadingElem(messagesField, true, 'flex-filler');
+            messages[currentDialogue.username].plug = plugStates.loading;
         }
+        redrawMessagesPlug(messages[currentDialogue.username]);
     });
 
     /**
@@ -323,12 +320,39 @@ export async function source(element, app) {
         dialogues.forEach((dialogue, htmlId) => {
             addDialogueToList(dialogue, htmlId);
         });
-        if (dialogues?.end === true)
-            addEndDialoguesElem(dialoguePreviewsGroup);
-        else
-            addLoadingElem(dialoguePreviewsGroup, false, 'empty-dialogue');
-    }
 
+        redrawDialoguesPlug();
+    }
+    function redrawDialoguesPlug() {
+        const plug = document.getElementById('dialogues-plug');
+        if (plug)
+            plug.remove();
+        switch (dialogues.plug) {
+            case plugStates.end:
+                addEndDialoguesElem(dialoguePreviewsGroup, 'dialogues-plug');
+                break;
+            case plugStates.loading:
+                addLoadingElem(dialoguePreviewsGroup, false, 'empty-dialogue', 'dialogues-plug');
+                break;
+        }
+    }
+    function redrawMessagesPlug(message) {
+        const plug = document.getElementById('messages-plug');
+        if (plug)
+            plug.remove();
+        console.log("Messages plug: ", message.plug);
+        switch (message.plug) {
+            case plugStates.end:
+                addEndMessagesElem(messagesField, 'messages-plug');
+                break;
+            case plugStates.loading:
+                addLoadingElem(messagesField, true, 'flex-filler', 'messages-plug');
+                break;
+            case plugStates.none:
+                addFlexFillerElem(messagesField, 'messages-plug');
+                break;
+        }
+    }
     /**
      * Converts DateTime format to string
      * @param dialogues
@@ -345,13 +369,18 @@ export async function source(element, app) {
      * @param amount
      * @returns {Promise<*>}
      */
-    async function getDialogues(since, amount) {
-        const response = await app.apiGet(`/email/dialogues?last=${since}&amount=${dialoguesByRequest}`);
+    async function getDialogues(since, amount, find) {
+        let path = `/email/dialogues?last=${since}&amount=${dialoguesByRequest}`;
+        if (find && find !== '')
+            path += '&find=' + find;
+        const response = await app.apiGet(path);
         if (!response.ok) {
             app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список диалогов!');
-            return;
+            return [];
         }
         const dialogues = await response.json();
+        if (!dialogues)
+            return [];
         convertTimesToStr(dialogues);
         return dialogues;
     }
@@ -370,6 +399,8 @@ export async function source(element, app) {
             return [];
         }
         const messages = await response.json();
+        if (!messages)
+            return [];
         convertTimesToStr(messages);
         messages.forEach((message) => { message.body = [message.body]; }); // - for only one-message blocks
         return messages;
@@ -421,8 +452,8 @@ export async function source(element, app) {
         currentDialogue.elem = currentElem;
         currentDialogue.elem.classList.add('active'); // "activate" current dialogue
 
-        // update dialogue header
-        const dialogue = dialogues[currentDialogue.htmlId]; // get dialogue data
+        // update messages header
+        const dialogue = dialogues.storage[currentDialogue.htmlId]; // get dialogue data
         dialogueHeader.innerText = currentDialogue.title = dialogue.username;
         dialogueTime.innerText = currentDialogue.time = dialogue.time;
 
@@ -435,6 +466,10 @@ export async function source(element, app) {
         if (!messages[dialogue.username]) {
             messages[dialogue.username] = await getMessages(dialogue.username, 0, messagesByRequest);
         }
+        if (messages[dialogue.username].length < messagesByRequest)
+            messages[dialogue.username].plug = plugStates.end;
+        else
+            messages[dialogue.username].plug = plugStates.loading;
 
         // set dialogue url
         const currentPath = window.location.pathname + `?with=${currentDialogue.username}`;
@@ -474,14 +509,9 @@ export async function source(element, app) {
             messages[username].slice(1).forEach((messageBlock, htmlId) => {
                 addMessageToField(messageBlock, htmlId);
             });
-
-            addLoadingElem(messagesField, true, 'flex-filler');
-        } else {
-            messagesField.innerHTML = '';
-            addEndMessagesElem(messagesField);
         }
+        redrawMessagesPlug(messages[username]);
         scrollToBottom(messagesField);
-        messagesField.dispatchEvent(new Event('scroll')); // trigger resize event-listener
     }
 
     /**
@@ -596,28 +626,38 @@ export async function source(element, app) {
 
     /**
      * Add plug-end of messages element
-     * @param messagesField
+     * @param parent
      */
-    function addEndMessagesElem(messagesField) {
+    function addEndMessagesElem(parent, id) {
         let elem = document.createElement('div');
-        elem.classList.add('center-text', 'flex-filler');
+        elem.classList.add('center-text', 'top-filler');
+        elem.id = id;
         elem.innerHTML = `
-                <svg class="svg-button" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></svg>
-                <div class="text-1">Это начало истории сообщений</div>`;
-        messagesField.insertBefore(elem, messagesField.firstChild);
+                    <svg class="svg-button centered" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></svg>
+                    <div class="text-1">Это начало истории сообщений</div>
+                `;
+        parent.insertBefore(elem, parent.firstChild);
+    }
+    function addFlexFillerElem(parent, id) {
+        let elem = document.createElement('div');
+        elem.classList.add('flex-filler');
+        if (id !== '')
+            elem.id = id;
+        parent.insertBefore(elem, parent.firstChild);
     }
 
     /**
      * Add plug-end of dialogues element
-     * @param dialoguesListing
+     * @param parent
      */
-    function addEndDialoguesElem(dialoguesListing) {
+    function addEndDialoguesElem(parent, id) {
         const elem = document.createElement('div');
         elem.classList.add('center-text', 'empty-dialogue');
+        elem.id = id;
         elem.innerHTML = `
                 <svg class="svg-button" pointer-events="none" width="40" height="30" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.6)"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></g></svg>
                 <div class="text-3">Больше диалогов нет</div>`;
-        dialoguesListing.appendChild(elem);
+        parent.appendChild(elem);
     }
 
     /**
@@ -625,9 +665,10 @@ export async function source(element, app) {
      * @param listingElem
      * @param isAddToTop
      */
-    function addLoadingElem(listingElem, isAddToTop, addClasses) {
+    function addLoadingElem(listingElem, isAddToTop, addClasses, id) {
         const elem = document.createElement('div');
         elem.classList.add('center-text', 'load-animation', addClasses);
+        elem.id = id;
         elem.innerHTML = `<div class="dot-pulse"></div>`;
         if (isAddToTop === true)
             listingElem.insertBefore(elem, listingElem.firstChild);
