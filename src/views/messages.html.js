@@ -4,11 +4,8 @@ const html = `
 <div class="table-columns fullheight p-l bg-5">
     <div class="table-column dialogues-column table-rows bg-transparent">
         <div class="header tool-dialogue table-columns">
-            <div class="middle-avatar add-button" id="add-dialogue-button">
-                <!--svg class="svg-button" xmlns="http://www.w3.org/2000/svg" width="40" height="40"><path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z"/></svg-->
-                <svg class="svg-button middle-avatar" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.6) translate(8, 8)"><path d="M50,24H28V2a2,2,0,0,0-4,0V24H2a2,2,0,0,0,0,4H24V50a2,2,0,0,0,4,0V28H50a2,2,0,0,0,0-4Z"/></g></svg>
-                <svg class="svg-button  middle-avatar" xmlns="http://www.w3.org/2000/svg"><g transform="scale(1.8) translate(2, -1)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>
-            </div>
+            <!--svg class="svg-button" xmlns="http://www.w3.org/2000/svg" width="40" height="40"><path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z"/></svg-->
+            <svg class="svg-button middle-avatar" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(1.8) translate(2, -1)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>
             <input class="find-input flex-filler" placeholder="Найти диалог" id="find-input">
             <svg class="svg-button transparent" id="clear-find-button" xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z"/></svg>
         </div>
@@ -104,20 +101,15 @@ export async function source(element, app) {
     // --- One-element containers
     const currentDialogue = {
         id: undefined,
+        idInDialogues: undefined,
         elem: dialoguePreviewsGroup,
         title: undefined,
         time: undefined,
         avatar: undefined,
         username: undefined
     };
-    const lastMessage = {
-        id: undefined,
-        elem: undefined,
-        blockId: undefined,
-        username: undefined,
-        title: undefined
-    };
-
+    let createdDialogues = 0;
+    let createdMessages = 0;
     // --- Handlebars templates
     // because handlebars is not imported but added as script:
     // eslint-disable-next-line
@@ -140,7 +132,7 @@ export async function source(element, app) {
             <div class="dialogue-body text-2">{{ body }}</div>
         </div>`);
 
-    const getMaxId = (objList) => Math.max(...objList.map(({ id }) => id));
+    const getMaxId = (objList) => Math.max(...Object.keys(objList));
 
     // --- Get dialogues
     dialogues.storage = await getDialogues(-1, dialoguesByRequest);
@@ -177,25 +169,28 @@ export async function source(element, app) {
         messageInput.style.height = messageInput.scrollHeight + 2 + 'px'; // 2 = border-width * 2
     });
 
-    // --- Find messages
-    let isCreateDialogue = false;
-    const addButton = document.getElementById('add-dialogue-button');
+    // --- Find dialogues
+    let lastDialoguesPlug = dialogues.plug;
     // create clear-find event-listener
     document.getElementById('clear-find-button').addEventListener('click', (event) => {
+        dialogues.plug = lastDialoguesPlug;
         findInput.value = '';
         redrawDialogues(dialogues.storage);
     });
 
-    // create find keydown event-listener
-    let lastFindInputValue = '';
+    // create find input event-listener
     findInput.addEventListener('input', async (event) => {
-        if (findInput.value === lastFindInputValue) { return; }
-        lastFindInputValue = findInput.value;
-        if (lastFindInputValue === '') {
+        if (dialogues.plug !== plugStates.none) {
+            lastDialoguesPlug = dialogues.plug;
+            dialogues.plug = plugStates.none;
+        }
+        const findText = findInput.value;
+        if (findText === '') {
+            dialogues.plug = lastDialoguesPlug;
             redrawDialogues(dialogues.storage);
             return;
         }
-        const response = await app.apiGet('/email/dialogues?find=' + lastFindInputValue);
+        const response = await app.apiGet('/email/dialogues?find=' + findText);
         if (!response.ok) {
             app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список писем!');
             return;
@@ -203,42 +198,25 @@ export async function source(element, app) {
         foundDialogues = await response.json();
         convertTimesToStr(foundDialogues);
         redrawDialogues(foundDialogues);
+
+        const foundDialogue = dialogues.storage.findIndex(item => item.username === findText);
+        if (foundDialogue === -1) {
+            addCreateNewDialogueElem();
+        }
     });
 
-    // create add-dialog event-listeners
-    addButton.addEventListener('click', (event) => {
-        if (!isCreateDialogue) {
-            isCreateDialogue = true;
-            findInput.focus();
-            addButton.classList.add('switched');
-            findInput.placeholder = 'Введите адрес получателя';
-        } else {
-            isCreateDialogue = false;
-            addButton.classList.remove('switched');
-            findInput.placeholder = 'Поиск диалога';
-            const username = findInput.value;
+    // create 'enter' in input event-listener
+    findInput.addEventListener('keydown', async (event) => {
+        if (event.keyCode === 13) { // if key Enter
+            await addOrSetDialogue(findInput.value);
             findInput.value = '';
-            if (username === '') { return; }
-            const foundDialogue = dialogues.storage.find(item => item.username === username);
-            if (foundDialogue) {
-                setActiveDialogue(foundDialogue.elem);
-                redrawDialogues(dialogues.storage);
-                return;
-            }
-
-            const dialogue = {
-                username: username,
-                body: '',
-                time: getCurrentTime()
-            };
-            messages[username] = [];
-            dialogues.storage.push(dialogue);
-
-            addDialogueToList(dialogue);
-            setActiveDialogue(dialogue.elem);
-            redrawDialogues(dialogues.storage);
-            scrollToBottom(dialoguePreviewsGroup);
         }
+    });
+
+    // create add-dialogue event-listener
+    document.getElementById('find-dialogue-button').addEventListener('click', (event) => {
+        findInput.focus();
+        findInput.dispatchEvent(new Event('input')); // trigger find event-listener
     });
 
     // create dialogues scroll event-listener to upload new dialogues
@@ -249,8 +227,8 @@ export async function source(element, app) {
         }
         // Get new dialogues
         const newDialogues = await getDialogues(getMaxId(dialogues.storage), dialoguesByRequest);
-        dialogues.storage = dialogues.storage.concat(newDialogues);
 
+        dialogues.storage = dialogues.storage.concat(newDialogues);
         newDialogues.forEach((dialogue) => {
             addDialogueToList(dialogue);
         });
@@ -366,7 +344,7 @@ export async function source(element, app) {
      * @returns {Promise<*>}
      */
     async function getDialogues(since, amount, find) {
-        let path = `/email/dialogues?last=${since}&amount=${dialoguesByRequest}`;
+        let path = `/email/dialogues?last=${since}&amount=${amount}`;
         if (find && find !== '') { path += '&find=' + find; }
         const response = await app.apiGet(path);
         if (!response.ok) {
@@ -388,7 +366,7 @@ export async function source(element, app) {
      * @returns {Promise<*>}
      */
     async function getMessages(withUsername, since, amount) {
-        const response = await app.apiGet(`/email/emails?with=${withUsername}&last=${since}&amount=${dialoguesByRequest}`);
+        const response = await app.apiGet(`/email/emails?with=${withUsername}&last=${since}&amount=${amount}`);
         if (!response.ok) {
             // app.messageError('Сессия истекла', 'или диалога нет. Обновите страницу'); Просто открыт новый диалог
             return [];
@@ -401,7 +379,7 @@ export async function source(element, app) {
     }
 
     /**
-     * Add dialogue to dialogues listing
+     * Add dialogue on bottom of dialogues listing
      *
      * @param {object} dialogue ?
      */
@@ -413,7 +391,7 @@ export async function source(element, app) {
 
         // create dialogue HTML-element
         dialogue.elem = document.createElement('li');
-        dialogue.elem.id = dialogue.id;
+        dialogue.elem.id = 'dialogue-' + dialogue.id;
         dialogue.elem.classList.add('listing-button');
         if (dialogue.username === currentDialogue.username) {
             dialogue.elem.classList.add('active');
@@ -432,13 +410,31 @@ export async function source(element, app) {
     }
 
     /**
+     * Add create new dialogue element on top of dialogues listing
+     */
+    function addCreateNewDialogueElem() {
+        // create dialogue HTML-element
+        const elem = document.createElement('li');
+        elem.id = 'new-dialogue-button';
+        elem.classList.add('listing-button', 'center-text', 'p-xs');
+        elem.innerHTML = `<svg class="plus-button" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(3) translate(1, -2)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>`;
+        dialoguePreviewsGroup.insertBefore(elem, dialoguePreviewsGroup.firstChild);
+
+        // create Event-listener on element
+        elem.addEventListener('click', async (event) => {
+            await addOrSetDialogue(findInput.value);
+            findInput.value = '';
+        });
+    }
+
+    /**
      * Set dialog active and draw it
      *
      * @param currentElem
      */
     async function setActiveDialogue(currentElem) {
-        if (currentElem.id === currentDialogue.id) { return; }
-        currentDialogue.id = currentElem.id;
+        if (currentElem.id === 'dialogue-' + currentDialogue.id) { return; }
+        currentDialogue.id = currentElem.id.substr(9) // length if 'dialogue-' ;
 
         messagesFooter.style.display = 'flex'; // show message input
 
@@ -447,7 +443,7 @@ export async function source(element, app) {
         currentDialogue.elem.classList.add('active'); // "activate" current dialogue
 
         // update messages header
-        const dialogue = dialogues.storage[currentDialogue.id]; // get dialogue data
+        const dialogue = dialogues.storage.find((item) => item.id === Number(currentDialogue.id)); // get dialogue data
         dialogueHeader.innerText = currentDialogue.title = dialogue.username;
         dialogueTime.innerText = currentDialogue.time = dialogue.time;
 
@@ -458,7 +454,7 @@ export async function source(element, app) {
 
         // get dialogue messages
         if (!messages[dialogue.username]) {
-            messages[dialogue.username] = await getMessages(dialogue.username, 0, messagesByRequest);
+            messages[dialogue.username] = await getMessages(dialogue.username, -1, messagesByRequest);
         }
         if (messages[dialogue.username].length < messagesByRequest) { messages[dialogue.username].plug = plugStates.end; } else { messages[dialogue.username].plug = plugStates.loading; }
 
@@ -470,6 +466,30 @@ export async function source(element, app) {
         showDialogue(dialogue.username);
     }
 
+    async function addOrSetDialogue(username) {
+        if (username === '') { return; }
+        const foundDialogue = dialogues.storage.find(item => item.username === username);
+        if (foundDialogue) {
+            await setActiveDialogue(foundDialogue.elem);
+            redrawDialogues(dialogues.storage);
+            return;
+        }
+
+        createdDialogues += 1;
+        const dialogue = {
+            id: -createdDialogues,
+            username: username,
+            body: '',
+            time: getCurrentTime()
+        };
+        messages[username] = [];
+        dialogues.storage.unshift(dialogue);
+
+        addDialogueToList(dialogue);
+        await setActiveDialogue(dialogue.elem);
+        redrawDialogues(dialogues.storage);
+        scrollToTop(dialoguePreviewsGroup);
+    }
     /**
      * draw all dialogue messages
      *
@@ -477,24 +497,11 @@ export async function source(element, app) {
      */
     function showDialogue(username) {
         messagesField.innerHTML = '';
-        // delete all lastMessage properties
-        lastMessage.id = undefined;
-        lastMessage.elem = undefined;
-        lastMessage.blockId = -1;
-        lastMessage.username = '';
-        lastMessage.title = '';
 
         if (messages[username].length !== 0) {
             // create bottom message block
             const messageBlock = messages[username][0];
             const messageBlockElem = addMessageToField(messageBlock);
-
-            // update lastMessage data
-            lastMessage.id = messageBlock.id;
-            lastMessage.elem = messageBlockElem;
-            lastMessage.blockId = 0;
-            lastMessage.title = messageBlock.title;
-            lastMessage.username = messageBlock.sender;
 
             // create other messages blocks
             messages[username].slice(1).forEach((messageBlock) => {
@@ -514,7 +521,7 @@ export async function source(element, app) {
     function addMessageToField(messageBlock) {
         // create block of messages HTML-element
         const messageBlockElem = document.createElement('div');
-        messageBlockElem.id = messageBlock.id;
+        messageBlockElem.id = 'message-' + messageBlock.id;
 
         // render message on right or left side
         if (messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase()) {
@@ -569,27 +576,21 @@ export async function source(element, app) {
         currentDialogue.elem.lastElementChild.lastElementChild.innerText = message;
 
         // add message HTML-block
-        if (lastMessage.username.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
-            lastMessage.id += 1;
-            lastMessage.elem.firstElementChild.innerHTML += `<div id="${lastMessage.id}" class="message-body">${message}</div>`;
+        const lastMessage = messages[currentDialogue.username][0];
+        if (lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
+            document.getElementById('message-' + lastMessage.id).firstElementChild.innerHTML += `<div id="${lastMessage.id}" class="message-body">${message}</div>`;
 
-            messages[currentDialogue.username][lastMessage.blockId].body.push(message);
+            messages[currentDialogue.username][0].body.push(message);
         } else {
             // create new messages block HTML-element
             const messageBlockElem = document.createElement('div');
-            messageBlockElem.id = lastMessage.blockId;
+            createdMessages += 1;
+            messageBlockElem.id = 'message-' + -createdMessages;
             messageBlockElem.classList.add('message-block-full', 'right-block');
             const currentTime = getCurrentTime();
             messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate(
                 { side: 'your', avatar: app.storage.avatar, time: currentTime, title: currentTitle, body: [message] });
             messagesField.appendChild(messageBlockElem);
-
-            // update lastMessage data
-            lastMessage.id = 0;
-            lastMessage.blockId += 1;
-            lastMessage.username = `${app.storage.username}@liokor.ru`;
-            lastMessage.title = currentTitle;
-            lastMessage.elem = messageBlockElem;
 
             // add block to messages list
             messages[currentDialogue.username].unshift({
@@ -612,12 +613,21 @@ export async function source(element, app) {
     }
 
     /**
-     * Scroll scrollable element to top
+     * Scroll scrollable element to bottom
      *
      * @param element
      */
     function scrollToBottom(element) {
         element.scrollTop = element.scrollHeight;
+    }
+
+    /**
+     * Scroll scrollable element to top
+     *
+     * @param element
+     */
+    function scrollToTop(element) {
+        element.scrollTop = 0;
     }
 
     /**

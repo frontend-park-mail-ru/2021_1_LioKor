@@ -87,11 +87,6 @@ width-border = 1px
 .floatleft
   float left
 
-.p-m
-  padding middle
-.p-l
-  padding large
-
 .center-text
   text-align center
 .centered
@@ -153,6 +148,7 @@ width-border = 1px
 // --- Listing button:
 .listing-button
   min-height dialogue-preview-height
+  max-height dialogue-preview-height
   overflow hidden
   padding middle
   //border-top 1px solid color3
@@ -275,7 +271,20 @@ width-border = 1px
   opacity 1
   transform scale(1.1)
 
+.plus-button
+  cursor pointer
+  overflow hidden
+  width 60px
+  height 60px
+  opacity 0.8
+  transition all 0.1s ease
+  fill #F5F5F5
+  fill-rule evenodd
+  clip-rule evenodd
+.plus-button:hover
+  opacity 1
 
+/*
 .add-button
   margin-right small
   overflow hidden
@@ -286,7 +295,7 @@ width-border = 1px
   transition all 0.3s ease-out
 .add-button.switched > *
   transform translateY(-40px)
-
+*/
 
 .find-input
   padding middle
@@ -345,6 +354,12 @@ width-border = 1px
   border-radius: var(--scrollbarBorderRadius);
   border: var(--scrollbarBorder);
 
+.p-xs
+  padding extra-small
+.p-m
+  padding middle
+.p-l
+  padding large
 
 .load-animation
   display: flex;

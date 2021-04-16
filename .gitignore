@@ -12,5 +12,3 @@ public/api/swagger/*
 public/styles/*.css
 
 build
-package.json
-package-lock.json
