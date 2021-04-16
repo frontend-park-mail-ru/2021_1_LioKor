@@ -6,11 +6,13 @@
     "private": true,
     "scripts": {
         "dev": "concurrently \"node ./devServer/server.js\" \"rollup -c -w\" --kill-others",
-        "lint": "eslint public/modules/*.js public/index.js server/server.js public/pages/*.js",
+        "lint": "eslint src/ --ext .js,.ts",
         "dist": "rollup -c"
     },
     "devDependencies": {
         "@rollup/plugin-typescript": "^8.2.1",
+        "@typescript-eslint/eslint-plugin": "^4.22.0",
+        "@typescript-eslint/parser": "^4.22.0",
         "concurrently": "^6.0.0",
         "cssnano": "^5.0.1",
         "eslint": "^7.21.0",

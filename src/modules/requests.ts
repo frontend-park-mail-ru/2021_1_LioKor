@@ -6,9 +6,9 @@ import { getCookie } from './cookies';
  * @param {string} method method to use: GET/POST/PUT/DELETE
  * @param {string} url url to which the request will be sent
  * @param {object} data post/put/delete dict, that will be JSONed
- * @returns {object} returns fetch's response
+ * @returns {Promise<object>} returns fetch's response
  */
-export function request(method: string, url: string, data = {}) {
+export function request(method: string, url: string, data = {}): Promise<Record<symbol, unknown>> {
     let params = {};
     if (!['GET', 'HEAD'].includes(method) && data) {
         params = {
