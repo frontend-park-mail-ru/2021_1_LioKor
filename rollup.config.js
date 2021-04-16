@@ -1,6 +1,6 @@
 import styles from "rollup-plugin-styles";
 import copy from 'rollup-plugin-copy'
-import { uglify } from "rollup-plugin-uglify";
+// import { uglify } from "rollup-plugin-uglify";
 import typescript from '@rollup/plugin-typescript';
 // import { nodeResolve } from '@rollup/plugin-node-resolve';
 

@@ -2,11 +2,11 @@ import * as renderer from './renderer.js';
 
 import { request } from './requests';
 
-import * as auth from '../pages/auth.html.js';
-import * as user from '../pages/profile.html.js';
-import * as signup from '../pages/signup.html.js';
-import * as changePassword from '../pages/change_password.html.js';
-import * as messages from '../pages/messages.html.js';
+import * as auth from '../views/auth.html.js';
+import * as user from '../views/profile.html.js';
+import * as signup from '../views/signup.html.js';
+import * as changePassword from '../views/change_password.html.js';
+import * as messages from '../views/messages.html.js';
 
 export default class App {
     constructor(name, apiUrl, elId, messagesElId = null) {
