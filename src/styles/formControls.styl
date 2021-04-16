@@ -1,0 +1,104 @@
+@require "constants.styl"
+
+formBgColor = #404346
+
+form-button-padding = 10px
+form-padding = 10px
+form-margin = 125px
+form-width = 460px
+
+linkButton
+    text-decoration none
+    color clPrimary
+    transition all 0.3s ease
+    cursor pointer
+linkButton:hover
+    color clHighlight
+
+.btn
+    -webkit-appearance none
+    display block
+    text-align center
+    background-color clPrimary
+    color textColor1
+    border-width 0
+    font-size 1.1rem
+    padding form-button-padding form-button-padding*2
+    border-radius 3px
+    cursor pointer
+    transition all 0.3s ease
+.btn.btn-danger
+    background-color clError
+.btn:hover
+    background-color clHighlight
+linkButton.btn:hover
+    color textColor1
+
+textarea.form-control
+    resize none
+    width 100%
+    font-family Arial
+.form-control
+    padding form-button-padding
+    font-size 1rem
+    color textColor1
+    background-color #393C3F
+    border 1px solid #080808
+    border-radius 3px
+    transition border 0.3s ease
+.form-control:focus
+    outline 0
+    border 1px solid clHighlight
+.form-control::placeholder
+    color textColor3
+.form-control.error,
+.error .form-control
+    border 1px solid clError !important
+
+.standalone-form
+    box-shadow 0 0 3px #101010
+    padding form-padding*2 form-padding*3
+
+    max-width form-width
+    margin form-margin auto
+    border-radius 7px
+    overflow hidden
+
+    background-color formBgColor
+
+    .title
+        text-align center
+        color textColor1
+        .primary
+            font-size 1.5rem
+            font-weight bold
+        .secondary
+            margin-top 10px
+            font-size 0.95rem
+            color textColor2
+    .form
+        padding-top 5px
+
+        .form-group
+            margin 20px 0
+            label
+                color textColor2
+                display block
+                font-size 0.75rem
+                font-weight bold
+                margin-bottom 9px
+                .error-text
+                    font-style italic
+                .error-text:not(:empty):before
+                    content: " - "
+
+            input,
+            button
+                width 100%
+            .muted
+                margin-top 8px
+                font-size 0.9rem
+                color textColor3
+        .form-group.error
+            label
+                color clError

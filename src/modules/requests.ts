@@ -8,7 +8,7 @@ import { getCookie } from './cookies';
  * @param {object} data post/put/delete dict, that will be JSONed
  * @returns {Promise<object>} returns fetch's response
  */
-export function request(method: string, url: string, data = {}): Promise<Record<symbol, unknown>> {
+export async function request(method: string, url: string, data = {}): Promise<Record<symbol, unknown>> {
     let params = {};
     if (!['GET', 'HEAD'].includes(method) && data) {
         params = {

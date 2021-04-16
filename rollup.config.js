@@ -1,5 +1,5 @@
 import typescript from '@rollup/plugin-typescript';
-import eslint from '@rollup/plugin-eslint';
+// import eslint from '@rollup/plugin-eslint';
 
 import styles from "rollup-plugin-styles";
 import copy from 'rollup-plugin-copy'

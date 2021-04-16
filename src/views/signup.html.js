@@ -129,7 +129,7 @@ export function source(element, app) {
             break;
         case 400:
             usernameGroup.classList.add('error');
-            usernameErrorText.innerHTML = 'Логин некорректен';
+            usernameErrorText.innerHTML = 'Некорректный логин';
             break;
         case 409:
             usernameGroup.classList.add('error');

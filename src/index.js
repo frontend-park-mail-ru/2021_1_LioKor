@@ -1,4 +1,6 @@
-import './styles/global.styl';
+import './styles/page.styl';
+import './styles/formControls.styl';
+import './styles/popupMessages.styl';
 import './styles/profile.styl';
 import './styles/messages.styl';
 
