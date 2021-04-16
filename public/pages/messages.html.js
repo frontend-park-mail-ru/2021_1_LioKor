@@ -155,10 +155,12 @@ export async function source(element, app) {
             <div class="dialogue-body text-2">{{ body }}</div>
         </div>`);
 
+    const getMaxId = (objList) => Math.max(...objList.map(({id}) => id));
+
     // --- Get dialogues
     dialogues.storage = await getDialogues(0, dialoguesByRequest);
     if (dialogues.storage.length > 0)
-        lastDialogue.realId = dialogues.storage[dialogues.storage.length - 1].id;
+        lastDialogue.realId = getMaxId(dialogues.storage);
 
     // --- Draw dialogues
     redrawDialogues(dialogues.storage);
@@ -344,7 +346,7 @@ export async function source(element, app) {
         const plug = document.getElementById('messages-plug');
         if (plug)
             plug.remove();
-        console.log("Messages plug: ", message.plug);
+
         switch (message.plug) {
             case plugStates.end:
                 addEndMessagesElem(messagesField, 'messages-plug');

@@ -134,7 +134,6 @@ export default class App {
     }
 
     async goto(path) {
-        console.log(path);
         history.pushState({ url: path }, '', path);
 
         let handler = null;
