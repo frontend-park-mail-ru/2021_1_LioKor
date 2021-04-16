@@ -5,7 +5,7 @@ import typescript from '@rollup/plugin-typescript';
 // import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 export default {
-    input: 'public/index.js',
+    input: 'src/index.js',
     output: {
         file: 'build/bundle.min.js',
         format: 'cjs',
@@ -21,8 +21,8 @@ export default {
         // uglify(),
         copy({
             targets: [
-                { src: 'public/images/*', dest: 'build/images' },
-                { src: 'public/index.html', dest: 'build/' },
+                { src: 'src/images/*', dest: 'build/images' },
+                { src: 'src/index.html', dest: 'build/' },
                 { src: 'node_modules/handlebars/dist/handlebars.min.js', dest: 'build/' }
             ]
         })
