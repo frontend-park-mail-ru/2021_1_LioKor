@@ -92,7 +92,7 @@ input.form-control.error[type="password"],
 .error input
     border 1px solid clError !important
 
-div.standalone-form
+.standalone-form
     box-shadow 0 0 3px #101010
     padding form-padding*2 form-padding*3
 
@@ -103,42 +103,43 @@ div.standalone-form
 
     background-color formBgColor
 
-    div.title
+    .title
         text-align center
         color textColor1
-        div.primary
+        .primary
             font-size 1.5rem
             font-weight bold
-        div.secondary
+        .secondary
             margin-top 10px
             font-size 0.95rem
             color textColor2
-    div.form
-        padding-top 5px
 
-        div.form-group
-            margin 20px 0
-            label
-                color textColor2
-                display block
-                font-size 0.75rem
-                font-weight bold
-                margin-bottom 9px
-                span.error-text
-                    font-style italic
-                span.error-text:not(:empty):before
-                    content: " - "
+.form
+    padding-top 5px
 
-            input,
-            button
-                width 100%
-            div.muted
-                margin-top 8px
-                font-size 0.9rem
-                color textColor3
-        div.form-group.error
-            label
-                color clError
+    .form-group
+        margin 20px 0
+        label
+            color textColor2
+            display block
+            font-size 0.75rem
+            font-weight bold
+            margin-bottom 9px
+            span.error-text
+                font-style italic
+            span.error-text:not(:empty):before
+                content: " - "
+
+        input,
+        button
+            width 100%
+        .muted
+            margin-top 8px
+            font-size 0.9rem
+            color textColor3
+    .form-group.error
+        label
+            color clError
 
 html
     height 100%
@@ -150,14 +151,14 @@ body
     background-image url(../images/background.jpg)
     background-repeat repeat-y
 
-    div.main
-        div.popup-messages
+    .main
+        .popup-messages
             position fixed
             top logo-padding
             right logo-padding
             width 225px
             z-index 1000
-            div.popup-message
+            .popup-message
                 margin-bottom logo-padding
                 padding 10px
                 border-radius 2px
@@ -165,9 +166,9 @@ body
                 border-left 5px solid #218838
                 color textColor1
                 transition opacity 0.5s ease
-                div.title
+                .title
                     margin-bottom 5px
-            div.popup-message.error
+            .popup-message.error
                 background-color #E54D42
                 border-left-color #B82E24
 
@@ -186,15 +187,15 @@ body
             height logo-height
             line-height logo-height
             padding logo-padding
-            div.logo
+            .logo
                 display flex
                 margin 0 auto
                 width logo-width
                 text-align center
-                div.image
+                .image
                     img
                         height logo-height
-                div.text
+                .text
                     padding-left logo-padding
                     color textColor1
                     font-family LioKorLogo

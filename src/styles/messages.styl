@@ -12,20 +12,21 @@ dialogue-color = #185d25AA
 dialogue-color-hover = #218633
 dialogue-color-active = #6b5c13
 
-plus-bg-color = #77777788
-confirm-bg-color = #5E5E5EAA
-
 bg-color-1 = #60606099
 bg-color-2 = #393C3FCC
 bg-color-3 = #3b3f4799
 bg-color-4 = #393939
 bg-color-5 = #4b5b4bAA
 
+scroll-bg-color = #00000000
 scroll-thumb-color = #80808080
 scroll-thumb-color-hover = #707070
 
 message-bg-1 = #3f444c
 message-bg-2 = #3f4a3f
+
+input-bg-color = bg-color-4
+input-bg-color-focus = #3C3C3C
 
 extra-small = 5px
 small = 7px
@@ -42,6 +43,8 @@ dialogue-preview-height = 62px
 
 dialogues-column-width = 30%
 messages-column-width = 100% - dialogues-column-width
+
+height-header = dialogue-preview-height
 
 width-border = 1px
 
@@ -94,6 +97,7 @@ width-border = 1px
 .top-filler
   margin-top auto
 
+
 // --- Table:
 .table-columns
   overflow hidden
@@ -111,6 +115,32 @@ width-border = 1px
   width 100%
   padding 0 middle 0 middle
 
+
+.scrollable
+  overflow-y scroll
+
+  --scrollbarBg: scroll-bg-color
+  --scrollbarThumb: scroll-thumb-color
+  --scrollbarWidth: 6px;
+  --scrollbarBorder: 1px solid var(--scrollbarBg);
+  --scrollbarBorderRadius: calc(var(--scrollbarWidth) / 2);
+
+  scrollbar-width: var(--scrollbarWidth);
+  scrollbar-color: var(--scrollbarThumb) var(--scrollbarBg);
+
+.scrollable:hover
+  --scrollbarThumb: scroll-thumb-color-hover
+
+.scrollable::-webkit-scrollbar
+  width: var(--scrollbarWidth);
+.scrollable::-webkit-scrollbar-track
+  background: var(--scrollbarBg);
+  border-radius: var(--scrollbarBorderRadius);
+.scrollable::-webkit-scrollbar-thumb
+  background-color: var(--scrollbarThumb);
+  border-radius: var(--scrollbarBorderRadius);
+  border: var(--scrollbarBorder);
+
 // extend table:
 .dialogues-column
   width dialogues-column-width
@@ -124,6 +154,10 @@ width-border = 1px
   list-style-type none
   margin 0
   padding 0
+  scrollbar-color scroll-thumb-color dialogue-color
+  border-bottom 1px solid color3
+.dialogues-listing::-webkit-scrollbar
+  background dialogue-color
 
 .header
   padding middle-large
@@ -131,6 +165,7 @@ width-border = 1px
   color color1
   box-shadow 0 4px 10px #2228
   z-index 0
+  height height-header
 .body
   color color2
 .footer
@@ -170,7 +205,7 @@ width-border = 1px
   overflow hidden
   padding small
   //border-top 1px solid color3
-  border-bottom 1px solid color3
+  //border-bottom 1px solid color3
   background-color bg-color-5
 
 .dialogue-text
@@ -233,7 +268,7 @@ width-border = 1px
 
 .message-input
   padding middle
-  background bg-color-4
+  background input-bg-color
   color color2
   border-radius extra-small
   outline none
@@ -250,6 +285,12 @@ width-border = 1px
   max-height: 200px;
   overflow-y: hidden;
   line-height: 17px;
+
+  transition all ease 0.2s
+.message-input:focus
+  background input-bg-color-focus
+  border-color color3
+
 .message-input::placeholder
   color color3
   transition color ease 0.4s
@@ -301,17 +342,34 @@ width-border = 1px
   padding middle
   background bg-color-4
   color color2
-  border-radius extra-small
   outline none
 
+  border-radius extra-small
   border-width width-border
   border-style inset
 
   overflow hidden
   text-overflow ellipsis
 
-  outline 0
+  margin-left middle
+  transition all ease 0.2s
 
+.find-input::placeholder
+  color color4
+.find-input:focus::placeholder
+  color color3
+
+.input + .input-clear
+  max-width 0
+  transition all ease-out 0.4s
+  opacity 0
+  transform rotate(45deg)
+.input:focus + .input-clear
+  max-width 100px
+  opacity 1
+  transform rotate(0)
+
+.find-input:focus,
 .theme-input
   font-size 14px
   margin-bottom extra-small
@@ -328,31 +386,6 @@ width-border = 1px
   color color4
 .theme-input:focus::placeholder
   color color3
-
-.scrollable
-  overflow-y scroll
-
-  --scrollbarBg: #00000000
-  --scrollbarThumb: scroll-thumb-color
-  --scrollbarWidth: 6px;
-  --scrollbarBorder: 1px solid var(--scrollbarBg);
-  --scrollbarBorderRadius: calc(var(--scrollbarWidth) / 2);
-
-  scrollbar-width: var(--scrollbarWidth);
-  scrollbar-color: var(--scrollbarThumb) var(--scrollbarBg);
-
-.scrollable:hover
-  --scrollbarThumb: scroll-thumb-color-hover
-
-.scrollable::-webkit-scrollbar
-  width: var(--scrollbarWidth);
-.scrollable::-webkit-scrollbar-track
-  background: var(--scrollbarBg);
-  border-radius: var(--scrollbarBorderRadius);
-.scrollable::-webkit-scrollbar-thumb
-  background-color: var(--scrollbarThumb);
-  border-radius: var(--scrollbarBorderRadius);
-  border: var(--scrollbarBorder);
 
 .p-xs
   padding extra-small
