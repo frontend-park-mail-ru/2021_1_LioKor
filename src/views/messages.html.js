@@ -69,7 +69,7 @@ export async function source(element, app) {
     element.innerHTML = html;
 
     // --- Configs
-    const dialoguesByRequest = 15;
+    const dialoguesByRequest = 500;
     const messagesByRequest = 10;
     const messagesScrollLoadOffset = 0;
     const dialoguesScrollLoadOffset = 20;
@@ -132,10 +132,13 @@ export async function source(element, app) {
             <div class="dialogue-body text-2">{{ body }}</div>
         </div>`);
 
-    const getMaxId = (objList) => Math.max(...Object.keys(objList));
+    const getMaxId = (objList) => Math.max(...objList.map(({ id }) => id));
 
     // --- Get dialogues
     dialogues.storage = await getDialogues(-1, dialoguesByRequest);
+    if (dialogues.storage.length < dialoguesByRequest) {
+        dialogues.plug = plugStates.end;
+    }
 
     // --- Draw dialogues
     redrawDialogues(dialogues.storage);
@@ -205,9 +208,10 @@ export async function source(element, app) {
         }
     });
 
-    // create 'enter' in input event-listener
+    // create event-listener on 'Enter' in input
     findInput.addEventListener('keydown', async (event) => {
         if (event.keyCode === 13) { // if key Enter
+            dialogues.plug = lastDialoguesPlug;
             await addOrSetDialogue(findInput.value);
             findInput.value = '';
         }
@@ -220,6 +224,8 @@ export async function source(element, app) {
     });
 
     // create dialogues scroll event-listener to upload new dialogues
+    // ОТВАЛ ЖОПЫ
+    /*
     dialoguePreviewsGroup.addEventListener('scroll', async (event) => {
         // if it not scrolled to bottom
         if (dialoguePreviewsGroup.scrollTop + dialoguePreviewsGroup.clientHeight < dialoguePreviewsGroup.scrollHeight - dialoguesScrollLoadOffset) {
@@ -240,7 +246,7 @@ export async function source(element, app) {
         }
         redrawDialoguesPlug();
     });
-    dialoguePreviewsGroup.dispatchEvent(new Event('scroll')); // trigger scroll event-listener
+    */
 
     // create messages scroll event-listener to upload new messages
     messagesField.addEventListener('scroll', async (event) => {
@@ -489,6 +495,7 @@ export async function source(element, app) {
         await setActiveDialogue(dialogue.elem);
         redrawDialogues(dialogues.storage);
         scrollToTop(dialoguePreviewsGroup);
+        themeInput.focus();
     }
     /**
      * draw all dialogue messages
@@ -577,7 +584,7 @@ export async function source(element, app) {
 
         // add message HTML-block
         const lastMessage = messages[currentDialogue.username][0];
-        if (lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
+        if (lastMessage && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
             document.getElementById('message-' + lastMessage.id).firstElementChild.innerHTML += `<div id="${lastMessage.id}" class="message-body">${message}</div>`;
 
             messages[currentDialogue.username][0].body.push(message);
@@ -594,6 +601,7 @@ export async function source(element, app) {
 
             // add block to messages list
             messages[currentDialogue.username].unshift({
+                id: -createdMessages,
                 sender: `${app.storage.username}@liokor.ru`,
                 title: currentTitle,
                 time: currentTime,
