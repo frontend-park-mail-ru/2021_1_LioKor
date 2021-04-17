@@ -1,0 +1,59 @@
+@require "constants.styl"
+
+logo-height = 55px
+logo-width = 180px
+logo-padding = 15px
+
+*
+    box-sizing border-box
+
+#app
+    opacity 0
+    transition all 200ms ease
+    height "calc(100vh - %s)" % logo-height
+    width 100%
+
+@font-face
+    font-family LioKorLogo
+    src url(../fonts/liokor_logo_font.ttf)
+
+html
+    height 100%
+body
+    margin 0
+    font-family Arial
+    color #202020
+
+    background-image url(../images/background.jpg)
+    background-repeat repeat-y
+
+    div.main
+        overflow auto
+        min-height 100vh
+
+        background-color transparent
+        background-image none
+        img.wolf
+            position fixed
+            right 20px
+            bottom 20px
+            z-index -1
+            height 400px
+        header.lite
+            height logo-height
+            line-height logo-height
+            padding logo-padding
+            div.logo
+                display flex
+                margin 0 auto
+                width logo-width
+                text-align center
+                div.image
+                    img
+                        height logo-height
+                div.text
+                    padding-left logo-padding
+                    color textColor1
+                    font-family LioKorLogo
+                    font-size 2.5rem
+                    letter-spacing .4rem
