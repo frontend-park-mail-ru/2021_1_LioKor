@@ -339,20 +339,23 @@ width-border = 1px
 */
 
 .find-input
+  font-size 14px
+  margin-bottom extra-small
+  background #FFFFFF00
+  border none
+  outline none
+  overflow hidden
+  text-overflow ellipsis
+  transition all ease 0.2s
+  color color2
+.find-input:focus
   padding middle
   background bg-color-4
   color color2
-  outline none
-
   border-radius extra-small
   border-width width-border
   border-style inset
-
-  overflow hidden
-  text-overflow ellipsis
-
   margin-left middle
-  transition all ease 0.2s
 
 .find-input::placeholder
   color color4
@@ -369,7 +372,6 @@ width-border = 1px
   opacity 1
   transform rotate(0)
 
-.find-input:focus,
 .theme-input
   font-size 14px
   margin-bottom extra-small
