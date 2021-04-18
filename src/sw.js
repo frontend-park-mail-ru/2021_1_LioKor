@@ -9,6 +9,7 @@ self.addEventListener('message', (event) => {
         event.waitUntil(
             caches.open(KEY)
                 .then( (cache) => {
+                    console.log("Cached: ", event.data.payload);
                     return cache.addAll(event.data.payload);
                 })
         );
@@ -21,14 +22,14 @@ self.addEventListener('fetch', function (event) {
             .then((cachedResponse) => {
 
                 if (navigator.onLine) {
-                    return fetch(event.request);
+                    return fetch(event.request); // try to get from network
                 }
 
                 if (cachedResponse) {
-                    return cachedResponse;
+                    return cachedResponse; // try to get from cache
                 }
 
-                return fetch(event.request);
+                return fetch(event.request); // TODO 404 page
             })
             .catch((err) => {
                 console.log(err.stack || err);

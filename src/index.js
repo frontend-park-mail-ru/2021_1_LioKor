@@ -4,6 +4,7 @@ import './styles/popupMessages.styl';
 import './styles/profile.styl';
 import './styles/messages.styl';
 
+import { registerSW } from './sw-installer.js';
 import App from './modules/app.js';
 
 /**
@@ -11,6 +12,8 @@ import App from './modules/app.js';
  *
  */
 async function main() {
+    registerSW();
+
     let apiUrl = 'https://api.mail.liokor.ru';
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         apiUrl = `http://${window.location.host}/api`;
