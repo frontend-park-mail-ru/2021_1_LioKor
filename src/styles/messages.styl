@@ -5,6 +5,9 @@ color4 = #888
 color5 = #585858
 color6 = #333
 color7 = #222
+color7-C = #222C
+color7-8 = #2228
+color7-4 = #2224
 
 loading-color = #84adff
 
@@ -163,7 +166,7 @@ width-border = 1px
   padding middle-large
   background bg-color-1
   color color1
-  box-shadow 0 4px 10px #2228
+  box-shadow 0 4px 10px color7-8
   z-index 0
   height height-header
 .body
@@ -177,7 +180,7 @@ width-border = 1px
 
 .tool-dialogue
   padding middle
-  box-shadow 0 5px 10px #222C
+  box-shadow 0 5px 10px color7-C
   min-height dialogue-preview-height
 
 // --- Listing button:
@@ -273,7 +276,7 @@ width-border = 1px
   border-radius extra-small
   outline none
   flex 1
-  font 400 15px Arial;
+  font 400 15px Arial
 
   border-width width-border
   border-style inset
@@ -297,6 +300,31 @@ width-border = 1px
 .message-input:focus::placeholder
   color color5
 
+.connection-info
+  z-index 1
+  position absolute
+  top -40px // to 0
+  opacity 0 // to 1
+  display none // to block
+  width 100%
+  background color7-8
+  border-bottom-left-radius small
+  border-bottom-right-radius small
+  box-shadow 0 5px 5px color7-4
+  padding extra-small
+  transition all cubic-bezier(.38,1.1,.55,1.1) 0.5s
+  svg
+    width 25px
+    height 20px
+
+.pos-relative
+  position relative
+  overflow hidden
+
+.inside-input
+  position absolute
+  right 10px
+  top 10px
 
 .svg-button
   cursor pointer
@@ -339,6 +367,7 @@ width-border = 1px
 */
 
 .find-input
+  width "calc(100% - %s)" % (middle)
   font-size 14px
   margin-bottom extra-small
   background #FFFFFF00
@@ -362,12 +391,12 @@ width-border = 1px
 .find-input:focus::placeholder
   color color3
 
-.input + .input-clear
+.input-with-clear + .input-clear
   max-width 0
   transition all ease-out 0.4s
   opacity 0
   transform rotate(45deg)
-.input:focus + .input-clear
+.input-with-clear:focus + .input-clear
   max-width 100px
   opacity 1
   transform rotate(0)

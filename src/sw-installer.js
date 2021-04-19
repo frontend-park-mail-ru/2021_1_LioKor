@@ -14,8 +14,10 @@ export function registerSW() {
 					};
 
 					if(registration.installing) {
+						registration.installing.postMessage(data);
 						console.log('Service worker installing');
 					} else if(registration.waiting) {
+						registration.waiting.postMessage(data);
 						console.log('Service worker installed');
 					} else if(registration.active) {
 						registration.active.postMessage(data);
