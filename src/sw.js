@@ -20,16 +20,18 @@ self.addEventListener('fetch', function (event) {
     event.respondWith(
         caches.match(event.request)
             .then((cachedResponse) => {
-
                 if (navigator.onLine) {
                     return fetch(event.request); // try to get from network
                 }
+
+                // There we lose internet connection
+                // TODO: send message to app
 
                 if (cachedResponse) {
                     return cachedResponse; // try to get from cache
                 }
 
-                return fetch(event.request); // TODO 404 page
+                return fetch(event.request); // return shit request
             })
             .catch((err) => {
                 console.log(err.stack || err);

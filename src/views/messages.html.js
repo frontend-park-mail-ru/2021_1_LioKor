@@ -72,7 +72,7 @@ export async function source(element, app) {
     // --- Configs
     const dialoguesByRequest = 500;
     const messagesByRequest = 10;
-    const messagesScrollLoadOffset = 0;
+    const messagesScrollLoadOffset = 40;
     const dialoguesScrollLoadOffset = 20;
 
     // --- HTML elements
@@ -254,33 +254,39 @@ export async function source(element, app) {
     */
 
     // create messages scroll event-listener to upload new messages
+    let mutexScrollMessagesEvent = false; // Убейте меня за это пожалуйсто...
     messagesField.addEventListener('scroll', async (event) => {
         // if it not scrolled to top
-        if (messagesField.scrollTop > messagesScrollLoadOffset) {
-            return;
-        }
+        if (messagesField.scrollTop > messagesScrollLoadOffset) { return; }
+
+        if (mutexScrollMessagesEvent === true) { return; } // mutex logic
+        mutexScrollMessagesEvent = true; // block mutex
+
         const dialogueMessages = messages[currentDialogue.username];
         let since = 0;
         if (dialogueMessages.length !== 0) { since = dialogueMessages[dialogueMessages.length - 1].id; }
         // Get new messages
         const newMessages = await getMessages(currentDialogue.username, since, messagesByRequest);
 
-        const heightToBottom = messagesField.clientHeight;
+        const heightToBottom = getChildrenHeight(messagesField) - messagesField.scrollTop;
         messages[currentDialogue.username] = dialogueMessages.concat(newMessages);
 
         newMessages.forEach((message) => {
             addMessageToField(message);
         });
 
-        // TODO: Scroll to previous place
-        messagesField.scrollTop = messagesField.clientHeight - heightToBottom;
-
         if (newMessages.length < messagesByRequest) {
             messages[currentDialogue.username].plug = plugStates.end;
         } else {
             messages[currentDialogue.username].plug = plugStates.loading;
         }
+
+        // Scroll to previous place
+        messagesField.scrollTop = getChildrenHeight(messagesField) - heightToBottom;
+
         redrawMessagesPlug(messages[currentDialogue.username]);
+
+        mutexScrollMessagesEvent = false; // unblock mutex
     });
 
     /**
@@ -701,5 +707,17 @@ export async function source(element, app) {
         elem.id = id;
         elem.innerHTML = '<div class="dot-pulse"></div>';
         if (isAddToTop === true) { listingElem.insertBefore(elem, listingElem.firstChild); } else { listingElem.appendChild(elem); }
+    }
+
+    /**
+     * Return sum of element children height
+     *
+     * @param elem
+     * @returns {number}
+     */
+    function getChildrenHeight(elem) {
+        let height = 0;
+        elem.childNodes.forEach((child) => {height += child.clientHeight;});
+        return height;
     }
 }
