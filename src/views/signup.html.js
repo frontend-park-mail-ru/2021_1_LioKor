@@ -125,7 +125,8 @@ export function source(element, app) {
         switch (response.status) {
         case 200:
             app.messageSuccess('Ура!', `Аккаунт ${username} успешно создан!`);
-            await app.goto('/user');
+            app.updateStorage(username);
+            await app.goto('/messages');
             break;
         case 400:
             usernameGroup.classList.add('error');
