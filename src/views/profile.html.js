@@ -111,7 +111,7 @@ export async function source(element, app) {
             return;
         }
 
-        const response = await app.apiPut(`/user/${username}`, { fullname, avatarUrl, reserveEmail });
+        const response = await app.apiPut(`/user/${username}`, { fullname, reserveEmail });
         if (!response.ok) {
             app.messageError(`Ошибка ${response.status}!`, 'Не удалось изменить данные!');
             return;
@@ -129,9 +129,17 @@ export async function source(element, app) {
 
     const avatarImage = document.getElementById('avatarImage');
     document.getElementById('avatarChange').addEventListener('click', async () => {
-        // if "Cancel" button will be pressed - Promise never resolves, but we don't have event to resolve on cancel =(
+        // if "Cancel" button will be pressed - Promise never resolves, but there's no event to resolve on cancel =(
         const dataURL = await readImageAsDataURL();
-        avatarImage.src = dataURL;
         avatarDataURL.value = dataURL;
+
+        const formData = new FormData(editProfileForm);
+        const avatarUrl = formData.get('avatarDataURL');
+
+        const response = await app.apiPut(`/user/${username}`, { avatarUrl });
+        if (response.ok) {
+            avatarImage.src = dataURL;
+            app.messageSuccess('Успех', 'Аватар успешно изменён');
+        }
     });
 }
