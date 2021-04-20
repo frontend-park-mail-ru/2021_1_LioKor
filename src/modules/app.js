@@ -77,6 +77,11 @@ export default class App {
         ];
     }
 
+    updateStorage(username, avatarUrl = null) {
+        this.storage.username = username;
+        this.storage.avatar = (avatarUrl) ? `${this.apiUrl}/${avatarUrl}` : this.defaultAvatarUrl;
+    }
+
     apiRequest(method, path, data = {}) {
         return request(method, `${this.apiUrl}${path}`, data);
     }
