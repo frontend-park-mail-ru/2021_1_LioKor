@@ -27,7 +27,8 @@ const html = `
         <div class="pos-relative flex-filler">
             <div class="connection-info center-text" id="connection-info">
                 <svg class="svg-button" xmlns="http://www.w3.org/2000/svg"><path d="M21.0303 4.83038C21.3232 4.53749 21.3232 4.06261 21.0303 3.76972C20.7374 3.47683 20.2626 3.47683 19.9697 3.76972L3.96967 19.7697C3.67678 20.0626 3.67678 20.5375 3.96967 20.8304C4.26256 21.1233 4.73744 21.1233 5.03033 20.8304L7.11065 18.7501H18.5233C20.9961 18.7501 23.0008 16.7454 23.0008 14.2725C23.0008 11.7996 20.9961 9.79493 18.5233 9.79493C18.4592 9.79493 18.3955 9.79628 18.3321 9.79895C18.2944 9.15027 18.1424 8.53227 17.8959 7.96479L21.0303 4.83038ZM16.7186 9.14209L8.61065 17.2501H18.5233C20.1677 17.2501 21.5008 15.917 21.5008 14.2725C21.5008 12.628 20.1677 11.2949 18.5233 11.2949C18.2557 11.2949 17.9975 11.33 17.7524 11.3955C17.5122 11.4596 17.2558 11.4006 17.0679 11.2378C16.8799 11.075 16.7849 10.8297 16.8141 10.5828C16.8321 10.4306 16.8414 10.2755 16.8414 10.1178C16.8414 9.78093 16.7987 9.45399 16.7186 9.14209Z"/><path d="M12.9319 4.70837C14.0388 4.70837 15.068 5.04083 15.9252 5.61134C16.0521 5.69579 16.0649 5.87451 15.9571 5.9823L15.2295 6.70991C15.1455 6.79392 15.0144 6.80644 14.912 6.74617C14.3313 6.4044 13.6545 6.20837 12.9319 6.20837C11.3816 6.20837 10.0406 7.1107 9.40813 8.42218C9.23808 8.77479 8.82543 8.9373 8.46061 8.79534C7.96987 8.60439 7.43541 8.49926 6.87461 8.49926C4.45814 8.49926 2.49921 10.4582 2.49921 12.8747C2.49921 14.521 3.40846 15.9549 4.75218 16.7017C4.90497 16.7866 4.94313 16.9963 4.81953 17.1199L4.09641 17.843C4.01666 17.9227 3.89307 17.9397 3.79705 17.8805C2.1183 16.8462 0.999207 14.9911 0.999207 12.8747C0.999207 9.62976 3.62971 6.99925 6.87461 6.99925C7.39427 6.99925 7.89899 7.0669 8.38002 7.19408C9.34177 5.69979 11.0205 4.70837 12.9319 4.70837Z"/></svg>
-                <span class="text-1">Соединение потеряно</span>
+                <span class="text-1" id="connection-text">Соединение потеряно</span>
+                <svg class="svg-button floatright" id="refresh-connection-button" xmlns="http://www.w3.org/2000/svg" style="transition: all ease-in-out 1s; transform: rotate(0deg)"><g transform="scale(0.04) translate(60, 0)"><path d="M112.156,97.111c72.3-65.4,180.5-66.4,253.8-6.7l-58.1,2.2c-7.5,0.3-13.3,6.5-13,14c0.3,7.3,6.3,13,13.5,13    c0.2,0,0.3,0,0.5,0l89.2-3.3c7.3-0.3,13-6.2,13-13.5v-1c0-0.2,0-0.3,0-0.5v-0.1l0,0l-3.3-88.2c-0.3-7.5-6.6-13.3-14-13    c-7.5,0.3-13.3,6.5-13,14l2.1,55.3c-36.3-29.7-81-46.9-128.8-49.3c-59.2-3-116.1,17.3-160,57.1c-60.4,54.7-86,137.9-66.8,217.1    c1.5,6.2,7,10.3,13.1,10.3c1.1,0,2.1-0.1,3.2-0.4c7.2-1.8,11.7-9.1,9.9-16.3C36.656,218.211,59.056,145.111,112.156,97.111z"/><path d="M462.456,195.511c-1.8-7.2-9.1-11.7-16.3-9.9c-7.2,1.8-11.7,9.1-9.9,16.3c16.9,69.6-5.6,142.7-58.7,190.7    c-37.3,33.7-84.1,50.3-130.7,50.3c-44.5,0-88.9-15.1-124.7-44.9l58.8-5.3c7.4-0.7,12.9-7.2,12.2-14.7s-7.2-12.9-14.7-12.2l-88.9,8    c-7.4,0.7-12.9,7.2-12.2,14.7l8,88.9c0.6,7,6.5,12.3,13.4,12.3c0.4,0,0.8,0,1.2-0.1c7.4-0.7,12.9-7.2,12.2-14.7l-4.8-54.1    c36.3,29.4,80.8,46.5,128.3,48.9c3.8,0.2,7.6,0.3,11.3,0.3c55.1,0,107.5-20.2,148.7-57.4    C456.056,357.911,481.656,274.811,462.456,195.511z"/></g></svg>
             </div>
             <div class="body fullheight fullwidth table-rows scrollable" id="messages-field">
                 <div class="flex-filler center-text"></div>
@@ -90,7 +91,10 @@ export async function source(element, app) {
 
     const messagesField = document.getElementById('messages-field');
     const messagesFooter = document.getElementById('messages-footer');
+
     const connectionInfo = document.getElementById('connection-info');
+    const connectionText = document.getElementById('connection-text');
+    const connectionRefresh = document.getElementById('refresh-connection-button');
 
     const findInput = document.getElementById('find-input');
     const themeInput = document.getElementById('theme-input');
@@ -99,7 +103,8 @@ export async function source(element, app) {
     const plugStates = {
         loading: 0,
         end: 1,
-        none: 2
+        none: 2,
+        offline: 3
     };
     // --- Big containers
     const dialogues = {
@@ -120,8 +125,7 @@ export async function source(element, app) {
     };
     let createdDialogues = 0;
     let createdMessages = 0;
-    // --- Needs only for function "checkRequestConnection()"
-    let wasLostConnection = false;
+    let isLostConnection = false;
     // --- Handlebars templates
     // because handlebars is not imported but added as script:
     // eslint-disable-next-line
@@ -146,9 +150,36 @@ export async function source(element, app) {
 
     const getMaxId = (objList) => Math.max(...objList.map(({ id }) => id));
 
+    // --- Connection events
+    window.addEventListener('offline', (event) => {
+        connectionInfo.style.visibility = 'visible';
+        connectionInfo.style.top = '0';
+        connectionInfo.style.opacity = '1';
+        isLostConnection = true;
+    });
+    if (!navigator.onLine) {
+        window.dispatchEvent(new Event('offline')); // trigger window offline event
+    }
+
+    window.addEventListener('online', (event) => {
+        if (messagesField.scrollTop <= messagesScrollLoadOffset) {
+            messagesField.dispatchEvent(new Event('scroll')); // trigger scroll-update messages
+        }
+        if (dialoguePreviewsGroup.scrollTop + dialoguePreviewsGroup.clientHeight >= dialoguePreviewsGroup.scrollHeight - dialoguesScrollLoadOffset) {
+            dialoguePreviewsGroup.dispatchEvent(new Event('scroll')); // trigger scroll-update dialogues
+        }
+        connectionInfo.style.top = '-40px';
+        connectionInfo.style.opacity = '0';
+        setTimeout(() => {connectionInfo.style.visibility = 'hidden';}, 500);
+        isLostConnection = false;
+    });
+
     // --- Get dialogues
     dialogues.storage = await getDialogues(-1, dialoguesByRequest);
-    if (dialogues.storage.length < dialoguesByRequest) {
+    if (isLostConnection) {
+        dialogues.gottenFromSW = true;
+        dialogues.plug = plugStates.offline;
+    } else if (dialogues.storage.length < dialoguesByRequest) {
         dialogues.plug = plugStates.end;
     }
 
@@ -183,7 +214,7 @@ export async function source(element, app) {
     messageInput.addEventListener('input', (event) => {
         // resize input element
         messageInput.style.height = messageInput.style.minHeight;
-        messageInput.style.height = messageInput.scrollHeight + 2 + 'px'; // 2 = border-width * 2
+        messageInput.style.height = messageInput.scrollHeight + 2 + 'px'; // 2 = CSS border-width * 2
     });
 
     // --- Find dialogues
@@ -208,6 +239,10 @@ export async function source(element, app) {
             return;
         }
         foundDialogues = await getDialogues(-1, 10, findText);
+        if (isLostConnection) {
+            dialogues.gottenFromSW = true;
+            dialogues.plug = plugStates.offline;
+        }
         redrawDialogues(foundDialogues);
 
         const foundDialogue = dialogues.storage.findIndex(item => item.username === findText);
@@ -249,7 +284,10 @@ export async function source(element, app) {
             addDialogueToList(dialogue);
         });
 
-        if (newDialogues.length < dialoguesByRequest) {
+        if (isLostConnection) {
+            dialogues.gottenFromSW = true;
+            dialogues.plug = plugStates.offline;
+        } else if (newDialogues.length < dialoguesByRequest) {
             dialogues.plug = plugStates.end;
         } else {
             dialogues.plug = plugStates.loading;
@@ -280,7 +318,11 @@ export async function source(element, app) {
             addMessageToField(message);
         });
 
-        if (newMessages.length < messagesByRequest) {
+        messages[currentDialogue.username].gottenFromSW = false;
+        if (isLostConnection) {
+            messages[currentDialogue.username].gottenFromSW = true;
+            messages[currentDialogue.username].plug = plugStates.offline;
+        } else if (newMessages.length < messagesByRequest) {
             messages[currentDialogue.username].plug = plugStates.end;
         } else {
             messages[currentDialogue.username].plug = plugStates.loading;
@@ -292,6 +334,16 @@ export async function source(element, app) {
         redrawMessagesPlug(messages[currentDialogue.username]);
 
         mutexScrollMessagesEvent = false; // unblock mutex
+    });
+
+
+    // Imitate loading work... Simple clicker-game for user
+    connectionInfo.addEventListener('click', (event) => {
+        connectionRefresh.style.transform = 'rotate(' + (Number(connectionRefresh.style.transform.substring(7, connectionRefresh.style.transform.length - 4)) + 360) + 'deg)';
+        setTimeout(() => { connectionText.innerText += '.' }, 300);
+        setTimeout(() => { connectionText.innerText += '.' }, 600);
+        setTimeout(() => { connectionText.innerText += '.' }, 900);
+        setTimeout(() => { connectionText.innerText = connectionText.innerText.substring(0, connectionText.innerText.length - 3) }, 1500);
     });
 
     /**
@@ -309,7 +361,7 @@ export async function source(element, app) {
     }
 
     /**
-     * Delete dialogues plug and set new
+     * Delete dialogues plug and draw new
      */
     function redrawDialoguesPlug() {
         const plug = document.getElementById('dialogues-plug');
@@ -325,7 +377,7 @@ export async function source(element, app) {
     }
 
     /**
-     * Delete messages plug and set new
+     * Delete messages plug and draw new
      *
      * @param message
      */
@@ -342,6 +394,9 @@ export async function source(element, app) {
             break;
         case plugStates.none:
             addFlexFillerElem(messagesField, 'messages-plug');
+            break;
+        case plugStates.offline:
+            addOfflineEndMessagesElem(messagesField, 'messages-plug');
             break;
         }
     }
@@ -369,9 +424,9 @@ export async function source(element, app) {
         let path = `/email/dialogues?last=${since}&amount=${amount}`;
         if (find && find !== '') { path += '&find=' + find; }
         const response = await app.apiGet(path);
-        if (checkRequestConnection(response.isLostConnection)) { return []; }
         if (!response.ok) {
-            app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список диалогов!');
+            if (response.status !== 418) // Empty response from SW (offline mode)
+                app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список диалогов!');
             return [];
         }
         const dialogues = await response.json();
@@ -389,8 +444,7 @@ export async function source(element, app) {
      * @returns {Promise<*>}
      */
     async function getMessages(withUsername, since, amount) {
-        const response = await app.apiGet(`/email/emails?with=${withUsername}&last=${since}&amount=${amount}`);
-        if (checkRequestConnection(response.isLostConnection)) { return []; }
+        let response = await app.apiGet(`/email/emails?with=${withUsername}&last=${since}&amount=${amount}`);
         if (!response.ok) {
             // Просто открыт новый пустой диалог
             return [];
@@ -477,10 +531,22 @@ export async function source(element, app) {
         currentDialogue.username = dialogue.username;
 
         // get dialogue messages
-        if (!messages[dialogue.username]) {
+        if (!messages[dialogue.username] || messages[dialogue.username].gottenFromSW) {
             messages[dialogue.username] = await getMessages(dialogue.username, -1, messagesByRequest);
+            if (isLostConnection) {
+                messages[dialogue.username].gottenFromSW = true;
+            } else {
+                messages[dialogue.username].gottenFromSW = false;
+            }
         }
-        if (messages[dialogue.username].length < messagesByRequest) { messages[dialogue.username].plug = plugStates.end; } else { messages[dialogue.username].plug = plugStates.loading; }
+
+        if (messages[dialogue.username].gottenFromSW) {
+            messages[dialogue.username].plug = plugStates.offline;
+        } else if (messages[dialogue.username].length < messagesByRequest) {
+            messages[dialogue.username].plug = plugStates.end;
+        } else {
+            messages[dialogue.username].plug = plugStates.loading;
+        }
 
         // set dialogue url
         const currentPath = window.location.pathname + `?with=${currentDialogue.username}`;
@@ -667,9 +733,24 @@ export async function source(element, app) {
         elem.classList.add('center-text', 'top-filler');
         elem.id = id;
         elem.innerHTML = `
-                    <svg class="svg-button centered" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></svg>
-                    <div class="text-1">Это начало истории сообщений</div>
-                `;
+                    <svg class="svg-button centered" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z" fill="currentColor"></path></svg>
+                    <div class="text-1">Это начало истории сообщений</div>`;
+        parent.insertBefore(elem, parent.firstChild);
+    }
+
+    /**
+     * Add plug-end of messages offline element
+     *
+     * @param parent
+     * @param id
+     */
+    function addOfflineEndMessagesElem(parent, id) {
+        const elem = document.createElement('div');
+        elem.classList.add('center-text', 'top-filler');
+        elem.id = id;
+        elem.innerHTML = `
+                    <svg class="svg-button centered" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><g transform="scale(2.4)"><path d="M21.0303 4.83038C21.3232 4.53749 21.3232 4.06261 21.0303 3.76972C20.7374 3.47683 20.2626 3.47683 19.9697 3.76972L3.96967 19.7697C3.67678 20.0626 3.67678 20.5375 3.96967 20.8304C4.26256 21.1233 4.73744 21.1233 5.03033 20.8304L7.11065 18.7501H18.5233C20.9961 18.7501 23.0008 16.7454 23.0008 14.2725C23.0008 11.7996 20.9961 9.79493 18.5233 9.79493C18.4592 9.79493 18.3955 9.79628 18.3321 9.79895C18.2944 9.15027 18.1424 8.53227 17.8959 7.96479L21.0303 4.83038ZM16.7186 9.14209L8.61065 17.2501H18.5233C20.1677 17.2501 21.5008 15.917 21.5008 14.2725C21.5008 12.628 20.1677 11.2949 18.5233 11.2949C18.2557 11.2949 17.9975 11.33 17.7524 11.3955C17.5122 11.4596 17.2558 11.4006 17.0679 11.2378C16.8799 11.075 16.7849 10.8297 16.8141 10.5828C16.8321 10.4306 16.8414 10.2755 16.8414 10.1178C16.8414 9.78093 16.7987 9.45399 16.7186 9.14209Z"/><path d="M12.9319 4.70837C14.0388 4.70837 15.068 5.04083 15.9252 5.61134C16.0521 5.69579 16.0649 5.87451 15.9571 5.9823L15.2295 6.70991C15.1455 6.79392 15.0144 6.80644 14.912 6.74617C14.3313 6.4044 13.6545 6.20837 12.9319 6.20837C11.3816 6.20837 10.0406 7.1107 9.40813 8.42218C9.23808 8.77479 8.82543 8.9373 8.46061 8.79534C7.96987 8.60439 7.43541 8.49926 6.87461 8.49926C4.45814 8.49926 2.49921 10.4582 2.49921 12.8747C2.49921 14.521 3.40846 15.9549 4.75218 16.7017C4.90497 16.7866 4.94313 16.9963 4.81953 17.1199L4.09641 17.843C4.01666 17.9227 3.89307 17.9397 3.79705 17.8805C2.1183 16.8462 0.999207 14.9911 0.999207 12.8747C0.999207 9.62976 3.62971 6.99925 6.87461 6.99925C7.39427 6.99925 7.89899 7.0669 8.38002 7.19408C9.34177 5.69979 11.0205 4.70837 12.9319 4.70837Z"/></g></svg>
+                    <div class="text-1">Это все загруженные сообщения</div>`;
         parent.insertBefore(elem, parent.firstChild);
     }
 
@@ -726,26 +807,5 @@ export async function source(element, app) {
         let height = 0;
         elem.childNodes.forEach((child) => {height += child.clientHeight;});
         return height;
-    }
-
-    /**
-     * Draw warning if lost connection
-     *
-     * @param isLostConnection
-     * @returns {boolean}
-     */
-    function checkRequestConnection(isLostConnection) {
-        if (isLostConnection && !wasLostConnection) {
-            connectionInfo.style.display = 'block';
-            connectionInfo.style.top = '0';
-            connectionInfo.style.opacity = '1';
-            wasLostConnection = true;
-        } else if (!isLostConnection && wasLostConnection) {
-            connectionInfo.style.top = '-40px';
-            connectionInfo.style.opacity = '0';
-            setTimeout(() => {connectionInfo.style.display = 'none';}, 500);
-            wasLostConnection = false;
-        }
-        return wasLostConnection;
     }
 }

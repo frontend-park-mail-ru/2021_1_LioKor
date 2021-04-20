@@ -21,6 +21,8 @@ bg-color-3 = #3b3f4799
 bg-color-4 = #393939
 bg-color-5 = #4b5b4bAA
 
+bg-info = #2a2b2bEE
+
 scroll-bg-color = #00000000
 scroll-thumb-color = #80808080
 scroll-thumb-color-hover = #707070
@@ -128,7 +130,7 @@ width-border = 1px
   --scrollbarBorder: 1px solid var(--scrollbarBg);
   --scrollbarBorderRadius: calc(var(--scrollbarWidth) / 2);
 
-  scrollbar-width: var(--scrollbarWidth);
+  scrollbar-width: thin;
   scrollbar-color: var(--scrollbarThumb) var(--scrollbarBg);
 
 .scrollable:hover
@@ -167,10 +169,11 @@ width-border = 1px
   background bg-color-1
   color color1
   box-shadow 0 4px 10px color7-8
-  z-index 0
+  z-index 2
   height height-header
 .body
   color color2
+  z-index 0
 .footer
   padding middle
   color color2
@@ -305,17 +308,19 @@ width-border = 1px
   position absolute
   top -40px // to 0
   opacity 0 // to 1
-  display none // to block
+  visibility hidden // to visible
   width 100%
-  background color7-8
+  background bg-info
   border-bottom-left-radius small
   border-bottom-right-radius small
-  box-shadow 0 5px 5px color7-4
+  box-shadow 0 5px 5px color7-4, inset 0 5px 5px color7-4
   padding extra-small
-  transition all cubic-bezier(.38,1.1,.55,1.1) 0.5s
+  transition all cubic-bezier(.38,1.1,.52,1.02) 0.4s
+  cursor pointer
   svg
     width 25px
     height 20px
+    pointer-events none
 
 .pos-relative
   position relative
