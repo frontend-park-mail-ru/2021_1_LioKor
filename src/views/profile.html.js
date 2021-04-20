@@ -111,7 +111,7 @@ export async function source(element, app) {
             return;
         }
 
-        const response = await app.apiPut(`/user/${username}`, { fullname, reserveEmail });
+        const response = await app.apiPut(`/user/${username}`, { fullname, avatarUrl, reserveEmail });
         if (!response.ok) {
             app.messageError(`Ошибка ${response.status}!`, 'Не удалось изменить данные!');
             return;
@@ -135,8 +135,10 @@ export async function source(element, app) {
 
         const formData = new FormData(editProfileForm);
         const avatarUrl = formData.get('avatarDataURL');
+        const fullname = formData.get('fullname').trim();
+        const reserveEmail = formData.get('reserveEmail').trim();
 
-        const response = await app.apiPut(`/user/${username}`, { avatarUrl });
+        const response = await app.apiPut(`/user/${username}`, { fullname, avatarUrl, reserveEmail });
         if (response.ok) {
             avatarImage.src = dataURL;
             app.messageSuccess('Успех', 'Аватар успешно изменён');
