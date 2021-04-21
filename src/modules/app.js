@@ -9,6 +9,7 @@ import * as user from '../views/profile.html.js';
 import * as signup from '../views/signup.html.js';
 import * as changePassword from '../views/change_password.html.js';
 import * as messages from '../views/messages.html.js';
+import * as view404 from '../views/404.html.js';
 
 export default class App {
     constructor(name, apiUrl, elId, messagesElId = null) {
@@ -152,8 +153,7 @@ export default class App {
 
         let handler = this.getHandler(path);
         if (handler === null) {
-            // TODO: import 404 handler
-            handler = handler404
+            handler = view404.handler
         }
         await renderer.render(this.element, handler, this);
     }
