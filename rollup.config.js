@@ -34,6 +34,7 @@ export default {
             targets: [
                 { src: 'src/images/*', dest: 'build/images' },
                 { src: 'src/index.html', dest: 'build/' },
+                { src: 'src/sw.js', dest: 'build/' },
                 { src: 'node_modules/handlebars/dist/handlebars.min.js', dest: 'build/' }
             ]
         })
