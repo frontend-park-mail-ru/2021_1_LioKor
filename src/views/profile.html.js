@@ -1,6 +1,6 @@
 import Handlebars from 'handlebars/dist/cjs/handlebars';
 
-import { readImageAsDataURL } from '../modules/images.js';
+import { getImageAsDataURL } from '@korolion/get-image-as-dataurl/getImageAsDataUrl.js';
 import { validateEmail, validateFullname } from '../modules/validators';
 
 const html = `
@@ -130,7 +130,7 @@ export async function source(element, app) {
     const avatarImage = document.getElementById('avatarImage');
     document.getElementById('avatarChange').addEventListener('click', async () => {
         // if "Cancel" button will be pressed - Promise never resolves, but there's no event to resolve on cancel =(
-        const dataURL = await readImageAsDataURL();
+        const dataURL = await getImageAsDataURL();
         avatarDataURL.value = dataURL;
 
         const formData = new FormData(editProfileForm);
