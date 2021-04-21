@@ -155,6 +155,7 @@ export default class App {
         if (handler === null) {
             handler = view404.handler
         }
+
         await renderer.render(this.element, handler, this);
     }
 }
