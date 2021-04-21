@@ -264,7 +264,7 @@ export async function source(element, app) {
 
     // create add-dialogue event-listener
     document.getElementById('find-dialogue-button').addEventListener('click', (event) => {
-        findInput.focus();
+        findInput.focus()
         findInput.dispatchEvent(new Event('input')); // trigger find event-listener
     });
 
@@ -305,12 +305,14 @@ export async function source(element, app) {
         if (mutexScrollMessagesEvent === true) { return; } // mutex logic
         mutexScrollMessagesEvent = true; // block mutex
 
+        // messages that we have already
         const dialogueMessages = messages[currentDialogue.username];
         let since = 0;
         if (dialogueMessages.length !== 0) { since = dialogueMessages[dialogueMessages.length - 1].id; }
         // Get new messages
         const newMessages = await getMessages(currentDialogue.username, since, messagesByRequest);
 
+        // get height for scroll to previous place at end of function
         const heightToBottom = getChildrenHeight(messagesField) - messagesField.scrollTop;
         messages[currentDialogue.username] = dialogueMessages.concat(newMessages);
 
@@ -318,6 +320,7 @@ export async function source(element, app) {
             addMessageToField(message);
         });
 
+        // set messages plug
         messages[currentDialogue.username].gottenFromSW = false;
         if (isLostConnection) {
             messages[currentDialogue.username].gottenFromSW = true;
@@ -525,10 +528,20 @@ export async function source(element, app) {
         dialogueHeader.innerText = currentDialogue.title = dialogue.username;
         dialogueTime.innerText = currentDialogue.time = dialogue.time;
 
+        // push old message and theme into localStorage
+        localStorage.setItem(currentDialogue.username + '-theme', themeInput.value);
+        localStorage.setItem(currentDialogue.username + '-message', messageInput.value);
+
         // update currentDialogue data
         currentDialogue.id = dialogue.id;
         currentDialogue.avatar = dialogue.avatarUrl;
         currentDialogue.username = dialogue.username;
+
+        // get new message and theme into localStorage
+        const theme = localStorage.getItem(currentDialogue.username + '-theme');
+        const message = localStorage.getItem(currentDialogue.username + '-message');
+        themeInput.value = theme;
+        messageInput.value = message;
 
         // get dialogue messages
         if (!messages[dialogue.username] || messages[dialogue.username].gottenFromSW) {
@@ -593,6 +606,17 @@ export async function source(element, app) {
             // create bottom message block
             const messageBlock = messages[username][0];
             const messageBlockElem = addMessageToField(messageBlock);
+
+            // set default theme of message
+            if (messageBlock.sender !== app.storage.username && messageBlock.sender !== app.storage.username + '@liokor.ru') {
+                if (messageBlock.title.substr(0, 3).toLowerCase() === 're:') {
+                    themeInput.value = messageBlock.title;
+                } else {
+                    themeInput.value = 'Re: ' + messageBlock.title;
+                }
+            } else {
+                themeInput.value = messageBlock.title;
+            }
 
             // create other messages blocks
             messages[username].slice(1).forEach((messageBlock) => {
