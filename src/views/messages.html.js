@@ -67,6 +67,7 @@ const html = `
 // <svg class="svg-button" id="change-theme-button" viewBox="711 15 24 24" xmlns="http://www.w3.org/2000/svg" height="30" width="30"><g fill="none" fill-rule="evenodd"><path d="m711 15h24v24h-24z"/><path d="m712 31h7m-7-5h12m-12-5h17m-5 10h10m-5-5v10" stroke="#828a99" stroke-linecap="round" stroke-width="2"/></g></svg>
 /**
  * Renders auth page and "activating" it's js
+ *
  * @param element
  * @param app
  * @returns {Promise<void>}
@@ -148,8 +149,6 @@ export async function source(element, app) {
             <div class="dialogue-body text-2">{{ body }}</div>
         </div>`);
 
-    const getMaxId = (objList) => Math.max(...objList.map(({ id }) => id));
-
     // --- Connection events
     window.addEventListener('offline', (event) => {
         connectionInfo.style.visibility = 'visible';
@@ -170,7 +169,7 @@ export async function source(element, app) {
         }
         connectionInfo.style.top = '-40px';
         connectionInfo.style.opacity = '0';
-        setTimeout(() => {connectionInfo.style.visibility = 'hidden';}, 500);
+        setTimeout(() => { connectionInfo.style.visibility = 'hidden'; }, 500);
         isLostConnection = false;
     });
 
@@ -336,14 +335,13 @@ export async function source(element, app) {
         mutexScrollMessagesEvent = false; // unblock mutex
     });
 
-
     // Imitate loading work... Simple clicker-game for user
     connectionInfo.addEventListener('click', (event) => {
         connectionRefresh.style.transform = 'rotate(' + (Number(connectionRefresh.style.transform.substring(7, connectionRefresh.style.transform.length - 4)) + 360) + 'deg)';
-        setTimeout(() => { connectionText.innerText += '.' }, 300);
-        setTimeout(() => { connectionText.innerText += '.' }, 600);
-        setTimeout(() => { connectionText.innerText += '.' }, 900);
-        setTimeout(() => { connectionText.innerText = connectionText.innerText.substring(0, connectionText.innerText.length - 3) }, 1500);
+        setTimeout(() => { connectionText.innerText += '.'; }, 300);
+        setTimeout(() => { connectionText.innerText += '.'; }, 600);
+        setTimeout(() => { connectionText.innerText += '.'; }, 900);
+        setTimeout(() => { connectionText.innerText = connectionText.innerText.substring(0, connectionText.innerText.length - 3); }, 1500);
     });
 
     /**
@@ -425,8 +423,10 @@ export async function source(element, app) {
         if (find && find !== '') { path += '&find=' + find; }
         const response = await app.apiGet(path);
         if (!response.ok) {
-            if (response.status !== 418) // Empty response from SW (offline mode)
+            // Empty response from SW (offline mode)
+            if (response.status !== 418) {
                 app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список диалогов!');
+            }
             return [];
         }
         const dialogues = await response.json();
@@ -444,7 +444,7 @@ export async function source(element, app) {
      * @returns {Promise<*>}
      */
     async function getMessages(withUsername, since, amount) {
-        let response = await app.apiGet(`/email/emails?with=${withUsername}&last=${since}&amount=${amount}`);
+        const response = await app.apiGet(`/email/emails?with=${withUsername}&last=${since}&amount=${amount}`);
         if (!response.ok) {
             // Просто открыт новый пустой диалог
             return [];
@@ -495,7 +495,7 @@ export async function source(element, app) {
         const elem = document.createElement('li');
         elem.id = 'new-dialogue-button';
         elem.classList.add('listing-button', 'center-text', 'p-xs');
-        elem.innerHTML = `<svg class="plus-button" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(3) translate(1, -2)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>`;
+        elem.innerHTML = '<svg class="plus-button" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(3) translate(1, -2)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>';
         dialoguePreviewsGroup.insertBefore(elem, dialoguePreviewsGroup.firstChild);
 
         // create Event-listener on element
@@ -512,7 +512,7 @@ export async function source(element, app) {
      */
     async function setActiveDialogue(currentElem) {
         if (currentElem.id === 'dialogue-' + currentDialogue.id) { return; }
-        currentDialogue.id = currentElem.id.substr(9) // length if 'dialogue-' ;
+        currentDialogue.id = currentElem.id.substr(9); // length if 'dialogue-' ;
 
         messagesFooter.style.display = 'flex'; // show message input
 
@@ -556,6 +556,9 @@ export async function source(element, app) {
         showDialogue(dialogue.username);
     }
 
+    /**
+     * @param username
+     */
     async function addOrSetDialogue(username) {
         if (username === '') { return; }
         themeInput.focus();
@@ -592,7 +595,7 @@ export async function source(element, app) {
         if (messages[username].length !== 0) {
             // create bottom message block
             const messageBlock = messages[username][0];
-            const messageBlockElem = addMessageToField(messageBlock);
+            /* const messageBlockElem = */addMessageToField(messageBlock);
 
             // create other messages blocks
             messages[username].slice(1).forEach((messageBlock) => {
@@ -805,7 +808,7 @@ export async function source(element, app) {
      */
     function getChildrenHeight(elem) {
         let height = 0;
-        elem.childNodes.forEach((child) => {height += child.clientHeight;});
+        elem.childNodes.forEach((child) => { height += child.clientHeight; });
         return height;
     }
 }
