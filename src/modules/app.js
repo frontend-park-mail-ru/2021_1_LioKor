@@ -16,9 +16,11 @@ export default class App {
             username: null,
             avatar: ''
         };
+
         this.name = name;
         this.apiUrl = apiUrl;
         this.element = elId;
+        this.defaultAvatarUrl = '/images/default-avatar.jpg';
 
         this.messagesEl = null;
         this.messageTemplate = null;
@@ -32,8 +34,6 @@ export default class App {
             this.messagesEl = document.getElementById(messagesElId);
             this.messageTemplate = Handlebars.compile(messageHTML);
         }
-
-        this.defaultAvatarUrl = '/images/default-avatar.jpg';
 
         window.addEventListener('popstate', (ev) => {
             const url = ev.state.url;
@@ -56,23 +56,23 @@ export default class App {
         this.routes = [
             {
                 urlRegex: /^\/auth$/,
-                handler: auth.source
+                handler: auth.handler
             },
             {
                 urlRegex: /^\/signup$/,
-                handler: signup.source
+                handler: signup.handler
             },
             {
                 urlRegex: /^\/user$/,
-                handler: user.source
+                handler: user.handler
             },
             {
                 urlRegex: /^\/user\/([A-Za-z0-9_]){1,}\/password$/,
-                handler: changePassword.source
+                handler: changePassword.handler
             },
             {
                 urlRegex: /^\/messages(\?with=.*)?$/,
-                handler: messages.source
+                handler: messages.handler
             }
         ];
     }
@@ -138,19 +138,22 @@ export default class App {
         this.message(title, message, false);
     }
 
+    getHandler(path) {
+        for (const route of this.routes) {
+            if (path.match(route.urlRegex)) {
+                return route.handler;
+            }
+        }
+        return null;
+    }
+
     async goto(path) {
         history.pushState({ url: path }, '', path);
 
-        let handler = null;
-        for (const route of this.routes) {
-            if (path.match(route.urlRegex)) {
-                handler = route.handler;
-                break;
-            }
-        }
+        let handler = this.getHandler(path);
         if (handler === null) {
-            this.goto('/auth');
-            return;
+            // TODO: import 404 handler
+            handler = handler404
         }
         await renderer.render(this.element, handler, this);
     }

@@ -53,7 +53,7 @@ const html = `
  * @param {object} element html element to be rendered in
  * @param {object} app object of a main App class
  */
-export function source(element, app) {
+export function handler(element, app) {
     document.title = `${app.name} | Регистрация`;
 
     const template = Handlebars.compile(html);

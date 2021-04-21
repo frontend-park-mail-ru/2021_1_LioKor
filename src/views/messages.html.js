@@ -72,7 +72,7 @@ const html = `
  * @param app
  * @returns {Promise<void>}
  */
-export async function source(element, app) {
+export async function handler(element, app) {
     if (!app.storage.username) {
         await app.goto('/auth');
         return;
@@ -268,7 +268,6 @@ export async function source(element, app) {
     });
 
     // create dialogues scroll event-listener to upload new dialogues
-    // ОТВАЛ ЖОПЫ
     /*
     dialoguePreviewsGroup.addEventListener('scroll', async (event) => {
         // if it not scrolled to bottom

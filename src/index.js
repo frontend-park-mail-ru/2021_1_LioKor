@@ -27,7 +27,7 @@ async function main() {
         app.updateStorage(username, avatarUrl);
 
         if (location.pathname === '/') {
-            await app.goto('/user');
+            await app.goto('/messages');
             return;
         }
         await app.goto(location.pathname + location.search);

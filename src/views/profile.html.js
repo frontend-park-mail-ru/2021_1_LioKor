@@ -55,7 +55,7 @@ const html = `
  * @param {object} element html element to be rendered in
  * @param {object} app object of a main App class
  */
-export async function source(element, app) {
+export async function handler(element, app) {
     document.title = `${app.name} | Профиль`;
 
     const response = await app.apiGet('/user');
@@ -65,8 +65,7 @@ export async function source(element, app) {
     }
     const data = await response.json();
     const { username, avatarUrl } = data;
-    app.storage.username = username;
-    app.storage.avatar = avatarUrl;
+    app.updateStorage(username, avatarUrl);
 
     const template = Handlebars.compile(html);
     element.innerHTML = template({

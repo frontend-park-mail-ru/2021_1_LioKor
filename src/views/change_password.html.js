@@ -43,7 +43,7 @@ const html = `
  * @param {object} element html element to be rendered in
  * @param {object} app object of a main App class
  */
-export async function source(element, app) {
+export async function handler(element, app) {
     if (!app.storage.username) {
         await app.goto('/auth');
         return;
