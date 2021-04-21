@@ -8,7 +8,7 @@ export function registerSW() {
 					const data = {
 						type: 'CACHE_URLS',
 						payload: [
-							location.href,
+							location.origin + location.pathname,
 							...performance.getEntriesByType('resource').map((r) => r.name)
 						]
 					};

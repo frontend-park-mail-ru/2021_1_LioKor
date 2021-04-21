@@ -9,7 +9,7 @@ self.addEventListener('message', (event) => {
         event.waitUntil(
             caches.open(KEY)
                 .then( (cache) => {
-                    console.log("Cached: ", event.data.payload);
+                    //console.log("Cached: ", event.data.payload);
                     return cache.addAll(event.data.payload);
                 })
         );
@@ -17,24 +17,16 @@ self.addEventListener('message', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-    console.log("Request:");
-    console.log(event.request);
+    if (event.request.method !== 'GET') { return; }
     event.respondWith(
         caches.match(event.request)
             .then((cachedResponse) => {
-                //console.log(" - success");
                 if (navigator.onLine) {
+                    caches.open(KEY).then( (cache) => { return cache.add(event.request.url); }) // cache request as url
                     return fetch(event.request); // get from network
-                            /*.then(response => {
-                                response.body.isLostLocation = false;
-                                return response;
-                            })
-                            .catch(err => console.log(err.stack || err));*/
                 }
-                //window.dispatchEvent(new Event('offline')); // trigger window offline event
 
                 if (cachedResponse) {
-                    //cachedResponse.body.isLostConnection = true;
                     return cachedResponse; // get from cache
                 }
 
