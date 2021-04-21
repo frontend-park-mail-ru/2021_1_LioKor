@@ -1,3 +1,5 @@
+import Handlebars from 'handlebars/dist/cjs/handlebars';
+
 import { validatePassword } from '../modules/validators';
 
 const html = `
@@ -49,8 +51,6 @@ export async function source(element, app) {
 
     document.title = `${app.name} | Cменить пароль`;
 
-    // because handlebars is not imported but added as script:
-    // eslint-disable-next-line
     const template = Handlebars.compile(html);
     element.innerHTML = template({
         passwordRequirements: validatePassword()

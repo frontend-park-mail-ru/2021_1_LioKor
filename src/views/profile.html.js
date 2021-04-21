@@ -1,3 +1,5 @@
+import Handlebars from 'handlebars/dist/cjs/handlebars';
+
 import { readImageAsDataURL } from '../modules/images.js';
 import { validateEmail, validateFullname } from '../modules/validators';
 
@@ -66,8 +68,6 @@ export async function source(element, app) {
     app.storage.username = username;
     app.storage.avatar = avatarUrl;
 
-    // because handlebars is not imported but added as script:
-    // eslint-disable-next-line
     const template = Handlebars.compile(html);
     element.innerHTML = template({
         username: username,

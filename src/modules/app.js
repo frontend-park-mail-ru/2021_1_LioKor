@@ -1,3 +1,5 @@
+import Handlebars from 'handlebars/dist/cjs/handlebars';
+
 import * as renderer from './renderer.js';
 
 import { request } from './requests';
@@ -28,8 +30,6 @@ export default class App {
                 <div class="message">{{ message }}</div>
             </div>`;
             this.messagesEl = document.getElementById(messagesElId);
-            // because handlebars is not imported but added as script:
-            // eslint-disable-next-line
             this.messageTemplate = Handlebars.compile(messageHTML);
         }
 

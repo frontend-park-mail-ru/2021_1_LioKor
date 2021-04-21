@@ -1,3 +1,5 @@
+import Handlebars from 'handlebars/dist/cjs/handlebars';
+
 import { validatePassword, validateEmail, validateFullname } from '../modules/validators';
 
 const html = `
@@ -54,8 +56,6 @@ const html = `
 export function source(element, app) {
     document.title = `${app.name} | Регистрация`;
 
-    // because handlebars is not imported but added as script:
-    // eslint-disable-next-line
     const template = Handlebars.compile(html);
     element.innerHTML = template({
         passwordRequirements: validatePassword()
