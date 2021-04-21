@@ -1,4 +1,4 @@
-const KEY = 'liokor-mail-key'
+const KEY = 'liokor-mail-key';
 
 self.addEventListener('install', (event) => {
     event.waitUntil(self.skipWaiting());
@@ -30,16 +30,16 @@ self.addEventListener('fetch', (event) => {
                     return cachedResponse; // get from cache
                 }
 
-                const init = {  // create empty response
+                const init = { // create empty response
                     status: 418,
                     statusText: 'Offline Mode'
                 };
-                const data = {message: 'Content is not available in offline mode'};
-                const blob = new Blob([JSON.stringify(data, null, 2)], {type : 'application/json'});
+                const data = { message: 'Content is not available in offline mode' };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                 return new Response(blob, init);
             })
             .catch((err) => {
-                //console.log(" - error");
+                // console.log(" - error");
                 console.log(err.stack || err);
             })
     );

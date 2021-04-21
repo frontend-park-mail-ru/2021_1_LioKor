@@ -1,4 +1,6 @@
-import { readImageAsDataURL } from '../modules/images.js';
+import Handlebars from 'handlebars/dist/cjs/handlebars';
+
+import { getImageAsDataURL } from '@korolion/get-image-as-dataurl/getImageAsDataUrl.js';
 import { validateEmail, validateFullname } from '../modules/validators';
 
 const html = `
@@ -53,7 +55,7 @@ const html = `
  * @param {object} element html element to be rendered in
  * @param {object} app object of a main App class
  */
-export async function source(element, app) {
+export async function handler(element, app) {
     document.title = `${app.name} | Профиль`;
 
     const response = await app.apiGet('/user');
@@ -63,11 +65,8 @@ export async function source(element, app) {
     }
     const data = await response.json();
     const { username, avatarUrl } = data;
-    app.storage.username = username;
-    app.storage.avatar = avatarUrl;
+    app.updateStorage(username, avatarUrl);
 
-    // because handlebars is not imported but added as script:
-    // eslint-disable-next-line
     const template = Handlebars.compile(html);
     element.innerHTML = template({
         username: username,
@@ -129,9 +128,21 @@ export async function source(element, app) {
 
     const avatarImage = document.getElementById('avatarImage');
     document.getElementById('avatarChange').addEventListener('click', async () => {
-        // if "Cancel" button will be pressed - Promise never resolves, but we don't have event to resolve on cancel =(
-        const dataURL = await readImageAsDataURL();
-        avatarImage.src = dataURL;
-        avatarDataURL.value = dataURL;
+        // if "Cancel" button will be pressed - Promise never resolves, but there's no event to resolve on cancel =(
+        const dataURL = await getImageAsDataURL();
+        if (avatarDataURL.value !== dataURL) {
+            avatarDataURL.value = dataURL;
+
+            const formData = new FormData(editProfileForm);
+            const avatarUrl = formData.get('avatarDataURL');
+            const fullname = formData.get('fullname').trim();
+            const reserveEmail = formData.get('reserveEmail').trim();
+
+            const response = await app.apiPut(`/user/${username}`, { fullname, avatarUrl, reserveEmail });
+            if (response.ok) {
+                avatarImage.src = dataURL;
+                app.messageSuccess('Успех', 'Аватар успешно изменён');
+            }
+        }
     });
 }

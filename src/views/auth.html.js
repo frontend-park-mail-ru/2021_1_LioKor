@@ -34,7 +34,7 @@ const html = `
  * @param {object} element html element to be rendered in
  * @param {object} app object of a main App class
  */
-export async function source(element, app) {
+export async function handler(element, app) {
     document.title = `${app.name} | Авторизация`;
     element.innerHTML = html;
 
@@ -71,7 +71,14 @@ export async function source(element, app) {
         const response = await app.apiPost('/user/auth', { username, password });
         if (response.ok) {
             app.message('Здравствуйте!', 'Вы успешно вошли в систему');
-            await app.goto('/user');
+            const response = await app.apiGet('/user');
+            if (response.ok) {
+                const { username, avatarUrl } = await response.json();
+                app.updateStorage(username, avatarUrl);
+                await app.goto('/messages');
+            } else {
+                app.messageError(`Ошибка ${response.status}`, 'Не удалось получить данные пользователя!');
+            }
         } else {
             switch (response.status) {
             case 401:

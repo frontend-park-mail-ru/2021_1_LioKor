@@ -23,12 +23,11 @@ async function main() {
     const response = await app.apiGet('/user');
     if (response.ok) {
         // authenticated => redirecting to profile
-        const data = await response.json();
-        app.storage.username = data.username;
-        app.storage.avatar = (data.avatarUrl) ? `${app.apiUrl}/${data.avatarUrl}` : app.defaultAvatarUrl;
+        const { username, avatarUrl } = await response.json();
+        app.updateStorage(username, avatarUrl);
 
         if (location.pathname === '/') {
-            await app.goto('/user');
+            await app.goto('/messages');
             return;
         }
         await app.goto(location.pathname + location.search);

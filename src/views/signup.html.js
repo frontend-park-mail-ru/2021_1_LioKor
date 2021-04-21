@@ -1,3 +1,5 @@
+import Handlebars from 'handlebars/dist/cjs/handlebars';
+
 import { validatePassword, validateEmail, validateFullname } from '../modules/validators';
 
 const html = `
@@ -32,7 +34,7 @@ const html = `
                     <div class="form-group" id="reserveEmailGroup">
                         <label>ЗАПАСНОЙ EMAIL<span class="error-text" id="reserveEmailErrorText"></span></label>
                         <input name="reserveEmail" type="email" class="form-control" placeholder="wolf@liokor.ru">
-                        <div class="muted">Используется для восстановления пароля, если не указан - пароль восстановить невозможно</a>
+                        <div class="muted">Используется для восстановления пароля, если не указан - восстановить пароль крайне сложно</a>
                     </div>
                     <div class="form-group">
                         <input type="submit" class="btn" value="Создать">
@@ -51,11 +53,9 @@ const html = `
  * @param {object} element html element to be rendered in
  * @param {object} app object of a main App class
  */
-export function source(element, app) {
+export function handler(element, app) {
     document.title = `${app.name} | Регистрация`;
 
-    // because handlebars is not imported but added as script:
-    // eslint-disable-next-line
     const template = Handlebars.compile(html);
     element.innerHTML = template({
         passwordRequirements: validatePassword()
@@ -125,7 +125,8 @@ export function source(element, app) {
         switch (response.status) {
         case 200:
             app.messageSuccess('Ура!', `Аккаунт ${username} успешно создан!`);
-            await app.goto('/user');
+            app.updateStorage(username);
+            await app.goto('/messages');
             break;
         case 400:
             usernameGroup.classList.add('error');

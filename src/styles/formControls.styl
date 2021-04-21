@@ -4,7 +4,7 @@ formBgColor = #404346
 
 form-button-padding = 10px
 form-padding = 10px
-form-margin = 125px
+form-margin = 100px
 form-width = 460px
 
 linkButton
@@ -79,26 +79,26 @@ textarea.form-control
     .form
         padding-top 5px
 
-        .form-group
-            margin 20px 0
-            label
-                color textColor2
-                display block
-                font-size 0.75rem
-                font-weight bold
-                margin-bottom 9px
-                .error-text
-                    font-style italic
-                .error-text:not(:empty):before
-                    content: " - "
+.form-group
+    margin 20px 0
+    label
+        color textColor2
+        display block
+        font-size 0.75rem
+        font-weight bold
+        margin-bottom 9px
+        .error-text
+            font-style italic
+        .error-text:not(:empty):before
+            content: " - "
 
-            input,
-            button
-                width 100%
-            .muted
-                margin-top 8px
-                font-size 0.9rem
-                color textColor3
-        .form-group.error
-            label
-                color clError
+    input,
+    button
+        width 100%
+    .muted
+        margin-top 8px
+        font-size 0.9rem
+        color textColor3
+.form-group.error
+    label
+        color clError

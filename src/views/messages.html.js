@@ -1,3 +1,5 @@
+import Handlebars from 'handlebars/dist/cjs/handlebars';
+
 import ParsedDate from '../modules/date';
 
 const html = `
@@ -23,7 +25,7 @@ const html = `
             <span class="text-3 flex-filler centered" id="dialogue-header-time" style="margin-left: 10px">Выберите диалог</span>
             <linkbutton class="svg-button" href="/user" pointer-events="auto"><svg pointer-events="none" id="clear-find-button" style="margin-right: 10px" xmlns="http://www.w3.org/2000/svg" height="30" width="30"><g transform="scale(1.5)"><path d="m3.0000001 14.5c0-3.1424487 3.08132567-4.50000038 6.9999999-4.50000038 3.9186742 0 6.9999999 1.35755168 6.9999999 4.50000038 0 1.615596-1.0761803 2.5000004-2.3000001 2.5000004h-9.39999961c-1.22381984 0-2.30000009-.8844044-2.30000009-2.5000004zm1.8 0c0 .5349234.20087263.7000004.50000009.7000004h9.39999961c.2991275 0 .5000001-.165077.5000001-.7000004 0-1.7450508-2.1675128-2.7000004-5.1999999-2.7000004-3.03248714 0-5.1999999.9549496-5.1999999 2.7000004zm9.0999999-9.5c0 2.15455627-1.7454437 3.9-3.9 3.9-2.15455627 0-3.9-1.74544373-3.9-3.9s1.74544373-3.9 3.9-3.9c2.1545563 0 3.9 1.74544373 3.9 3.9zm-1.8 0c0-1.16044373-.9395563-2.1-2.1-2.1-1.16044373 0-2.1.93955627-2.1 2.1s.93955627 2.1 2.1 2.1c1.1604437 0 2.1-.93955627 2.1-2.1z"/></g></svg></linkbutton>
         </div>
-        
+
         <div class="pos-relative flex-filler">
             <div class="connection-info center-text" id="connection-info">
                 <svg class="svg-button" xmlns="http://www.w3.org/2000/svg"><path d="M21.0303 4.83038C21.3232 4.53749 21.3232 4.06261 21.0303 3.76972C20.7374 3.47683 20.2626 3.47683 19.9697 3.76972L3.96967 19.7697C3.67678 20.0626 3.67678 20.5375 3.96967 20.8304C4.26256 21.1233 4.73744 21.1233 5.03033 20.8304L7.11065 18.7501H18.5233C20.9961 18.7501 23.0008 16.7454 23.0008 14.2725C23.0008 11.7996 20.9961 9.79493 18.5233 9.79493C18.4592 9.79493 18.3955 9.79628 18.3321 9.79895C18.2944 9.15027 18.1424 8.53227 17.8959 7.96479L21.0303 4.83038ZM16.7186 9.14209L8.61065 17.2501H18.5233C20.1677 17.2501 21.5008 15.917 21.5008 14.2725C21.5008 12.628 20.1677 11.2949 18.5233 11.2949C18.2557 11.2949 17.9975 11.33 17.7524 11.3955C17.5122 11.4596 17.2558 11.4006 17.0679 11.2378C16.8799 11.075 16.7849 10.8297 16.8141 10.5828C16.8321 10.4306 16.8414 10.2755 16.8414 10.1178C16.8414 9.78093 16.7987 9.45399 16.7186 9.14209Z"/><path d="M12.9319 4.70837C14.0388 4.70837 15.068 5.04083 15.9252 5.61134C16.0521 5.69579 16.0649 5.87451 15.9571 5.9823L15.2295 6.70991C15.1455 6.79392 15.0144 6.80644 14.912 6.74617C14.3313 6.4044 13.6545 6.20837 12.9319 6.20837C11.3816 6.20837 10.0406 7.1107 9.40813 8.42218C9.23808 8.77479 8.82543 8.9373 8.46061 8.79534C7.96987 8.60439 7.43541 8.49926 6.87461 8.49926C4.45814 8.49926 2.49921 10.4582 2.49921 12.8747C2.49921 14.521 3.40846 15.9549 4.75218 16.7017C4.90497 16.7866 4.94313 16.9963 4.81953 17.1199L4.09641 17.843C4.01666 17.9227 3.89307 17.9397 3.79705 17.8805C2.1183 16.8462 0.999207 14.9911 0.999207 12.8747C0.999207 9.62976 3.62971 6.99925 6.87461 6.99925C7.39427 6.99925 7.89899 7.0669 8.38002 7.19408C9.34177 5.69979 11.0205 4.70837 12.9319 4.70837Z"/></svg>
@@ -65,11 +67,12 @@ const html = `
 // <svg class="svg-button" id="change-theme-button" viewBox="711 15 24 24" xmlns="http://www.w3.org/2000/svg" height="30" width="30"><g fill="none" fill-rule="evenodd"><path d="m711 15h24v24h-24z"/><path d="m712 31h7m-7-5h12m-12-5h17m-5 10h10m-5-5v10" stroke="#828a99" stroke-linecap="round" stroke-width="2"/></g></svg>
 /**
  * Renders auth page and "activating" it's js
+ *
  * @param element
  * @param app
  * @returns {Promise<void>}
  */
-export async function source(element, app) {
+export async function handler(element, app) {
     if (!app.storage.username) {
         await app.goto('/auth');
         return;
@@ -127,8 +130,6 @@ export async function source(element, app) {
     let createdMessages = 0;
     let isLostConnection = false;
     // --- Handlebars templates
-    // because handlebars is not imported but added as script:
-    // eslint-disable-next-line
     const messageBlockInnerHTMLTemplate = Handlebars.compile(`
         <div class="message-block {{ side }}">
             <img src="{{ avatar }}" alt="avatar" class="middle-avatar">
@@ -147,8 +148,6 @@ export async function source(element, app) {
             <div class="text-1">{{ title }}</div>
             <div class="dialogue-body text-2">{{ body }}</div>
         </div>`);
-
-    const getMaxId = (objList) => Math.max(...objList.map(({ id }) => id));
 
     // --- Connection events
     window.addEventListener('offline', (event) => {
@@ -170,7 +169,7 @@ export async function source(element, app) {
         }
         connectionInfo.style.top = '-40px';
         connectionInfo.style.opacity = '0';
-        setTimeout(() => {connectionInfo.style.visibility = 'hidden';}, 500);
+        setTimeout(() => { connectionInfo.style.visibility = 'hidden'; }, 500);
         isLostConnection = false;
     });
 
@@ -269,7 +268,6 @@ export async function source(element, app) {
     });
 
     // create dialogues scroll event-listener to upload new dialogues
-    // ОТВАЛ ЖОПЫ
     /*
     dialoguePreviewsGroup.addEventListener('scroll', async (event) => {
         // if it not scrolled to bottom
@@ -339,14 +337,13 @@ export async function source(element, app) {
         mutexScrollMessagesEvent = false; // unblock mutex
     });
 
-
     // Imitate loading work... Simple clicker-game for user
     connectionInfo.addEventListener('click', (event) => {
         connectionRefresh.style.transform = 'rotate(' + (Number(connectionRefresh.style.transform.substring(7, connectionRefresh.style.transform.length - 4)) + 360) + 'deg)';
-        setTimeout(() => { connectionText.innerText += '.' }, 300);
-        setTimeout(() => { connectionText.innerText += '.' }, 600);
-        setTimeout(() => { connectionText.innerText += '.' }, 900);
-        setTimeout(() => { connectionText.innerText = connectionText.innerText.substring(0, connectionText.innerText.length - 3) }, 1500);
+        setTimeout(() => { connectionText.innerText += '.'; }, 300);
+        setTimeout(() => { connectionText.innerText += '.'; }, 600);
+        setTimeout(() => { connectionText.innerText += '.'; }, 900);
+        setTimeout(() => { connectionText.innerText = connectionText.innerText.substring(0, connectionText.innerText.length - 3); }, 1500);
     });
 
     /**
@@ -428,8 +425,10 @@ export async function source(element, app) {
         if (find && find !== '') { path += '&find=' + find; }
         const response = await app.apiGet(path);
         if (!response.ok) {
-            if (response.status !== 418) // Empty response from SW (offline mode)
+            // Empty response from SW (offline mode)
+            if (response.status !== 418) {
                 app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список диалогов!');
+            }
             return [];
         }
         const dialogues = await response.json();
@@ -447,7 +446,7 @@ export async function source(element, app) {
      * @returns {Promise<*>}
      */
     async function getMessages(withUsername, since, amount) {
-        let response = await app.apiGet(`/email/emails?with=${withUsername}&last=${since}&amount=${amount}`);
+        const response = await app.apiGet(`/email/emails?with=${withUsername}&last=${since}&amount=${amount}`);
         if (!response.ok) {
             // Просто открыт новый пустой диалог
             return [];
@@ -498,7 +497,7 @@ export async function source(element, app) {
         const elem = document.createElement('li');
         elem.id = 'new-dialogue-button';
         elem.classList.add('listing-button', 'center-text', 'p-xs');
-        elem.innerHTML = `<svg class="plus-button" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(3) translate(1, -2)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>`;
+        elem.innerHTML = '<svg class="plus-button" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(3) translate(1, -2)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>';
         dialoguePreviewsGroup.insertBefore(elem, dialoguePreviewsGroup.firstChild);
 
         // create Event-listener on element
@@ -515,7 +514,7 @@ export async function source(element, app) {
      */
     async function setActiveDialogue(currentElem) {
         if (currentElem.id === 'dialogue-' + currentDialogue.id) { return; }
-        currentDialogue.id = currentElem.id.substr(9) // length if 'dialogue-' ;
+        currentDialogue.id = currentElem.id.substr(9); // length if 'dialogue-' ;
 
         messagesFooter.style.display = 'flex'; // show message input
 
@@ -569,6 +568,9 @@ export async function source(element, app) {
         showDialogue(dialogue.username);
     }
 
+    /**
+     * @param username
+     */
     async function addOrSetDialogue(username) {
         if (username === '') { return; }
         themeInput.focus();
@@ -605,7 +607,7 @@ export async function source(element, app) {
         if (messages[username].length !== 0) {
             // create bottom message block
             const messageBlock = messages[username][0];
-            const messageBlockElem = addMessageToField(messageBlock);
+            /* const messageBlockElem = */addMessageToField(messageBlock);
 
             // set default theme of message
             if (messageBlock.sender !== app.storage.username && messageBlock.sender !== app.storage.username + '@liokor.ru') {
@@ -829,7 +831,7 @@ export async function source(element, app) {
      */
     function getChildrenHeight(elem) {
         let height = 0;
-        elem.childNodes.forEach((child) => {height += child.clientHeight;});
+        elem.childNodes.forEach((child) => { height += child.clientHeight; });
         return height;
     }
 }
