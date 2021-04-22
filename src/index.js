@@ -14,9 +14,10 @@ import App from './modules/app.js';
 async function main() {
     registerSW();
 
+    const { hostname, host } = window.location;
     let apiUrl = 'https://api.mail.liokor.ru';
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        apiUrl = `http://${window.location.host}/api`;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        apiUrl = `http://${host}/api`;
     }
     const app = new App('LioKor', apiUrl, 'app', 'popupMessages');
 

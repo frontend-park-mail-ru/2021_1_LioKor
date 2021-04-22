@@ -11,6 +11,8 @@ import * as changePassword from '../views/change_password.html.js';
 import * as messages from '../views/messages.html.js';
 import * as view404 from '../views/404.html.js';
 
+const DEFAULT_AVATAR_URL = '/images/default-avatar.jpg';
+
 export default class App {
     constructor(name, apiUrl, elId, messagesElId = null) {
         this.storage = {
@@ -21,7 +23,7 @@ export default class App {
         this.name = name;
         this.apiUrl = apiUrl;
         this.element = elId;
-        this.defaultAvatarUrl = '/images/default-avatar.jpg';
+        this.defaultAvatarUrl = DEFAULT_AVATAR_URL;
 
         this.messagesEl = null;
         this.messageTemplate = null;
