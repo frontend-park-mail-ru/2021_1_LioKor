@@ -161,7 +161,7 @@ export async function handler(element, app) {
     }
 
     window.addEventListener('online', (event) => {
-        if (messagesField.scrollTop <= messagesScrollLoadOffset) {
+        if (messagesField.scrollTop <= messagesScrollLoadOffset && currentDialogue.username) {
             messagesField.dispatchEvent(new Event('scroll')); // trigger scroll-update messages
         }
         if (dialoguePreviewsGroup.scrollTop + dialoguePreviewsGroup.clientHeight >= dialoguePreviewsGroup.scrollHeight - dialoguesScrollLoadOffset) {
