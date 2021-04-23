@@ -1,7 +1,7 @@
 /**
  * Register Service Worker
  */
-export function registerSW() {
+export async function registerSW() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js', { scope: '/' })
             .then((registration) => {
@@ -9,18 +9,19 @@ export function registerSW() {
                     type: 'CACHE_URLS',
                     payload: [
                         location.href,
-                        ...performance.getEntriesByType('resource').map((r) => r.name)
+                        performance.getEntriesByType('resource').map(({name}) => name)
                     ]
                 };
 
-                if (registration.installing) {
-                    registration.installing.postMessage(data);
+                const {installing, waiting, active} = registration;
+                if (installing) {
+                    installing.postMessage(data);
                     console.log('Service worker installing');
-                } else if (registration.waiting) {
-                    registration.waiting.postMessage(data);
+                } else if (waiting) {
+                    waiting.postMessage(data);
                     console.log('Service worker installed');
-                } else if (registration.active) {
-                    registration.active.postMessage(data);
+                } else if (active) {
+                    active.postMessage(data);
                     console.log('Service worker active');
                 }
             })

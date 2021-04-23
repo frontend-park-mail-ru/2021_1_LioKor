@@ -12,9 +12,9 @@ import App from './modules/app.js';
  *
  */
 async function main() {
-    registerSW();
+    await registerSW();
 
-    const { hostname, host } = window.location;
+    const { hostname, host, pathname, search } = window.location;
     let apiUrl = 'https://api.mail.liokor.ru';
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
         apiUrl = `http://${host}/api`;
@@ -27,19 +27,19 @@ async function main() {
         const { username, avatarUrl } = await response.json();
         app.updateStorage(username, avatarUrl);
 
-        if (location.pathname === '/') {
+        if (pathname === '/') {
             await app.goto('/messages');
             return;
         }
-        await app.goto(location.pathname + location.search);
+        await app.goto(pathname + search);
         return;
     }
 
-    if (location.pathname === '/') {
+    if (pathname === '/') {
         await app.goto('/auth');
         return;
     }
-    await app.goto(location.pathname + location.search);
+    await app.goto(pathname + search);
 }
 
-main();
+await main();
