@@ -26,6 +26,10 @@ self.addEventListener('fetch', (event) => {
                     return fetch(event.request); // get from network
                 }
 
+                if (event.request.url.includes('/messages?')) { // if we have query-parameters
+                    return caches.match(event.request.url.split('?')[0]); // get cache from url without query
+                }
+
                 if (cachedResponse) {
                     return cachedResponse; // get from cache
                 }
