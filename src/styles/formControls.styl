@@ -3,9 +3,14 @@
 formBgColor = #404346
 
 form-button-padding = 10px
+form-button-margin = 10px
 form-padding = 10px
 form-margin = 100px
 form-width = 460px
+form-top-margin = 8px
+border-width = 1px
+border-radius = 3px
+big-border-radius = 7px
 
 linkButton
     text-decoration none
@@ -24,7 +29,7 @@ linkButton:hover
     border-width 0
     font-size 1.1rem
     padding form-button-padding form-button-padding*2
-    border-radius 3px
+    border-radius border-radius
     cursor pointer
     transition all 0.3s ease
 .btn.btn-danger
@@ -42,9 +47,9 @@ textarea.form-control
     padding form-button-padding
     font-size 1rem
     color textColor1
-    background-color #393C3F
-    border 1px solid #080808
-    border-radius 3px
+    background-color clSecondary
+    border border-width solid clFormBorder
+    border-radius border-radius
     transition border 0.3s ease
 .form-control:focus
     outline 0
@@ -53,15 +58,15 @@ textarea.form-control
     color textColor3
 .form-control.error,
 .error .form-control
-    border 1px solid clError !important
+    border border-width solid clError !important
 
 .standalone-form
-    box-shadow 0 0 3px #101010
+    box-shadow 0 0 border-radius clFormShadow
     padding form-padding*2 form-padding*3
 
     max-width form-width
     margin form-margin auto
-    border-radius 7px
+    border-radius big-border-radius
     overflow hidden
 
     background-color formBgColor
@@ -73,20 +78,20 @@ textarea.form-control
             font-size 1.5rem
             font-weight bold
         .secondary
-            margin-top 10px
+            margin-top form-button-margin
             font-size 0.95rem
             color textColor2
     .form
         padding-top 5px
 
 .form-group
-    margin 20px 0
+    margin form-button-margin*2 0
     label
         color textColor2
         display block
         font-size 0.75rem
         font-weight bold
-        margin-bottom 9px
+        margin-bottom form-button-margin
         .error-text
             font-style italic
         .error-text:not(:empty):before
@@ -96,7 +101,7 @@ textarea.form-control
     button
         width 100%
     .muted
-        margin-top 8px
+        margin-top form-top-margin
         font-size 0.9rem
         color textColor3
 .form-group.error

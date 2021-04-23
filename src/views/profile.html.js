@@ -122,6 +122,8 @@ export async function handler(element, app) {
     document.getElementById('logoutButton').addEventListener('click', async (event) => {
         event.preventDefault();
         await app.apiDelete('/user/session');
+        app.storage.username = undefined;
+        app.storage.avatar = undefined;
         app.messageSuccess('До свидания!', 'Вы успешно вышли из аккаунта!');
         await app.goto('/auth');
     });
@@ -130,19 +132,19 @@ export async function handler(element, app) {
     document.getElementById('avatarChange').addEventListener('click', async () => {
         // if "Cancel" button will be pressed - Promise never resolves, but there's no event to resolve on cancel =(
         const dataURL = await getImageAsDataURL();
-        if (avatarDataURL.value !== dataURL) {
-            avatarDataURL.value = dataURL;
+        if (avatarDataURL.value === dataURL) { return; }
 
-            const formData = new FormData(editProfileForm);
-            const avatarUrl = formData.get('avatarDataURL');
-            const fullname = formData.get('fullname').trim();
-            const reserveEmail = formData.get('reserveEmail').trim();
+        avatarDataURL.value = dataURL;
 
-            const response = await app.apiPut(`/user/${username}`, { fullname, avatarUrl, reserveEmail });
-            if (response.ok) {
-                avatarImage.src = dataURL;
-                app.messageSuccess('Успех', 'Аватар успешно изменён');
-            }
+        const formData = new FormData(editProfileForm);
+        const avatarUrl = formData.get('avatarDataURL');
+        const fullname = formData.get('fullname').trim();
+        const reserveEmail = formData.get('reserveEmail').trim();
+
+        const response = await app.apiPut(`/user/${username}`, { fullname, avatarUrl, reserveEmail });
+        if (response.ok) {
+            avatarImage.src = dataURL;
+            app.messageSuccess('Успех', 'Аватар успешно изменён');
         }
     });
 }
