@@ -42,4 +42,4 @@ async function main() {
     await app.goto(pathname + search);
 }
 
-await main();
+main();

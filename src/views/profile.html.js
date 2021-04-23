@@ -132,7 +132,9 @@ export async function handler(element, app) {
     document.getElementById('avatarChange').addEventListener('click', async () => {
         // if "Cancel" button will be pressed - Promise never resolves, but there's no event to resolve on cancel =(
         const dataURL = await getImageAsDataURL();
-        if (avatarDataURL.value === dataURL) { return; }
+        if (avatarDataURL.value === dataURL) {
+            return;
+        }
 
         avatarDataURL.value = dataURL;
 
