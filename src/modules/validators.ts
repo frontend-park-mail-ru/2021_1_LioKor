@@ -1,3 +1,7 @@
+const VALID_PASSWORD_REGEX = /^(?=.*\d)(?=.*[a-zA-Z]).{6,}$/;
+const VALID_EMAIL_REGEX = /^[^@ ]{1,}@[^@ ]{3,}\..{2,}$/;
+const MAX_FULLNAME_LENGTH = 128;
+
 /**
  * Validates password, if no args are passed - returns string with requirements
  *
@@ -8,8 +12,7 @@ export function validatePassword(password: string | null = null): boolean | stri
     if (password === null) {
         return 'Минимум 6 символов, хотя бы 1 буква и 1 цифра';
     }
-    const validPasswordRegex = /^(?=.*\d)(?=.*[a-zA-Z]).{6,}$/;
-    return password.match(validPasswordRegex) !== null;
+    return password.match(VALID_PASSWORD_REGEX) !== null;
 }
 
 /**
@@ -17,8 +20,7 @@ export function validatePassword(password: string | null = null): boolean | stri
  * @returns {boolean} true if valid, else false
  */
 export function validateEmail(email: string): boolean {
-    const validEmailRegex = /^[^@ ]{1,}@[^@ ]{3,}\..{2,}$/;
-    return email.match(validEmailRegex) !== null;
+    return email.match(VALID_EMAIL_REGEX) !== null;
 }
 
 /**
@@ -26,5 +28,5 @@ export function validateEmail(email: string): boolean {
  * @returns {boolean} true if valid, else false
  */
 export function validateFullname(fullname: string): boolean {
-    return fullname.length < 128;
+    return fullname.length <= MAX_FULLNAME_LENGTH;
 }
