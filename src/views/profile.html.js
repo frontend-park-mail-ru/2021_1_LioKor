@@ -122,8 +122,7 @@ export async function handler(element, app) {
     document.getElementById('logoutButton').addEventListener('click', async (event) => {
         event.preventDefault();
         await app.apiDelete('/user/session');
-        app.storage.username = undefined;
-        app.storage.avatar = undefined;
+        app.clearStorage();
         app.messageSuccess('До свидания!', 'Вы успешно вышли из аккаунта!');
         await app.goto('/auth');
     });

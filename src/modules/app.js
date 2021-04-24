@@ -85,6 +85,11 @@ export default class App {
         this.storage.avatar = (avatarUrl) ? `${this.apiUrl}/${avatarUrl}` : this.defaultAvatarUrl;
     }
 
+    clearStorage() {
+        this.storage.username = null;
+        this.storage.avatar = null;
+    }
+
     apiRequest(method, path, data = {}) {
         return request(method, `${this.apiUrl}${path}`, data);
     }
