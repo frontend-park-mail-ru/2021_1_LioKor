@@ -51,7 +51,7 @@ export default class App {
                 event.preventDefault();
                 const href = event.target.getAttribute('href');
                 if (href) {
-                    this.goto(href.toString());
+                    this.goto(href);
                 }
             }
         });
