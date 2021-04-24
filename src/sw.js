@@ -22,11 +22,16 @@ self.addEventListener('fetch', (event) => {
         caches.match(event.request)
             .then((cachedResponse) => {
                 if (navigator.onLine) {
-                    caches.open(KEY).then( (cache) => { return cache.add(event.request.url); }) // cache request as url
-                    return fetch(event.request); // get from network
+                    return fetch(event.request) // get from network
+                        .then(res => {
+                            const resClone = res.clone();
+                            caches.open(KEY).then((cache) => cache.put(event.request, resClone));
+                            return res;
+                        })
+                        .catch(err => console.error(err));
                 }
 
-                if (event.request.url.includes('/messages?')) { // if we have query-parameters
+                if (event.request.url.includes('/messages?')) { // if we have query-parameters (but we need to get html-page)
                     return caches.match(event.request.url.split('?')[0]); // get cache from url without query
                 }
 
