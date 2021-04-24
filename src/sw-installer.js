@@ -9,7 +9,7 @@ export async function registerSW() {
                     type: 'CACHE_URLS',
                     payload: [
                         location.href,
-                        performance.getEntriesByType('resource').map(({name}) => name)
+                        ...performance.getEntriesByType('resource').map(({name}) => name)
                     ]
                 };
 
