@@ -3,7 +3,7 @@ import Handlebars from 'handlebars/dist/cjs/handlebars';
 import ParsedDate from '../modules/date';
 
 const html = `
-<div class="table-columns fullheight p-l bg-5">
+<div class="table-columns fullheight p-l bg-5" id="messages-page">
     <div class="table-column dialogues-column table-rows bg-transparent">
         <div class="header tool-dialogue table-columns">
             <!--svg class="svg-button" xmlns="http://www.w3.org/2000/svg" width="40" height="40"><path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z"/></svg-->
@@ -91,6 +91,8 @@ export async function handler(element, app) {
     const dialoguesScrollLoadOffset = 20;
 
     // --- HTML elements
+    const messagesPage = document.getElementById('messages-page');
+
     const dialoguePreviewsGroup = document.getElementById('dialogues-listing');
     const dialogueHeader = document.getElementById('dialogue-header-title');
     const dialogueTime = document.getElementById('dialogue-header-time');
@@ -122,13 +124,14 @@ export async function handler(element, app) {
     // --- One-element containers
     const currentDialogue = {
         id: undefined,
-        idInDialogues: undefined,
         elem: dialoguePreviewsGroup,
-        title: undefined,
-        time: undefined,
         avatar: undefined,
         username: undefined
     };
+    let selectedDialogue = {
+        elem: dialoguePreviewsGroup,
+        title: undefined
+    }
     let createdDialogues = 0;
     let createdMessages = 0;
     let isLostConnection = false;
@@ -243,7 +246,7 @@ export async function handler(element, app) {
             redrawDialogues(dialogues.storage);
             return;
         }
-        foundDialogues = await getDialogues(-1, 10, findText);
+        foundDialogues = await getDialogues(-1, dialoguesByRequest, findText);
         if (isLostConnection) {
             dialogues.gottenFromSW = true;
             dialogues.plug = plugStates.offline;
@@ -352,6 +355,8 @@ export async function handler(element, app) {
         setTimeout(() => { connectionText.innerText = connectionText.innerText.substring(0, connectionText.innerText.length - 3); }, 1500);
     });
 
+
+
     /**
      * Clear dialogues list and show new
      *
@@ -439,7 +444,15 @@ export async function handler(element, app) {
     function convertTimesToStr(array) {
         array.forEach((elem) => {
             const date = new Date(elem.time);
-            elem.time = date.getDate() + '/' + ('0' + date.getMonth()).slice(-2) + ' ' + date.getHours() + ':' + ('0' + date.getMinutes()).slice(-2);
+            const now = new Date();
+            if (date.getDate() === now.getDate()) { // today
+                elem.time = '';
+            } else if (date.getDate() === now.getDate() - 1) { // yesterday
+                elem.time = 'Вчера ';
+            } else { // long time ago
+                elem.time = date.getDate() + '.' + String(date.getMonth()).padStart(2, '0') + ' ';
+            }
+            elem.time += date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0'); // add time
         });
     }
 
@@ -555,8 +568,8 @@ export async function handler(element, app) {
 
         // update messages header
         const dialogue = dialogues.storage.find((item) => item.id === Number(currentDialogue.id)); // get dialogue data
-        dialogueHeader.innerText = currentDialogue.title = dialogue.username;
-        dialogueTime.innerText = currentDialogue.time = dialogue.time;
+        dialogueHeader.innerText = dialogue.username;
+        dialogueTime.innerText = dialogue.time;
 
         // push old message and theme into localStorage
         localStorage.setItem(currentDialogue.username + '-theme', themeInput.value);
@@ -758,7 +771,8 @@ export async function handler(element, app) {
      * @returns {string}
      */
     function getCurrentTime() {
-        return (new ParsedDate(new Date())).getShortDateString();
+        const date = new Date();
+        return date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0')
     }
 
     /**
