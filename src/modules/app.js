@@ -39,10 +39,7 @@ export default class App {
         }
 
         window.addEventListener('popstate', (ev) => {
-            const url = ev.state.url;
-            if (url) {
-                this.goto(url);
-            }
+            this.goto(location.pathname, false);
         });
 
         document.body.addEventListener('click', (event) => {
@@ -83,6 +80,11 @@ export default class App {
     updateStorage(username, avatarUrl = null) {
         this.storage.username = username;
         this.storage.avatar = (avatarUrl) ? `${this.apiUrl}/${avatarUrl}` : this.defaultAvatarUrl;
+    }
+
+    clearStorage() {
+        this.storage.username = null;
+        this.storage.avatar = null;
     }
 
     apiRequest(method, path, data = {}) {
@@ -150,8 +152,10 @@ export default class App {
         return null;
     }
 
-    async goto(path) {
-        history.pushState({ url: path }, '', path);
+    async goto(path, pushState = true) {
+        if (pushState) {
+            history.pushState(null, null, path);
+        }
 
         let handler = this.getHandler(path);
         if (handler === null) {
