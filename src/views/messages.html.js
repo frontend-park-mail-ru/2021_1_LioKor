@@ -1,19 +1,18 @@
 import Handlebars from 'handlebars/dist/cjs/handlebars';
 
-import ParsedDate from '../modules/date';
+import { validateEmail } from '../modules/validators';
 
 const html = `
 <div class="table-columns fullheight p-l bg-5" id="messages-page">
     <div class="table-column dialogues-column table-rows bg-transparent">
         <div class="header tool-dialogue table-columns">
             <!--svg class="svg-button" xmlns="http://www.w3.org/2000/svg" width="40" height="40"><path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z"/></svg-->
-            <!--svg class="svg-button middle-avatar" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(1.8) translate(2, -1)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg-->
             <!--svg class="svg-button middle-avatar" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.07) translate(30,30)"><path d="M506.141,477.851L361.689,333.399c65.814-80.075,61.336-198.944-13.451-273.73c-79.559-79.559-209.01-79.559-288.569,0    s-79.559,209.01,0,288.569c74.766,74.766,193.62,79.293,273.73,13.451l144.452,144.452c7.812,7.812,20.477,7.812,28.289,0    C513.953,498.328,513.953,485.663,506.141,477.851z M319.949,319.948c-63.96,63.96-168.03,63.959-231.99,0    c-63.96-63.96-63.96-168.03,0-231.99c63.958-63.957,168.028-63.962,231.99,0C383.909,151.918,383.909,255.988,319.949,319.948z"/><path xmlns="http://www.w3.org/2000/svg" d="M301.897,183.949h-77.94v-77.94c0-11.048-8.956-20.004-20.004-20.004c-11.048,0-20.004,8.956-20.004,20.004v77.94h-77.94    c-11.048,0-20.004,8.956-20.004,20.004c0,11.048,8.956,20.004,20.004,20.004h77.94v77.94c0,11.048,8.956,20.004,20.004,20.004    c11.048,0,20.004-8.956,20.004-20.004v-77.94h77.94c11.048,0,20.004-8.956,20.004-20.004    C321.901,192.905,312.945,183.949,301.897,183.949z"/></g></svg-->
-            <svg class="svg-button middle-avatar" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(2) translate(0, -2)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>
             <div class="flex-filler pos-relative">
                 <input class="find-input input-with-clear fullheight" type="text" autocomplete="off" placeholder="Создать или найти диалог" id="find-input">
                 <svg class="svg-button transparent centered input-clear inside-input" id="clear-find-button" xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z"/></svg>
              </div>
+             <svg class="svg-button middle-avatar" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(2) translate(0, -2)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>
         </div>
 
         <ul class="table-rows dialogues-listing scrollable" id="dialogues-listing">
@@ -80,10 +79,9 @@ export async function handler(element, app) {
     const messagesByRequest = 10;
     const messagesScrollLoadOffset = 40;
     const dialoguesScrollLoadOffset = 20;
+    const controlKeys = [13, 27, 37,38,39,40]; // enter, escape, [arrows]
 
     // --- HTML elements
-    const messagesPage = document.getElementById('messages-page');
-
     const dialoguePreviewsGroup = document.getElementById('dialogues-listing');
     const dialogueHeader = document.getElementById('dialogue-header-title');
     const dialogueTime = document.getElementById('dialogue-header-time');
@@ -96,6 +94,8 @@ export async function handler(element, app) {
     const connectionRefresh = document.getElementById('refresh-connection-button');
 
     const findInput = document.getElementById('find-input');
+    const findButton = document.getElementById('find-dialogue-button');
+
     const themeInput = document.getElementById('theme-input');
     const messageInput = document.getElementById('message-input');
     // --- Plug-elements
@@ -204,6 +204,9 @@ export async function handler(element, app) {
     });
     // create send message event-listener by ctrl+Enter
     messageInput.addEventListener('keydown', async (event) => {
+        if (controlKeys.includes(event.keyCode)) {
+            event.stopPropagation();
+        }
         if (event.keyCode === 27) { // Esc
             messageInput.blur();
         } else if (event.ctrlKey && event.keyCode === 13) { // ctrl+Enter
@@ -216,49 +219,66 @@ export async function handler(element, app) {
     messageInput.addEventListener('input', (event) => {
         // resize input element
         messageInput.style.height = messageInput.style.minHeight;
-        messageInput.style.height = messageInput.scrollHeight + 2 + 'px'; // 2 = CSS border-width * 2
+        messageInput.style.height = messageInput.scrollHeight + 2 + 'px'; // 2 = border-width * 2
     });
 
     // --- Find dialogues
-    let lastDialoguesPlug = dialogues.plug;
+    let previousDialoguesPlug = dialogues.plug;
     // create clear-find event-listener
     document.getElementById('clear-find-button').addEventListener('click', (event) => {
-        dialogues.plug = lastDialoguesPlug;
+        // "load" previous dialogues plug
+        dialogues.plug = previousDialoguesPlug;
         findInput.value = '';
         redrawDialogues(dialogues.storage);
     });
 
     // create find input event-listener
     findInput.addEventListener('input', async (event) => {
+        // "save" previous dialogues plug
         if (dialogues.plug !== plugStates.none) {
-            lastDialoguesPlug = dialogues.plug;
+            previousDialoguesPlug = dialogues.plug;
             dialogues.plug = plugStates.none;
         }
+        // get find value
         const findText = findInput.value;
+        // "load" previous dialogues plug
         if (findText === '') {
-            dialogues.plug = lastDialoguesPlug;
+            dialogues.plug = previousDialoguesPlug;
             redrawDialogues(dialogues.storage);
             return;
         }
+        // get found dialogues
         foundDialogues = await getDialogues(-1, dialoguesByRequest, findText);
+        // set offline plug
         if (isLostConnection) {
             dialogues.gottenFromSW = true;
             dialogues.plug = plugStates.offline;
         }
         redrawDialogues(foundDialogues);
 
-        const foundDialogue = dialogues.storage.findIndex(item => item.username === findText);
-        if (foundDialogue === -1) {
-            addCreateNewDialogueElem();
+
+        if (validateEmail(findText)) { // address valid
+            if (dialogues.storage.findIndex(item => item.username === findText) === -1) { // dialogue with accuracy coincidence not found
+                addCreateNewDialogueElem(); // draw a button that creates a new dialogue
+                findButton.innerHTML = `<path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z"/>`;
+            } else { // dialogue found => draw arrow on button
+                findButton.innerHTML = `<path transform="scale(1.3)" d="m12.1 7.87v-3.47a1.32 1.32 0 0 1 2.17-1l8.94 7.6a1.32 1.32 0 0 1 .15 1.86l-.15.15-8.94 7.6a1.32 1.32 0 0 1 -2.17-1v-3.45c-4.68.11-8 1.09-9.89 2.87a1.15 1.15 0 0 1 -1.9-1.11c1.53-6.36 5.51-9.76 11.79-10.05zm1.8-2.42v4.2h-.9c-5.3 0-8.72 2.25-10.39 6.86 2.45-1.45 5.92-2.16 10.39-2.16h.9v4.2l7.71-6.55z"/>`;
+            }
+            return;
         }
+        // addres invalid  => draw magnifier on button
+        findButton.innerHTML = `<g transform="scale(0.07) translate(30,30)"><path d="M506.141,477.851L361.689,333.399c65.814-80.075,61.336-198.944-13.451-273.73c-79.559-79.559-209.01-79.559-288.569,0    s-79.559,209.01,0,288.569c74.766,74.766,193.62,79.293,273.73,13.451l144.452,144.452c7.812,7.812,20.477,7.812,28.289,0    C513.953,498.328,513.953,485.663,506.141,477.851z M319.949,319.948c-63.96,63.96-168.03,63.959-231.99,0    c-63.96-63.96-63.96-168.03,0-231.99c63.958-63.957,168.028-63.962,231.99,0C383.909,151.918,383.909,255.988,319.949,319.948z"/></g>`;
     });
 
     // create event-listener on 'Enter' in input
     findInput.addEventListener('keydown', async (event) => {
+        if (controlKeys.includes(event.keyCode)) {
+            event.stopPropagation();
+        }
         if (event.keyCode === 27) { // Esc
             findInput.blur();
         } else if (event.keyCode === 13) { // Enter
-            dialogues.plug = lastDialoguesPlug;
+            dialogues.plug = previousDialoguesPlug;
             await addOrSetDialogue(findInput.value);
             findInput.value = '';
         }
@@ -298,12 +318,16 @@ export async function handler(element, app) {
     */
 
     // create messages scroll event-listener to upload new messages
-    let mutexScrollMessagesEvent = false; // Убейте меня за это пожалуйсто...
+    let mutexScrollMessagesEvent = false; // Убейте меня за это пожалусто...
     messagesField.addEventListener('scroll', async (event) => {
         // if it not scrolled to top
-        if (messagesField.scrollTop > messagesScrollLoadOffset) { return; }
+        if (messagesField.scrollTop > messagesScrollLoadOffset || !currentDialogue.username) {
+            return;
+        }
 
-        if (mutexScrollMessagesEvent === true) { return; } // mutex logic
+        if (mutexScrollMessagesEvent === true) { // mutex logic
+            return;
+        }
         mutexScrollMessagesEvent = true; // block mutex
 
         // messages that we have already
@@ -351,7 +375,9 @@ export async function handler(element, app) {
 
     // ------ Page navigation using keys arrows + enter + escape
     document.addEventListener('keydown', (event) => {
-        let keyFound = true;
+        if (controlKeys.includes(event.keyCode)) {
+            event.stopPropagation();
+        }
         switch (event.keyCode) {
         case 38: // up arrow
             if (!selectedDialogue.id || !selectedDialogue.elem.previousElementSibling) { // if is in dialogues list (check "overflow")
@@ -368,25 +394,21 @@ export async function handler(element, app) {
             break;
         case 39: // right arrow
         case 13: // enter
-            setActiveDialogue(selectedDialogue.elem);
+            if (selectedDialogue.id) {
+                setActiveDialogue(selectedDialogue.elem);
+            }
             break;
         case 37: // left arrow
         case 27: // escape
             unsetActiveDialogue();
             break;
-        default:
-            keyFound = false;
-            break;
-        }
-        if (keyFound) {
-            event.preventDefault();
         }
     });
 
     function selectDialogue(elem) {
         selectedDialogue.elem.classList.remove('selected');
         selectedDialogue.elem = elem;
-        selectedDialogue.id = selectedDialogue.elem.id.substring(9); // length of 'dialogue-'
+        selectedDialogue.id = Number(selectedDialogue.elem.id.substring(9)); // length of 'dialogue-'
         selectedDialogue.elem.classList.add('selected');
     }
 
@@ -509,7 +531,9 @@ export async function handler(element, app) {
             return [];
         }
         const dialogues = await response.json();
-        if (!dialogues) { return []; }
+        if (!dialogues) {
+            return [];
+        }
         convertTimesToStr(dialogues);
         return dialogues;
     }
@@ -529,7 +553,9 @@ export async function handler(element, app) {
             return [];
         }
         const messages = await response.json();
-        if (!messages) { return []; }
+        if (!messages) {
+            return [];
+        }
         convertMessagesToBlocks(messages);
         convertTimesToStr(messages);
         return messages;
@@ -553,6 +579,11 @@ export async function handler(element, app) {
         if (dialogue.username === currentDialogue.username) {
             dialogue.elem.classList.add('active');
             currentDialogue.elem = dialogue.elem;
+        }
+        console.log(dialogue.id , selectedDialogue.id)
+        if (dialogue.id === selectedDialogue.id) {
+            dialogue.elem.classList.add('selected');
+            selectedDialogue.elem = dialogue.elem;
         }
         dialogue.elem.innerHTML = dialogueInnerHTMLTemplate(
             { avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body });
@@ -592,7 +623,9 @@ export async function handler(element, app) {
      * @param currentElem
      */
     async function setActiveDialogue(currentElem) {
-        if (currentElem.id === 'dialogue-' + currentDialogue.id) { return; }
+        if (currentElem.id === 'dialogue-' + currentDialogue.id) {
+            return;
+        }
         currentDialogue.id = currentElem.id.substr(9); // length of 'dialogue-' ;
 
         messagesFooter.style.display = 'flex'; // show message input
@@ -624,11 +657,7 @@ export async function handler(element, app) {
         // get dialogue messages
         if (!messages[dialogue.username] || messages[dialogue.username].gottenFromSW) {
             messages[dialogue.username] = await getMessages(dialogue.username, -1, messagesByRequest);
-            if (isLostConnection) {
-                messages[dialogue.username].gottenFromSW = true;
-            } else {
-                messages[dialogue.username].gottenFromSW = false;
-            }
+            messages[dialogue.username].gottenFromSW = isLostConnection;
         }
 
         if (messages[dialogue.username].gottenFromSW) {
@@ -678,7 +707,9 @@ export async function handler(element, app) {
      * @param username
      */
     async function addOrSetDialogue(username) {
-        if (username === '') { return; }
+        if (username === '') {
+            return;
+        }
         themeInput.focus();
         const foundDialogue = dialogues.storage.find(item => item.username === username);
         if (foundDialogue) {
@@ -797,7 +828,9 @@ export async function handler(element, app) {
         let currentTitle = themeInput.value;
         if (currentTitle === '') { currentTitle = 'Без темы'; }
         const message = messageInput.value;
-        if (message === '') { return; }
+        if (message === '') {
+            return;
+        }
 
         // send message request
         const response = await app.apiPost('/email', {
