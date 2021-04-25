@@ -36,15 +36,6 @@ const html = `
                 <svg class="svg-button floatright" id="refresh-connection-button" xmlns="http://www.w3.org/2000/svg" style="transition: all ease-in-out 1s; transform: rotate(0deg)"><g transform="scale(0.04) translate(60, 0)"><path d="M112.156,97.111c72.3-65.4,180.5-66.4,253.8-6.7l-58.1,2.2c-7.5,0.3-13.3,6.5-13,14c0.3,7.3,6.3,13,13.5,13    c0.2,0,0.3,0,0.5,0l89.2-3.3c7.3-0.3,13-6.2,13-13.5v-1c0-0.2,0-0.3,0-0.5v-0.1l0,0l-3.3-88.2c-0.3-7.5-6.6-13.3-14-13    c-7.5,0.3-13.3,6.5-13,14l2.1,55.3c-36.3-29.7-81-46.9-128.8-49.3c-59.2-3-116.1,17.3-160,57.1c-60.4,54.7-86,137.9-66.8,217.1    c1.5,6.2,7,10.3,13.1,10.3c1.1,0,2.1-0.1,3.2-0.4c7.2-1.8,11.7-9.1,9.9-16.3C36.656,218.211,59.056,145.111,112.156,97.111z"/><path d="M462.456,195.511c-1.8-7.2-9.1-11.7-16.3-9.9c-7.2,1.8-11.7,9.1-9.9,16.3c16.9,69.6-5.6,142.7-58.7,190.7    c-37.3,33.7-84.1,50.3-130.7,50.3c-44.5,0-88.9-15.1-124.7-44.9l58.8-5.3c7.4-0.7,12.9-7.2,12.2-14.7s-7.2-12.9-14.7-12.2l-88.9,8    c-7.4,0.7-12.9,7.2-12.2,14.7l8,88.9c0.6,7,6.5,12.3,13.4,12.3c0.4,0,0.8,0,1.2-0.1c7.4-0.7,12.9-7.2,12.2-14.7l-4.8-54.1    c36.3,29.4,80.8,46.5,128.3,48.9c3.8,0.2,7.6,0.3,11.3,0.3c55.1,0,107.5-20.2,148.7-57.4    C456.056,357.911,481.656,274.811,462.456,195.511z"/></g></svg>
             </div>
             <div class="body fullheight fullwidth table-rows scrollable" id="messages-field">
-                <div class="flex-filler center-text"></div>
-                <div class="center-text">
-                    <svg class="svg-button" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></svg>
-                    <div class="text-1">
-                        Выберите диалог <br>
-                        или создайте новый
-                    </div>
-                </div>
-                <div class="flex-filler"></div>
             </div>
         </div>
 
@@ -129,8 +120,8 @@ export async function handler(element, app) {
         username: undefined
     };
     let selectedDialogue = {
-        elem: dialoguePreviewsGroup,
-        title: undefined
+        id: undefined,
+        elem: dialoguePreviewsGroup
     }
     let createdDialogues = 0;
     let createdMessages = 0;
@@ -155,8 +146,11 @@ export async function handler(element, app) {
             <div class="dialogue-body text-2">{{ body }}</div>
         </div>`);
 
-    // --- Fill username in header
+    // --- Draw some page elements
+    // fill username in header
     document.getElementById('profile-link-username').innerText = app.storage.username[0].toUpperCase() + app.storage.username.slice(1) + '@liokor.ru';
+    // draw default 'Choose dialogue' page
+    drawChooseDialoguePage();
 
     // --- Connection events
     window.addEventListener('offline', (event) => {
@@ -355,7 +349,46 @@ export async function handler(element, app) {
         setTimeout(() => { connectionText.innerText = connectionText.innerText.substring(0, connectionText.innerText.length - 3); }, 1500);
     });
 
+    // ------ Page navigation using keys arrows + enter + escape
+    document.addEventListener('keydown', (event) => {
+        let keyFound = true;
+        switch (event.keyCode) {
+        case 38: // up arrow
+            if (!selectedDialogue.id || !selectedDialogue.elem.previousElementSibling) { // if is in dialogues list (check "overflow")
+               return;
+            }
+            selectDialogue(selectedDialogue.elem.previousElementSibling);
+            break;
+        case 40: // down arrow
+            if (!selectedDialogue.id) {
+               selectDialogue(dialoguePreviewsGroup.firstElementChild);
+            } else if (selectedDialogue.elem.nextElementSibling.tagName === 'LI') { // if is in dialogues list (check "overflow")
+               selectDialogue(selectedDialogue.elem.nextElementSibling);
+            }
+            break;
+        case 39: // right arrow
+        case 13: // enter
+            setActiveDialogue(selectedDialogue.elem);
+            break;
+        case 37: // left arrow
+        case 27: // escape
+            unsetActiveDialogue();
+            break;
+        default:
+            keyFound = false;
+            break;
+        }
+        if (keyFound) {
+            event.preventDefault();
+        }
+    });
 
+    function selectDialogue(elem) {
+        selectedDialogue.elem.classList.remove('selected');
+        selectedDialogue.elem = elem;
+        selectedDialogue.id = selectedDialogue.elem.id.substring(9); // length of 'dialogue-'
+        selectedDialogue.elem.classList.add('selected');
+    }
 
     /**
      * Clear dialogues list and show new
@@ -525,11 +558,13 @@ export async function handler(element, app) {
             { avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body });
         dialoguePreviewsGroup.appendChild(dialogue.elem);
 
-        // create Event-listener on dialogue element
+        // create Event-listener on dialogue element to activate it
         dialogue.elem.addEventListener('click', async (event) => {
-            // set this dialogue active
-            const currentElem = event.currentTarget;
-            await setActiveDialogue(currentElem);
+            await setActiveDialogue(event.currentTarget);
+        });
+        // create Event-listener on dialogue element to select it
+        dialogue.elem.addEventListener('mousemove', async (event) => {
+            selectDialogue(event.currentTarget);
         });
     }
 
@@ -552,13 +587,13 @@ export async function handler(element, app) {
     }
 
     /**
-     * Set dialog active and draw it
+     * Set dialogue active and draw it
      *
      * @param currentElem
      */
     async function setActiveDialogue(currentElem) {
         if (currentElem.id === 'dialogue-' + currentDialogue.id) { return; }
-        currentDialogue.id = currentElem.id.substr(9); // length if 'dialogue-' ;
+        currentDialogue.id = currentElem.id.substr(9); // length of 'dialogue-' ;
 
         messagesFooter.style.display = 'flex'; // show message input
 
@@ -580,7 +615,7 @@ export async function handler(element, app) {
         currentDialogue.avatar = dialogue.avatarUrl;
         currentDialogue.username = dialogue.username;
 
-        // get new message and theme into localStorage
+        // get new message and theme from localStorage
         const theme = localStorage.getItem(currentDialogue.username + '-theme');
         const message = localStorage.getItem(currentDialogue.username + '-message');
         themeInput.value = theme;
@@ -607,9 +642,36 @@ export async function handler(element, app) {
         // set dialogue url
         const currentPath = window.location.pathname + `?with=${currentDialogue.username}`;
         history.pushState({ url: currentPath }, '', currentPath);
-        document.title = `${app.name} | Диалоги | ${currentDialogue.username}`;
+        document.title = `${app.name} | ${currentDialogue.username}`;
 
         showDialogue(dialogue.username);
+    }
+
+    /**
+     * Unset active dialogue and draw default page
+     */
+    async function unsetActiveDialogue() {
+        currentDialogue.elem.classList.remove('active'); // "deactivate" previous dialogue
+
+        // update messages header
+        dialogueHeader.innerText = '';
+        dialogueTime.innerText = 'Выберите диалог';
+
+        // push old message and theme into localStorage
+        localStorage.setItem(currentDialogue.username + '-theme', themeInput.value);
+        localStorage.setItem(currentDialogue.username + '-message', messageInput.value);
+
+        // update currentDialogue data
+        currentDialogue.id = undefined;
+        currentDialogue.avatar = undefined;
+        currentDialogue.username = undefined;
+
+        // set default url
+        const currentPath = window.location.pathname;
+        history.pushState({ url: currentPath }, '', currentPath);
+        document.title = `${app.name} | Диалоги`;
+
+        drawChooseDialoguePage();
     }
 
     /**
@@ -640,6 +702,7 @@ export async function handler(element, app) {
         redrawDialogues(dialogues.storage);
         scrollToTop(dialoguePreviewsGroup);
     }
+
     /**
      * draw all dialogue messages
      *
@@ -671,6 +734,24 @@ export async function handler(element, app) {
         }
         redrawMessagesPlug(messages[username]);
         scrollToBottom(messagesField);
+        messageInput.focus();
+    }
+
+    /**
+     * Show default page with 'Choose dialogue or create new'
+     */
+    function drawChooseDialoguePage() {
+        messagesField.innerHTML = `
+                <div class="flex-filler center-text"></div>
+                <div class="center-text">
+                    <svg class="svg-button" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></svg>
+                    <div class="text-1">
+                        Выберите диалог <br>
+                        или создайте новый
+                    </div>
+                </div>
+                <div class="flex-filler"></div>`;
+        messagesFooter.style.display = 'none';
     }
 
     /**

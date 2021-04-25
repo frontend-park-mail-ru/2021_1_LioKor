@@ -12,8 +12,9 @@ color7-4 = #2224
 loading-color = #84adff
 
 dialogue-color = #185d25AA
-dialogue-color-hover = #218633
 dialogue-color-active = #6b5c13
+dialogue-color-selected = #218633
+dialogue-color-active-selected = #787b15
 
 bg-color-1 = #60606099
 bg-color-2 = #393C3FCC
@@ -199,12 +200,17 @@ width-border = 1px
   transition background-color ease 0.3s
   img
     float left
-.listing-button:hover
-  background dialogue-color-hover
 .listing-button.active
   //border-top 1px solid color1
   border-bottom 1px solid color1
   background-color dialogue-color-active
+.listing-button.selected
+  border-bottom 1px solid color2
+  background-color dialogue-color-selected
+  transition none
+.listing-button.active.selected
+  border-bottom 1px solid color1
+  background-color dialogue-color-active-selected
 
 .empty-dialogue
   min-height dialogue-preview-height
