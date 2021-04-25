@@ -24,7 +24,7 @@ const html = `
         <div class="header table-columns">
             <span class="text-1 centered" id="dialogue-header-title"></span>
             <span class="text-3 flex-filler centered" id="dialogue-header-time" style="margin-left: 10px">Выберите диалог</span>
-            
+
             <span class="text-2 centered" id="profile-link-username" style="margin-right: 5px">username@liokor.ru</span>
             <linkbutton class="svg-button" href="/user" pointer-events="auto"><svg pointer-events="none" id="clear-find-button" style="margin-right: 10px" xmlns="http://www.w3.org/2000/svg" height="30" width="30"><g transform="scale(1.5)"><path d="m3.0000001 14.5c0-3.1424487 3.08132567-4.50000038 6.9999999-4.50000038 3.9186742 0 6.9999999 1.35755168 6.9999999 4.50000038 0 1.615596-1.0761803 2.5000004-2.3000001 2.5000004h-9.39999961c-1.22381984 0-2.30000009-.8844044-2.30000009-2.5000004zm1.8 0c0 .5349234.20087263.7000004.50000009.7000004h9.39999961c.2991275 0 .5000001-.165077.5000001-.7000004 0-1.7450508-2.1675128-2.7000004-5.1999999-2.7000004-3.03248714 0-5.1999999.9549496-5.1999999 2.7000004zm9.0999999-9.5c0 2.15455627-1.7454437 3.9-3.9 3.9-2.15455627 0-3.9-1.74544373-3.9-3.9s1.74544373-3.9 3.9-3.9c2.1545563 0 3.9 1.74544373 3.9 3.9zm-1.8 0c0-1.16044373-.9395563-2.1-2.1-2.1-1.16044373 0-2.1.93955627-2.1 2.1s.93955627 2.1 2.1 2.1c1.1604437 0 2.1-.93955627 2.1-2.1z"/></g></svg></linkbutton>
         </div>
@@ -196,7 +196,7 @@ export async function handler(element, app) {
     if (gottenUsername !== '') {
         const dialogue = dialogues.storage.find(item => item.username === gottenUsername);
         if (dialogue) {
-            await setActiveDialogue(dialogue.elem);
+            await setActiveDialogue(dialogue.elem, false);
         }
     }
 
@@ -543,7 +543,7 @@ export async function handler(element, app) {
      *
      * @param currentElem
      */
-    async function setActiveDialogue(currentElem) {
+    async function setActiveDialogue(currentElem, pushState = true) {
         if (currentElem.id === 'dialogue-' + currentDialogue.id) { return; }
         currentDialogue.id = currentElem.id.substr(9); // length if 'dialogue-' ;
 
@@ -593,7 +593,9 @@ export async function handler(element, app) {
 
         // set dialogue url
         const currentPath = window.location.pathname + `?with=${currentDialogue.username}`;
-        history.pushState({ url: currentPath }, '', currentPath);
+        if (pushState) {
+            history.pushState(null, null, currentPath);
+        }
         document.title = `${app.name} | Диалоги | ${currentDialogue.username}`;
 
         showDialogue(dialogue.username);
