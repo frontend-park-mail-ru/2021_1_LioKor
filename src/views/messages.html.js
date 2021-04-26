@@ -539,6 +539,29 @@ export async function handler(element, app) {
     }
 
     /**
+     * Sets avatarUrl to default way for every mail in all array elements
+     *
+     * @param array to replace avatars in
+     */
+    function convertAvatarsToDefault(array) {
+        array.forEach((elem) => {
+            const tail = elem.username.split('@')[1];
+            switch(tail) { // get address after '@'
+            case 'mail.ru':
+                elem.avatarUrl = '/images/mail.png';
+                break;
+            case 'gmail.com':
+                elem.avatarUrl = '/images/gmail.png';
+                break;
+            case 'yandex.ru':
+            case 'ya.ru':
+                elem.avatarUrl = '/images/yandex.png';
+                break;
+            }
+        });
+    }
+
+    /**
      * Get new dialogues list
      *
      * @param since
@@ -562,6 +585,7 @@ export async function handler(element, app) {
             return [];
         }
         convertTimesToStr(dialogues);
+        convertAvatarsToDefault(dialogues);
         return dialogues;
     }
 
