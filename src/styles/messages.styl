@@ -41,9 +41,9 @@ middle-large = 15px
 large = 20px
 extra-large = 30px
 
-small-avatar-size = 20px
+small-avatar-size = 30px
 middle-avatar-size = 40px
-large-avatar-size = 60px
+large-avatar-size = 50px
 
 dialogue-preview-height = 62px
 
@@ -54,12 +54,21 @@ height-header = dialogue-preview-height
 
 width-border = 1px
 
+.large-avatar
 .middle-avatar
+.small-avatar
   border-radius 50%
-  width middle-avatar-size
-  height middle-avatar-size
   overflow hidden
 
+.large-avatar
+  width large-avatar-size
+  height large-avatar-size
+.middle-avatar
+  width middle-avatar-size
+  height middle-avatar-size
+.small-avatar
+  width small-avatar-size
+  height small-avatar-size
 /*
 .pad-xs
   padding extra-small
@@ -100,6 +109,9 @@ width-border = 1px
   text-align center
 .centered
   margin auto
+.centered-vertical
+  margin-top auto
+  margin-bottom auto
 .top-filler
   margin-top auto
 
@@ -166,12 +178,22 @@ width-border = 1px
   background dialogue-color
 
 .header
-  padding middle-large
+  padding middle
   background bg-color-1
   color color1
   box-shadow 0 4px 10px color7-8
   z-index 2
   height height-header
+.header-title
+  background none
+  cursor default
+  border-radius (small-avatar-size / 2)
+  padding-left 0
+  padding-right 0
+  margin-right 5px
+.header-title:hover
+    svg
+      opacity 1
 .body
   color color2
   z-index 0
@@ -335,7 +357,7 @@ width-border = 1px
 
 .inside-input
   position absolute
-  right 10px
+  right 20px
   top 10px
 
 .svg-button
@@ -379,9 +401,11 @@ width-border = 1px
 */
 
 .find-input
-  width "calc(100% - %s)" % (middle)
+  width "calc(100% - %s)" % (middle * 2)
   font-size 14px
   margin-bottom extra-small
+  margin-right middle
+  margin-left middle
   background #FFFFFF00
   border none
   outline none
@@ -389,6 +413,7 @@ width-border = 1px
   text-overflow ellipsis
   transition all ease 0.2s
   color color2
+
 .find-input:focus
   padding middle
   background bg-color-4
@@ -539,3 +564,46 @@ width-border = 1px
 /**
 * ==================================
 **/
+
+
+// For mobile version
+.mobile-only
+  display none
+
+.dialogues-column
+.messages-column
+  transition width ease 0.2s
+
+@media (max-width: 800px)
+  .dialogues-column
+  .messages-column
+    width 0
+
+  .mobile-fullwidth
+    width 100%
+
+  .mobile-only
+    display block
+  .header-title
+    background bg-color-2
+    cursor pointer
+    padding-left middle
+    padding-right middle
+
+  .listing-button.selected
+    background-color dialogue-color
+  .listing-button.active.selected
+    background-color dialogue-color-active
+
+  #messages-page
+    padding 0
+
+  #dialogue-header-time
+    display none
+
+  header
+    display none
+  #app
+    height 100%
+
+

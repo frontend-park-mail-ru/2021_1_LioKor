@@ -4,13 +4,14 @@ import { validateEmail } from '../modules/validators';
 
 const html = `
 <div class="table-columns fullheight p-l bg-5" id="messages-page">
-    <div class="table-column dialogues-column table-rows bg-transparent">
+    <div class="table-column dialogues-column table-rows bg-transparent mobile-fullwidth" id="dialogues-column">
         <div class="header tool-dialogue table-columns">
             <!--svg class="svg-button" xmlns="http://www.w3.org/2000/svg" width="40" height="40"><path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z"/></svg-->
             <!--svg class="svg-button middle-avatar" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.07) translate(30,30)"><path d="M506.141,477.851L361.689,333.399c65.814-80.075,61.336-198.944-13.451-273.73c-79.559-79.559-209.01-79.559-288.569,0    s-79.559,209.01,0,288.569c74.766,74.766,193.62,79.293,273.73,13.451l144.452,144.452c7.812,7.812,20.477,7.812,28.289,0    C513.953,498.328,513.953,485.663,506.141,477.851z M319.949,319.948c-63.96,63.96-168.03,63.959-231.99,0    c-63.96-63.96-63.96-168.03,0-231.99c63.958-63.957,168.028-63.962,231.99,0C383.909,151.918,383.909,255.988,319.949,319.948z"/><path xmlns="http://www.w3.org/2000/svg" d="M301.897,183.949h-77.94v-77.94c0-11.048-8.956-20.004-20.004-20.004c-11.048,0-20.004,8.956-20.004,20.004v77.94h-77.94    c-11.048,0-20.004,8.956-20.004,20.004c0,11.048,8.956,20.004,20.004,20.004h77.94v77.94c0,11.048,8.956,20.004,20.004,20.004    c11.048,0,20.004-8.956,20.004-20.004v-77.94h77.94c11.048,0,20.004-8.956,20.004-20.004    C321.901,192.905,312.945,183.949,301.897,183.949z"/></g></svg-->
+            <img class="centered-vertical middle-avatar mobile-only" src="/images/liokor_logo.png" alt="лого">
             <div class="flex-filler pos-relative">
                 <input class="find-input input-with-clear fullheight" type="text" autocomplete="off" placeholder="Создать или найти диалог" id="find-input">
-                <svg class="svg-button transparent centered input-clear inside-input" id="clear-find-button" xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z"/></svg>
+                <svg class="svg-button transparent centered-vertical input-clear inside-input" id="clear-find-button" xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z"/></svg>
              </div>
              <svg class="svg-button middle-avatar" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(2) translate(0, -2)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>
         </div>
@@ -19,13 +20,16 @@ const html = `
         </ul>
     </div>
 
-    <div class="table-column table-rows messages-column bg-transparent">
+    <div class="table-column table-rows messages-column bg-transparent" id="messages-column">
         <div class="header table-columns">
-            <span class="text-1 centered" id="dialogue-header-title"></span>
-            <span class="text-3 flex-filler centered" id="dialogue-header-time" style="margin-left: 10px">Выберите диалог</span>
+            <div class="header-title bg-transparent table-columns" id="header-title-button">
+                <svg class="svg-button small-avatar centered-vertical mobile-only" id="back-button" xmlns="http://www.w3.org/2000/svg" style="overflow: visible; transform: scale(1.2)"><g class="centered" style="transform: scale(0.8) rotate(180deg); transform-origin: center center"><path xmlns="http://www.w3.org/2000/svg" d="M21.205,5.007c-0.429-0.444-1.143-0.444-1.587,0c-0.429,0.429-0.429,1.143,0,1.571l8.047,8.047H1.111  C0.492,14.626,0,15.118,0,15.737c0,0.619,0.492,1.127,1.111,1.127h26.554l-8.047,8.032c-0.429,0.444-0.429,1.159,0,1.587  c0.444,0.444,1.159,0.444,1.587,0l9.952-9.952c0.444-0.429,0.444-1.143,0-1.571L21.205,5.007z"/></g></svg>
+                <span class="text-1 centered-vertical" style="margin-left: 5px" id="dialogue-header-title"></span>
+            </div>
+            <div class="text-3 flex-filler centered" id="dialogue-header-time" style="margin-left: 10px">Выберите диалог</div>
             
             <span class="text-2 centered" id="profile-link-username" style="margin-right: 5px">username@liokor.ru</span>
-            <linkbutton class="svg-button" href="/user" pointer-events="auto"><svg pointer-events="none" id="clear-find-button" style="margin-right: 10px" xmlns="http://www.w3.org/2000/svg" height="30" width="30"><g transform="scale(1.5)"><path d="m3.0000001 14.5c0-3.1424487 3.08132567-4.50000038 6.9999999-4.50000038 3.9186742 0 6.9999999 1.35755168 6.9999999 4.50000038 0 1.615596-1.0761803 2.5000004-2.3000001 2.5000004h-9.39999961c-1.22381984 0-2.30000009-.8844044-2.30000009-2.5000004zm1.8 0c0 .5349234.20087263.7000004.50000009.7000004h9.39999961c.2991275 0 .5000001-.165077.5000001-.7000004 0-1.7450508-2.1675128-2.7000004-5.1999999-2.7000004-3.03248714 0-5.1999999.9549496-5.1999999 2.7000004zm9.0999999-9.5c0 2.15455627-1.7454437 3.9-3.9 3.9-2.15455627 0-3.9-1.74544373-3.9-3.9s1.74544373-3.9 3.9-3.9c2.1545563 0 3.9 1.74544373 3.9 3.9zm-1.8 0c0-1.16044373-.9395563-2.1-2.1-2.1-1.16044373 0-2.1.93955627-2.1 2.1s.93955627 2.1 2.1 2.1c1.1604437 0 2.1-.93955627 2.1-2.1z"/></g></svg></linkbutton>
+            <linkbutton class="svg-button small-avatar centered-vertical" href="/user" pointer-events="auto"><svg pointer-events="none" id="clear-find-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(1.5)"><path d="m3.0000001 14.5c0-3.1424487 3.08132567-4.50000038 6.9999999-4.50000038 3.9186742 0 6.9999999 1.35755168 6.9999999 4.50000038 0 1.615596-1.0761803 2.5000004-2.3000001 2.5000004h-9.39999961c-1.22381984 0-2.30000009-.8844044-2.30000009-2.5000004zm1.8 0c0 .5349234.20087263.7000004.50000009.7000004h9.39999961c.2991275 0 .5000001-.165077.5000001-.7000004 0-1.7450508-2.1675128-2.7000004-5.1999999-2.7000004-3.03248714 0-5.1999999.9549496-5.1999999 2.7000004zm9.0999999-9.5c0 2.15455627-1.7454437 3.9-3.9 3.9-2.15455627 0-3.9-1.74544373-3.9-3.9s1.74544373-3.9 3.9-3.9c2.1545563 0 3.9 1.74544373 3.9 3.9zm-1.8 0c0-1.16044373-.9395563-2.1-2.1-2.1-1.16044373 0-2.1.93955627-2.1 2.1s.93955627 2.1 2.1 2.1c1.1604437 0 2.1-.93955627 2.1-2.1z"/></g></svg></linkbutton>
         </div>
 
         <div class="pos-relative flex-filler">
@@ -34,6 +38,7 @@ const html = `
                 <span class="text-1" id="connection-text">Соединение потеряно</span>
                 <svg class="svg-button floatright" id="refresh-connection-button" xmlns="http://www.w3.org/2000/svg" style="transition: all ease-in-out 1s; transform: rotate(0deg)"><g transform="scale(0.04) translate(60, 0)"><path d="M112.156,97.111c72.3-65.4,180.5-66.4,253.8-6.7l-58.1,2.2c-7.5,0.3-13.3,6.5-13,14c0.3,7.3,6.3,13,13.5,13    c0.2,0,0.3,0,0.5,0l89.2-3.3c7.3-0.3,13-6.2,13-13.5v-1c0-0.2,0-0.3,0-0.5v-0.1l0,0l-3.3-88.2c-0.3-7.5-6.6-13.3-14-13    c-7.5,0.3-13.3,6.5-13,14l2.1,55.3c-36.3-29.7-81-46.9-128.8-49.3c-59.2-3-116.1,17.3-160,57.1c-60.4,54.7-86,137.9-66.8,217.1    c1.5,6.2,7,10.3,13.1,10.3c1.1,0,2.1-0.1,3.2-0.4c7.2-1.8,11.7-9.1,9.9-16.3C36.656,218.211,59.056,145.111,112.156,97.111z"/><path d="M462.456,195.511c-1.8-7.2-9.1-11.7-16.3-9.9c-7.2,1.8-11.7,9.1-9.9,16.3c16.9,69.6-5.6,142.7-58.7,190.7    c-37.3,33.7-84.1,50.3-130.7,50.3c-44.5,0-88.9-15.1-124.7-44.9l58.8-5.3c7.4-0.7,12.9-7.2,12.2-14.7s-7.2-12.9-14.7-12.2l-88.9,8    c-7.4,0.7-12.9,7.2-12.2,14.7l8,88.9c0.6,7,6.5,12.3,13.4,12.3c0.4,0,0.8,0,1.2-0.1c7.4-0.7,12.9-7.2,12.2-14.7l-4.8-54.1    c36.3,29.4,80.8,46.5,128.3,48.9c3.8,0.2,7.6,0.3,11.3,0.3c55.1,0,107.5-20.2,148.7-57.4    C456.056,357.911,481.656,274.811,462.456,195.511z"/></g></svg>
             </div>
+            
             <div class="body fullheight fullwidth table-rows scrollable" id="messages-field">
             </div>
         </div>
@@ -86,6 +91,10 @@ export async function handler(element, app) {
     const dialogueHeader = document.getElementById('dialogue-header-title');
     const dialogueTime = document.getElementById('dialogue-header-time');
 
+    const dialoguesColumn = document.getElementById('dialogues-column');
+    const messagesColumn = document.getElementById('messages-column');
+
+    const backToDialoguesButton = document.getElementById('header-title-button');
     const messagesField = document.getElementById('messages-field');
     const messagesFooter = document.getElementById('messages-footer');
 
@@ -267,7 +276,7 @@ export async function handler(element, app) {
             return;
         }
         // addres invalid  => draw magnifier on button
-        findButton.innerHTML = `<g transform="scale(0.07) translate(30,30)"><path d="M506.141,477.851L361.689,333.399c65.814-80.075,61.336-198.944-13.451-273.73c-79.559-79.559-209.01-79.559-288.569,0    s-79.559,209.01,0,288.569c74.766,74.766,193.62,79.293,273.73,13.451l144.452,144.452c7.812,7.812,20.477,7.812,28.289,0    C513.953,498.328,513.953,485.663,506.141,477.851z M319.949,319.948c-63.96,63.96-168.03,63.959-231.99,0    c-63.96-63.96-63.96-168.03,0-231.99c63.958-63.957,168.028-63.962,231.99,0C383.909,151.918,383.909,255.988,319.949,319.948z"/></g>`;
+        findButton.innerHTML = `<g transform="scale(0.06) translate(40,60)"><path d="M506.141,477.851L361.689,333.399c65.814-80.075,61.336-198.944-13.451-273.73c-79.559-79.559-209.01-79.559-288.569,0    s-79.559,209.01,0,288.569c74.766,74.766,193.62,79.293,273.73,13.451l144.452,144.452c7.812,7.812,20.477,7.812,28.289,0    C513.953,498.328,513.953,485.663,506.141,477.851z M319.949,319.948c-63.96,63.96-168.03,63.959-231.99,0    c-63.96-63.96-63.96-168.03,0-231.99c63.958-63.957,168.028-63.962,231.99,0C383.909,151.918,383.909,255.988,319.949,319.948z"/></g>`;
     });
 
     // create event-listener on 'Enter' in input
@@ -362,6 +371,10 @@ export async function handler(element, app) {
         redrawMessagesPlug(messages[currentDialogue.username]);
 
         mutexScrollMessagesEvent = false; // unblock mutex
+    });
+
+    backToDialoguesButton.addEventListener('click', (event) => {
+        unsetActiveDialogue();
     });
 
     // Imitate loading work... Simple clicker-game for user
@@ -580,7 +593,6 @@ export async function handler(element, app) {
             dialogue.elem.classList.add('active');
             currentDialogue.elem = dialogue.elem;
         }
-        console.log(dialogue.id , selectedDialogue.id)
         if (dialogue.id === selectedDialogue.id) {
             dialogue.elem.classList.add('selected');
             selectedDialogue.elem = dialogue.elem;
@@ -623,6 +635,10 @@ export async function handler(element, app) {
      * @param currentElem
      */
     async function setActiveDialogue(currentElem) {
+        // For mobile version. Go to messages
+        dialoguesColumn.classList.remove('mobile-fullwidth');
+        messagesColumn.classList.add('mobile-fullwidth');
+
         if (currentElem.id === 'dialogue-' + currentDialogue.id) {
             return;
         }
@@ -680,7 +696,12 @@ export async function handler(element, app) {
      * Unset active dialogue and draw default page
      */
     async function unsetActiveDialogue() {
-        currentDialogue.elem.classList.remove('active'); // "deactivate" previous dialogue
+        // For mobile version. Go to dialogues
+        dialoguesColumn.classList.add('mobile-fullwidth');
+        messagesColumn.classList.remove('mobile-fullwidth');
+
+        // "Deactivate" previous dialogue
+        currentDialogue.elem.classList.remove('active');
 
         // update messages header
         dialogueHeader.innerText = '';
