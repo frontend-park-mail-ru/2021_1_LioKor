@@ -122,8 +122,7 @@ export async function handler(element, app) {
     document.getElementById('logoutButton').addEventListener('click', async (event) => {
         event.preventDefault();
         await app.apiDelete('/user/session');
-        app.storage.username = undefined;
-        app.storage.avatar = undefined;
+        app.clearStorage();
         app.messageSuccess('До свидания!', 'Вы успешно вышли из аккаунта!');
         await app.goto('/auth');
     });
@@ -132,7 +131,9 @@ export async function handler(element, app) {
     document.getElementById('avatarChange').addEventListener('click', async () => {
         // if "Cancel" button will be pressed - Promise never resolves, but there's no event to resolve on cancel =(
         const dataURL = await getImageAsDataURL();
-        if (avatarDataURL.value === dataURL) { return; }
+        if (avatarDataURL.value === dataURL) {
+            return;
+        }
 
         avatarDataURL.value = dataURL;
 

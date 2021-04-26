@@ -16,7 +16,7 @@ async function main() {
 
     const { hostname, host, pathname, search } = window.location;
     let apiUrl = 'https://api.mail.liokor.ru';
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.')) {
         apiUrl = `http://${host}/api`;
     }
     const app = new App('LioKor', apiUrl, 'app', 'popupMessages');
@@ -28,7 +28,7 @@ async function main() {
         app.updateStorage(username, avatarUrl);
 
         if (pathname === '/') {
-            await app.goto('/messages');
+            await app.goto('/messages' + search);
             return;
         }
         await app.goto(pathname + search);
