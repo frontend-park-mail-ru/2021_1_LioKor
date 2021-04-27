@@ -96,7 +96,7 @@ export async function handler(element, app) {
     const messagesByRequest = 10;
     const messagesScrollLoadOffset = 40;
     const dialoguesScrollLoadOffset = 20;
-    const controlKeys = [13, 27, 37,38,39,40]; // enter, escape, [arrows]
+    const controlKeys = [13, 27, 37, 38, 39, 40]; // enter, escape, [arrows]
 
     // --- HTML elements
     const dialoguePreviewsGroup = document.getElementById('dialogues-listing');
@@ -138,10 +138,10 @@ export async function handler(element, app) {
         avatar: undefined,
         username: undefined
     };
-    let selectedDialogue = {
+    const selectedDialogue = {
         id: undefined,
         elem: dialoguePreviewsGroup
-    }
+    };
     let createdDialogues = 0;
     let createdMessages = 0;
     let isLostConnection = false;
@@ -279,18 +279,17 @@ export async function handler(element, app) {
         }
         redrawDialogues(foundDialogues);
 
-
         if (validateEmail(findText)) { // address valid
             if (dialogues.storage.findIndex(item => item.username === findText) === -1) { // dialogue with accuracy coincidence not found
                 addCreateNewDialogueElem(); // draw a button that creates a new dialogue
-                findButton.innerHTML = `<path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z"/>`;
+                findButton.innerHTML = '<path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z"/>';
             } else { // dialogue found => draw arrow on button
-                findButton.innerHTML = `<path transform="scale(1.5) translate(2, 0)" d="m12.1 7.87v-3.47a1.32 1.32 0 0 1 2.17-1l8.94 7.6a1.32 1.32 0 0 1 .15 1.86l-.15.15-8.94 7.6a1.32 1.32 0 0 1 -2.17-1v-3.45c-4.68.11-8 1.09-9.89 2.87a1.15 1.15 0 0 1 -1.9-1.11c1.53-6.36 5.51-9.76 11.79-10.05zm1.8-2.42v4.2h-.9c-5.3 0-8.72 2.25-10.39 6.86 2.45-1.45 5.92-2.16 10.39-2.16h.9v4.2l7.71-6.55z"/>`;
+                findButton.innerHTML = '<path transform="scale(1.5) translate(2, 0)" d="m12.1 7.87v-3.47a1.32 1.32 0 0 1 2.17-1l8.94 7.6a1.32 1.32 0 0 1 .15 1.86l-.15.15-8.94 7.6a1.32 1.32 0 0 1 -2.17-1v-3.45c-4.68.11-8 1.09-9.89 2.87a1.15 1.15 0 0 1 -1.9-1.11c1.53-6.36 5.51-9.76 11.79-10.05zm1.8-2.42v4.2h-.9c-5.3 0-8.72 2.25-10.39 6.86 2.45-1.45 5.92-2.16 10.39-2.16h.9v4.2l7.71-6.55z"/>';
             }
             return;
         }
         // addres invalid  => draw magnifier on button
-        findButton.innerHTML = `<g transform="scale(0.06) translate(40,60)"><path d="M506.141,477.851L361.689,333.399c65.814-80.075,61.336-198.944-13.451-273.73c-79.559-79.559-209.01-79.559-288.569,0    s-79.559,209.01,0,288.569c74.766,74.766,193.62,79.293,273.73,13.451l144.452,144.452c7.812,7.812,20.477,7.812,28.289,0    C513.953,498.328,513.953,485.663,506.141,477.851z M319.949,319.948c-63.96,63.96-168.03,63.959-231.99,0    c-63.96-63.96-63.96-168.03,0-231.99c63.958-63.957,168.028-63.962,231.99,0C383.909,151.918,383.909,255.988,319.949,319.948z"/></g>`;
+        findButton.innerHTML = '<g transform="scale(0.06) translate(40,60)"><path d="M506.141,477.851L361.689,333.399c65.814-80.075,61.336-198.944-13.451-273.73c-79.559-79.559-209.01-79.559-288.569,0    s-79.559,209.01,0,288.569c74.766,74.766,193.62,79.293,273.73,13.451l144.452,144.452c7.812,7.812,20.477,7.812,28.289,0    C513.953,498.328,513.953,485.663,506.141,477.851z M319.949,319.948c-63.96,63.96-168.03,63.959-231.99,0    c-63.96-63.96-63.96-168.03,0-231.99c63.958-63.957,168.028-63.962,231.99,0C383.909,151.918,383.909,255.988,319.949,319.948z"/></g>';
     });
 
     // create event-listener on 'Enter' in input
@@ -315,7 +314,7 @@ export async function handler(element, app) {
     // create find-dialogue event-listener
     document.getElementById('find-dialogue-button').addEventListener('click', (event) => {
         if (findInput.value === '') {
-            findInput.focus()
+            findInput.focus();
             return;
         }
         const newEvent = new Event('keydown');
@@ -422,15 +421,15 @@ export async function handler(element, app) {
         switch (event.keyCode) {
         case 38: // up arrow
             if (!selectedDialogue.id || !selectedDialogue.elem.previousElementSibling) { // if is in dialogues list (check "overflow")
-               return;
+                return;
             }
             selectDialogue(selectedDialogue.elem.previousElementSibling);
             break;
         case 40: // down arrow
             if (!selectedDialogue.id) {
-               selectDialogue(dialoguePreviewsGroup.firstElementChild);
+                selectDialogue(dialoguePreviewsGroup.firstElementChild);
             } else if (selectedDialogue.elem.nextElementSibling.tagName === 'LI') { // if is in dialogues list (check "overflow")
-               selectDialogue(selectedDialogue.elem.nextElementSibling);
+                selectDialogue(selectedDialogue.elem.nextElementSibling);
             }
             break;
         case 39: // right arrow
@@ -562,7 +561,7 @@ export async function handler(element, app) {
             return;
         }
         const tail = dialogue.username.split('@')[1];
-        switch(tail) { // get address after '@'
+        switch (tail) { // get address after '@'
         case 'mail.ru':
             dialogue.avatarUrl = '/images/mail.png';
             break;
@@ -959,7 +958,7 @@ export async function handler(element, app) {
      */
     function getCurrentTime() {
         const date = new Date();
-        return date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0')
+        return date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0');
     }
 
     /**

@@ -9,11 +9,11 @@ export async function registerSW() {
                     type: 'CACHE_URLS',
                     payload: [
                         location.href,
-                        ...performance.getEntriesByType('resource').map(({name}) => name)
+                        ...performance.getEntriesByType('resource').map(({ name }) => name)
                     ]
                 };
 
-                const {installing, waiting, active} = registration;
+                const { installing, waiting, active } = registration;
                 if (installing) {
                     installing.postMessage(data);
                     console.log('Service worker installing');

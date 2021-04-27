@@ -57,27 +57,27 @@ export default class App {
             {
                 urlRegex: /^\/auth$/,
                 handler: auth.handler,
-                authRequired: false,
+                authRequired: false
             },
             {
                 urlRegex: /^\/signup$/,
                 handler: signup.handler,
-                authRequired: false,
+                authRequired: false
             },
             {
                 urlRegex: /^\/user$/,
                 handler: user.handler,
-                authRequired: true,
+                authRequired: true
             },
             {
                 urlRegex: /^\/user\/([A-Za-z0-9_]){1,}\/password$/,
                 handler: changePassword.handler,
-                authRequired: true,
+                authRequired: true
             },
             {
                 urlRegex: /^\/(\?with=.*)?$/,
                 handler: messages.handler,
-                authRequired: true,
+                authRequired: true
             }
         ];
     }
@@ -160,7 +160,7 @@ export default class App {
         return {
             handler: null,
             authRequired: null
-         };
+        };
     }
 
     async goto(path, pushState = true) {
@@ -170,7 +170,7 @@ export default class App {
 
         let { handler, authRequired } = this.getHandler(path);
         if (handler === null) {
-            handler = view404.handler
+            handler = view404.handler;
             authRequired = false;
         }
 

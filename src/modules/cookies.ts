@@ -15,7 +15,7 @@ export function getCookie(name: string): string {
             return false;
         }
         return true;
-    })
+    });
 
     return cookieValue;
 }
