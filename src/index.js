@@ -4,7 +4,7 @@ import './styles/popupMessages.styl';
 import './styles/profile.styl';
 import './styles/messages.styl';
 
-import { registerSW } from './sw-installer.js';
+import { registerSW } from './modules/sw-installer.js';
 import App from './modules/app.js';
 
 /**
