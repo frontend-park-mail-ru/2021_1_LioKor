@@ -7,7 +7,7 @@ const html = `
                 <div class="secondary">Страница не найдена!</div>
             </div>
             <div class="form" style="margin-top: 50px;">
-                <linkbutton href="/messages" class="btn">На главную</linkbutton>
+                <linkbutton href="/" class="btn">На главную</linkbutton>
             </div>
         </div>
     </div>

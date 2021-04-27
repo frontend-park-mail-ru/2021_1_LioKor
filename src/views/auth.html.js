@@ -75,7 +75,7 @@ export async function handler(element, app) {
             if (response.ok) {
                 const { username, avatarUrl } = await response.json();
                 app.updateStorage(username, avatarUrl);
-                await app.goto('/messages');
+                await app.goto('/');
                 return;
             }
             app.messageError(`Ошибка ${response.status}`, 'Не удалось получить данные пользователя!');

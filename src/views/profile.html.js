@@ -37,7 +37,7 @@ const html = `
                         <LinkButton href="/user/{{ username }}/password" class="btn" id="changePasswordButton">Сменить пароль</LinkButton>
                     </div>
                     <div class="form-group">
-                        <LinkButton href="/messages" class="btn" id="goToMessagesButton">Перейти в диалоги</LinkButton>
+                        <LinkButton href="/" class="btn" id="goToMessagesButton">Перейти в диалоги</LinkButton>
                     </div>
                     <div class="form-group">
                         <button href="/auth" class="btn btn-danger" id="logoutButton">Выйти</button>

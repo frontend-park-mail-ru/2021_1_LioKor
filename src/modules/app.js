@@ -56,23 +56,28 @@ export default class App {
         this.routes = [
             {
                 urlRegex: /^\/auth$/,
-                handler: auth.handler
+                handler: auth.handler,
+                authRequired: false,
             },
             {
                 urlRegex: /^\/signup$/,
-                handler: signup.handler
+                handler: signup.handler,
+                authRequired: false,
             },
             {
                 urlRegex: /^\/user$/,
-                handler: user.handler
+                handler: user.handler,
+                authRequired: true,
             },
             {
                 urlRegex: /^\/user\/([A-Za-z0-9_]){1,}\/password$/,
-                handler: changePassword.handler
+                handler: changePassword.handler,
+                authRequired: true,
             },
             {
-                urlRegex: /^\/messages(\?with=.*)?$/,
-                handler: messages.handler
+                urlRegex: /^\/(\?with=.*)?$/,
+                handler: messages.handler,
+                authRequired: true,
             }
         ];
     }
@@ -146,10 +151,16 @@ export default class App {
     getHandler(path) {
         for (const route of this.routes) {
             if (path.match(route.urlRegex)) {
-                return route.handler;
+                return {
+                    handler: route.handler,
+                    authRequired: route.authRequired
+                };
             }
         }
-        return null;
+        return {
+            handler: null,
+            authRequired: null
+         };
     }
 
     async goto(path, pushState = true) {
@@ -157,9 +168,15 @@ export default class App {
             history.pushState(null, null, path);
         }
 
-        let handler = this.getHandler(path);
+        let { handler, authRequired } = this.getHandler(path);
         if (handler === null) {
             handler = view404.handler
+            authRequired = false;
+        }
+
+        if (authRequired && !this.storage.username) {
+            this.goto('/auth');
+            return;
         }
 
         await renderer.render(this.element, handler, this);
