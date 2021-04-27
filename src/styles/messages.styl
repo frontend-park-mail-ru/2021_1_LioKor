@@ -45,6 +45,8 @@ small-avatar-size = 30px
 middle-avatar-size = 40px
 large-avatar-size = 50px
 
+mobile-profile-button-size = 35px
+
 dialogue-preview-height = 62px
 
 dialogues-column-width = 30%
@@ -569,6 +571,8 @@ width-border = 1px
 // For mobile version
 .mobile-only
   display none
+.desktop-only
+  display block
 
 .dialogues-column
 .messages-column
@@ -584,6 +588,9 @@ width-border = 1px
 
   .mobile-only
     display block
+  .desktop-only
+    display none
+
   .header-title
     background bg-color-2
     cursor pointer
@@ -595,14 +602,16 @@ width-border = 1px
   .listing-button.active.selected
     background-color dialogue-color-active
 
+  .profile-button
+    width mobile-profile-button-size
+    height mobile-profile-button-size
+    svg
+      g
+        transform scale(1.8)
+
   #messages-page
     padding 0
 
-  #dialogue-header-time
-    display none
-
-  header
-    display none
   #app
     height 100%
 
