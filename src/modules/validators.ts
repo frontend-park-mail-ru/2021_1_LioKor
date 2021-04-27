@@ -1,5 +1,5 @@
 const VALID_PASSWORD_REGEX = /^(?=.*\d)(?=.*[a-zA-Z]).{6,}$/;
-const VALID_EMAIL_REGEX = /^[^@ ]{1,}@[^@ ]{3,}\..{2,}$/;
+const VALID_EMAIL_REGEX = /^[^@ ]{1,}@[^@ ]{2,}\..{2,}$/;
 const MAX_FULLNAME_LENGTH = 128;
 
 /**
