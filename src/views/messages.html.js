@@ -5,10 +5,11 @@ import { validateEmail } from '../modules/validators';
 const html = `
 <div class="table-columns fullheight p-l bg-5" id="messages-page">
     <div class="table-column dialogues-column table-rows bg-transparent mobile-fullwidth" id="dialogues-column">
-        <div class="header tool-dialogue table-columns">
+        <div class="header tool-dialogue table-columns pos-relative">
             <img class="centered-vertical middle-avatar mobile-only" src="/images/liokor_logo.png" alt="лого">
-            <div class="flex-filler pos-relative">
+            <div class="flex-filler table-columns reversed pos-relative">
                 <input class="find-input input-with-clear fullheight" type="text" autocomplete="off" placeholder="Создать или найти диалог" id="find-input">
+                <svg class="folders-button svg-button middle-avatar" id="folders-button" xmlns="http://www.w3.org/2000/svg"><g><path transform="scale(0.065) translate(80,15)" d="M448.916,118.259h-162.05c-6.578,0-13.003-2.701-17.44-7.292l-50.563-53.264c-12.154-12.115-28.783-18.443-45.625-18.346    H63.084C28.301,39.356,0,67.657,0,102.439v307.123c0,34.783,28.301,63.084,63.084,63.084h386.064h0.058    c34.764-0.154,62.949-28.59,62.794-63.277V181.342C512,146.559,483.699,118.259,448.916,118.259z M473.417,409.447    c0.058,13.504-10.88,24.558-24.307,24.616H63.084c-13.504,0-24.5-10.996-24.5-24.5V102.439c0-13.504,10.996-24.5,24.5-24.52    H173.74c0.212,0,0.424,0,0.637,0c6.443,0,12.694,2.566,16.899,6.733l50.293,53.013c11.806,12.192,28.32,19.176,45.297,19.176    h162.05c13.504,0,24.5,10.996,24.5,24.5V409.447z"/><path id="folder-icon-arrow" d="M225.923,354.706c-8.098,0-16.195-3.092-22.369-9.263L9.27,151.157c-12.359-12.359-12.359-32.397,0-44.751   c12.354-12.354,32.388-12.354,44.748,0l171.905,171.915l171.906-171.909c12.359-12.354,32.391-12.354,44.744,0   c12.365,12.354,12.365,32.392,0,44.751L248.292,345.449C242.115,351.621,234.018,354.706,225.923,354.706z"/></g></svg>
                 <svg class="svg-button transparent centered-vertical input-clear inside-input" id="clear-find-button" xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z"/></svg>
             </div>
             <svg class="svg-button middle-avatar" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(2) translate(0, -2)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>
@@ -21,7 +22,7 @@ const html = `
                 <span class="text-1" id="connection-text">Соединение потеряно</span>
                 <svg class="svg-button floatright" id="refresh-connection-button" xmlns="http://www.w3.org/2000/svg" style="transition: all ease-in-out 1s; transform: rotate(0deg)"><g transform="scale(0.04) translate(60, 0)"><path d="M112.156,97.111c72.3-65.4,180.5-66.4,253.8-6.7l-58.1,2.2c-7.5,0.3-13.3,6.5-13,14c0.3,7.3,6.3,13,13.5,13    c0.2,0,0.3,0,0.5,0l89.2-3.3c7.3-0.3,13-6.2,13-13.5v-1c0-0.2,0-0.3,0-0.5v-0.1l0,0l-3.3-88.2c-0.3-7.5-6.6-13.3-14-13    c-7.5,0.3-13.3,6.5-13,14l2.1,55.3c-36.3-29.7-81-46.9-128.8-49.3c-59.2-3-116.1,17.3-160,57.1c-60.4,54.7-86,137.9-66.8,217.1    c1.5,6.2,7,10.3,13.1,10.3c1.1,0,2.1-0.1,3.2-0.4c7.2-1.8,11.7-9.1,9.9-16.3C36.656,218.211,59.056,145.111,112.156,97.111z"/><path d="M462.456,195.511c-1.8-7.2-9.1-11.7-16.3-9.9c-7.2,1.8-11.7,9.1-9.9,16.3c16.9,69.6-5.6,142.7-58.7,190.7    c-37.3,33.7-84.1,50.3-130.7,50.3c-44.5,0-88.9-15.1-124.7-44.9l58.8-5.3c7.4-0.7,12.9-7.2,12.2-14.7s-7.2-12.9-14.7-12.2l-88.9,8    c-7.4,0.7-12.9,7.2-12.2,14.7l8,88.9c0.6,7,6.5,12.3,13.4,12.3c0.4,0,0.8,0,1.2-0.1c7.4-0.7,12.9-7.2,12.2-14.7l-4.8-54.1    c36.3,29.4,80.8,46.5,128.3,48.9c3.8,0.2,7.6,0.3,11.3,0.3c55.1,0,107.5-20.2,148.7-57.4    C456.056,357.911,481.656,274.811,462.456,195.511z"/></g></svg>
             </div>
-
+            
             <ul class="dialogues-listing scrollable" id="dialogues-listing">
             </ul>
         </div>
@@ -36,7 +37,7 @@ const html = `
             <div class="text-3 centered desktop-only" id="dialogue-header-time" style="margin-left: 10px">Выберите диалог</div>
             <div class="flex-filler"></div>
             <span class="text-2 centered-vertical desktop-only" id="profile-link-username" style="margin-right: 5px">username@liokor.ru</span>
-            <linkbutton class="svg-button small-avatar centered-vertical profile-button" href="/user" pointer-events="auto"><svg pointer-events="none" id="clear-find-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(1.5)"><path d="m3.0000001 14.5c0-3.1424487 3.08132567-4.50000038 6.9999999-4.50000038 3.9186742 0 6.9999999 1.35755168 6.9999999 4.50000038 0 1.615596-1.0761803 2.5000004-2.3000001 2.5000004h-9.39999961c-1.22381984 0-2.30000009-.8844044-2.30000009-2.5000004zm1.8 0c0 .5349234.20087263.7000004.50000009.7000004h9.39999961c.2991275 0 .5000001-.165077.5000001-.7000004 0-1.7450508-2.1675128-2.7000004-5.1999999-2.7000004-3.03248714 0-5.1999999.9549496-5.1999999 2.7000004zm9.0999999-9.5c0 2.15455627-1.7454437 3.9-3.9 3.9-2.15455627 0-3.9-1.74544373-3.9-3.9s1.74544373-3.9 3.9-3.9c2.1545563 0 3.9 1.74544373 3.9 3.9zm-1.8 0c0-1.16044373-.9395563-2.1-2.1-2.1-1.16044373 0-2.1.93955627-2.1 2.1s.93955627 2.1 2.1 2.1c1.1604437 0 2.1-.93955627 2.1-2.1z"/></g></svg></linkbutton>
+            <linkbutton class="svg-button middle-avatar centered-vertical profile-button" href="/user" pointer-events="auto"><svg pointer-events="none" id="clear-find-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(1.5)"><path d="m3.0000001 14.5c0-3.1424487 3.08132567-4.50000038 6.9999999-4.50000038 3.9186742 0 6.9999999 1.35755168 6.9999999 4.50000038 0 1.615596-1.0761803 2.5000004-2.3000001 2.5000004h-9.39999961c-1.22381984 0-2.30000009-.8844044-2.30000009-2.5000004zm1.8 0c0 .5349234.20087263.7000004.50000009.7000004h9.39999961c.2991275 0 .5000001-.165077.5000001-.7000004 0-1.7450508-2.1675128-2.7000004-5.1999999-2.7000004-3.03248714 0-5.1999999.9549496-5.1999999 2.7000004zm9.0999999-9.5c0 2.15455627-1.7454437 3.9-3.9 3.9-2.15455627 0-3.9-1.74544373-3.9-3.9s1.74544373-3.9 3.9-3.9c2.1545563 0 3.9 1.74544373 3.9 3.9zm-1.8 0c0-1.16044373-.9395563-2.1-2.1-2.1-1.16044373 0-2.1.93955627-2.1 2.1s.93955627 2.1 2.1 2.1c1.1604437 0 2.1-.93955627 2.1-2.1z"/></g></svg></linkbutton>
         </div>
 
         <div class="pos-relative flex-filler">
@@ -93,10 +94,15 @@ export async function handler(element, app) {
 
     // --- Configs
     const dialoguesByRequest = 500;
+    const foldersByRequest = 500;
     const messagesByRequest = 10;
+
     const messagesScrollLoadOffset = 40;
     const dialoguesScrollLoadOffset = 20;
+
     const controlKeys = [13, 27, 37, 38, 39, 40]; // enter, escape, [arrows]
+
+    const mainFolderName = 'Все входящие';
 
     // --- HTML elements
     const dialoguePreviewsGroup = document.getElementById('dialogues-listing');
@@ -115,6 +121,9 @@ export async function handler(element, app) {
     const findInput = document.getElementById('find-input');
     const findButton = document.getElementById('find-dialogue-button');
 
+    const foldersButton = document.getElementById('folders-button');
+    const foldersIconArrow = document.getElementById('folder-icon-arrow');
+
     const themeInput = document.getElementById('theme-input');
     const messageInput = document.getElementById('message-input');
     // --- Plug-elements
@@ -130,6 +139,15 @@ export async function handler(element, app) {
         plug: plugStates.loading
     };
     let foundDialogues = [];
+    const foldersStates = {
+        closed: false,
+        opened: true
+    };
+    const folders = {
+        storage: [],
+        plug: plugStates.loading,
+        state: foldersStates.closed
+    };
     const messages = {};
     // --- One-element containers
     const currentDialogue = {
@@ -138,9 +156,19 @@ export async function handler(element, app) {
         avatar: undefined,
         username: undefined
     };
-    const selectedDialogue = {
-        id: undefined,
-        elem: dialoguePreviewsGroup
+    const currentFolder = {
+        id: 0,
+        elem: dialoguePreviewsGroup,
+        title: mainFolderName,
+    };
+    const elemTypes = {
+        dialogue: false,
+        folder: true
+    };
+    const selectedElem = {
+        id: 0,
+        elem: dialoguePreviewsGroup,
+        type: undefined
     };
     let createdDialogues = 0;
     let createdMessages = 0;
@@ -156,13 +184,24 @@ export async function handler(element, app) {
             {{/each}}
         </div>`);
 
-    // eslint-disable-next-line
     const dialogueInnerHTMLTemplate = Handlebars.compile(`
         <img src="{{ avatar }}" alt="avatar" class="middle-avatar">
         <div class="floatright text-4">{{ time }}</div>
         <div class="dialogue-text">
             <div class="text-1">{{ title }}</div>
             <div class="dialogue-body text-2">{{ body }}</div>
+        </div>`);
+
+    const folderInnerHTMLTemplate = Handlebars.compile(`
+        <svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.05) translate(150,110)"><path d="M448.916,118.259h-162.05c-6.578,0-13.003-2.701-17.44-7.292l-50.563-53.264c-12.154-12.115-28.783-18.443-45.625-18.346    H63.084C28.301,39.356,0,67.657,0,102.439v307.123c0,34.783,28.301,63.084,63.084,63.084h386.064h0.058    c34.764-0.154,62.949-28.59,62.794-63.277V181.342C512,146.559,483.699,118.259,448.916,118.259z M473.417,409.447    c0.058,13.504-10.88,24.558-24.307,24.616H63.084c-13.504,0-24.5-10.996-24.5-24.5V102.439c0-13.504,10.996-24.5,24.5-24.52    H173.74c0.212,0,0.424,0,0.637,0c6.443,0,12.694,2.566,16.899,6.733l50.293,53.013c11.806,12.192,28.32,19.176,45.297,19.176    h162.05c13.504,0,24.5,10.996,24.5,24.5V409.447z"/></g></svg>
+        <div class="dialogue-text">
+            <div class="text-1">{{ title }}</div>
+            <div class="dialogue-body text-2">Диалогов: {{ dialoguesCount }}</div>
+        </div>`);
+
+    const dividerHTMLTemplate = Handlebars.compile(`
+        <div class="dialogues-listing-divider center-text" id="dialogues-listing-divider">
+            <div class="text-4">↓ {{ folder }} ↓</div>
         </div>`);
 
     // --- Draw some page elements
@@ -199,6 +238,15 @@ export async function handler(element, app) {
         isLostConnection = false;
     });
 
+    // --- Get folders
+    folders.storage = await getFolders(-1, foldersByRequest);
+    if (isLostConnection) {
+        folders.gottenFromSW = true;
+        folders.plug = plugStates.offline;
+    } else if (folders.storage.length < dialoguesByRequest) {
+        folders.plug = plugStates.end;
+    }
+
     // --- Get dialogues
     dialogues.storage = await getDialogues(-1, dialoguesByRequest);
     if (isLostConnection) {
@@ -207,9 +255,10 @@ export async function handler(element, app) {
     } else if (dialogues.storage.length < dialoguesByRequest) {
         dialogues.plug = plugStates.end;
     }
+    folders.storage.push({ id: 0, title: mainFolderName, dialogues: dialogues.storage});
 
     // --- Draw dialogues
-    redrawDialogues(dialogues.storage);
+    redrawDialogues(folders.storage, dialogues.storage);
 
     // if we have get-parameters in url => go to dialogue
     const gottenUsername = window.location.search.substring(6);
@@ -240,9 +289,39 @@ export async function handler(element, app) {
     });
     // create resize message input event-listener
     messageInput.addEventListener('input', (event) => {
+        // push message and theme into localStorage
+        localStorage.setItem(currentDialogue.username + '-theme', themeInput.value);
+        localStorage.setItem(currentDialogue.username + '-message', messageInput.value);
         // resize input element
         messageInput.style.height = messageInput.style.minHeight;
         messageInput.style.height = messageInput.scrollHeight + 2 + 'px'; // 2 = border-width * 2
+    });
+
+    // --- Folders
+    foldersButton.addEventListener('click', (event) => {
+        if (folders.state === foldersStates.opened) { // close folders
+            foldersIconArrow.style.transform = 'scale(0.03) rotate(0deg) translate(500px, 430px)';
+            folders.state = foldersStates.closed;
+            folders.storage.forEach((folder) => {
+                folder.elem.remove();
+            });
+            if (currentFolder.id === 0) {
+                document.getElementById('dialogues-listing-divider').remove();
+            }
+            if (selectedElem.type === elemTypes.folder) { // unselect folder
+                selectedElem.id = undefined;
+            }
+            return;
+        }
+        // open folders
+        foldersIconArrow.style.transform = 'scale(0.03) rotate(180deg) translate(-950px, -880px)';
+        folders.state = foldersStates.opened;
+        if (currentFolder.id === 0) {
+            addDialoguesDividerElem();
+        }
+        folders.storage.forEach((folder) => {
+            addFolderToList(folder);
+        });
     });
 
     // --- Find dialogues
@@ -252,7 +331,7 @@ export async function handler(element, app) {
         // "load" previous dialogues plug
         dialogues.plug = previousDialoguesPlug;
         findInput.value = '';
-        redrawDialogues(dialogues.storage);
+        redrawDialogues(folders.storage, dialogues.storage);
     });
 
     // create find input event-listener
@@ -267,7 +346,7 @@ export async function handler(element, app) {
         // "load" previous dialogues plug
         if (findText === '') {
             dialogues.plug = previousDialoguesPlug;
-            redrawDialogues(dialogues.storage);
+            redrawDialogues(folders.storage, dialogues.storage);
             return;
         }
         // get found dialogues
@@ -277,7 +356,7 @@ export async function handler(element, app) {
             dialogues.gottenFromSW = true;
             dialogues.plug = plugStates.offline;
         }
-        redrawDialogues(foundDialogues);
+        redrawDialogues([], foundDialogues);
 
         if (validateEmail(findText)) { // address valid
             if (dialogues.storage.findIndex(item => item.username === findText) === -1) { // dialogue with accuracy coincidence not found
@@ -417,25 +496,45 @@ export async function handler(element, app) {
     document.addEventListener('keydown', (event) => {
         if (controlKeys.includes(event.keyCode)) {
             event.stopPropagation();
+            event.preventDefault();
         }
         switch (event.keyCode) {
         case 38: // up arrow
-            if (!selectedDialogue.id || !selectedDialogue.elem.previousElementSibling) { // if is in dialogues list (check "overflow")
+            let previousElem = selectedElem.elem.previousElementSibling;
+            if (!selectedElem.id || !previousElem) { // if is in dialogues list (check "overflow")
                 return;
             }
-            selectDialogue(selectedDialogue.elem.previousElementSibling);
+            if (previousElem.tagName === 'DIV') {
+                previousElem = previousElem.previousElementSibling;
+            }
+            if (previousElem) {
+                selectElem(previousElem);
+            }
             break;
         case 40: // down arrow
-            if (!selectedDialogue.id) {
-                selectDialogue(dialoguePreviewsGroup.firstElementChild);
-            } else if (selectedDialogue.elem.nextElementSibling.tagName === 'LI') { // if is in dialogues list (check "overflow")
-                selectDialogue(selectedDialogue.elem.nextElementSibling);
+            let nextElem = selectedElem.elem.nextElementSibling;
+            if (!nextElem) {
+                return;
+            }
+            if (typeof selectedElem.id === 'undefined') {
+                selectElem(dialoguePreviewsGroup.firstElementChild);
+                return;
+            }
+            if (nextElem.tagName === 'DIV') { // if is in dialogues list (check "overflow")
+                nextElem = nextElem.nextElementSibling;
+            }
+            if (nextElem) {
+                selectElem(nextElem);
             }
             break;
         case 39: // right arrow
         case 13: // enter
-            if (selectedDialogue.id) {
-                setActiveDialogue(selectedDialogue.elem);
+            if (selectedElem.id) {
+                if (selectedElem.type === elemTypes.dialogue) {
+                    setActiveDialogue(selectedElem.elem);
+                } else {
+                    setActiveFolder(selectedElem.elem);
+                }
             }
             break;
         case 37: // left arrow
@@ -445,23 +544,56 @@ export async function handler(element, app) {
         }
     });
 
-    function selectDialogue(elem) {
-        selectedDialogue.elem.classList.remove('selected');
-        selectedDialogue.elem = elem;
-        selectedDialogue.id = Number(selectedDialogue.elem.id.substring(9)); // length of 'dialogue-'
-        selectedDialogue.elem.classList.add('selected');
+    /**
+     * Set element selected
+     *
+     * @param elem element to select
+     */
+    function selectElem(element) {
+        if (selectedElem.elem === element) {
+            return;
+        }
+        selectedElem.elem.classList.remove('selected');
+        selectedElem.elem = element;
+        selectedElem.elem.classList.add('selected');
+        if (element.classList.contains('folder')) {
+            selectedElem.id = Number(selectedElem.elem.id.substring(7)); // length of 'folder-'
+            selectedElem.type = elemTypes.folder;
+            return;
+        }
+        selectedElem.id = Number(selectedElem.elem.id.substring(9)); // length of 'dialogue-'
+        selectedElem.type = elemTypes.dialogue;
     }
 
     /**
      * Clear dialogues list and show new
      *
+     * @param {object} folders folders to redraw
      * @param {object} dialogues dialogues to redraw
      */
-    function redrawDialogues(dialogues) {
+    function redrawDialogues(foldersList, dialogues) {
         dialoguePreviewsGroup.innerHTML = '';
-        dialogues.forEach((dialogue) => {
-            addDialogueToList(dialogue);
-        });
+
+        if (folders.state === foldersStates.opened) {
+            addDialoguesDividerElem();
+            foldersList.forEach((folder) => {
+                addFolderToList(folder);
+            });
+        }
+        if (typeof currentFolder.id === 'undefined') {
+            dialogues.forEach((dialogue) => {
+                addDialogueToList(dialogue);
+            });
+        } else {
+            const folder = foldersList.find(item => item.id === currentFolder.id);
+            if (!folder) {
+                return;
+            }
+            folder.dialogues.forEach((dialogue) => {
+                addDialogueToList(dialogue);
+            });
+        }
+
 
         redrawDialoguesPlug();
     }
@@ -578,20 +710,50 @@ export async function handler(element, app) {
     }
 
     /**
-     * Get new dialogues list
+     * Get new folders list
      *
      * @param since
      * @param amount
      * @param find
      * @returns {Promise<*>}
      */
-    async function getDialogues(since, amount, find) {
-        let path = `/email/dialogues?last=${since}&amount=${amount}`;
-        if (find && find !== '') { path += '&find=' + find; }
+    async function getFolders(since, amount) {
+        let path = `/email/folders`;//?last=${since}&amount=${amount}`;
+        //if (find && find !== '') { path += '&find=' + find; }
         const response = await app.apiGet(path);
         if (!response.ok) {
-            // Empty response from SW (offline mode)
-            if (response.status !== 418) {
+            if (response.status !== 418) { // Empty response from SW (offline mode)
+                app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список папок!');
+            }
+            return [];
+        }
+        const folders = await response.json();
+        if (!folders) {
+            return [];
+        }
+        return folders;
+    }
+
+    /**
+     * Get new dialogues list
+     *
+     * @param since
+     * @param amount
+     * @param find
+     * @param folderId
+     * @returns {Promise<*>}
+     */
+    async function getDialogues(since, amount, find, folderId = 0) {
+        let path = `/email/dialogues?last=${since}&amount=${amount}`;
+        if (find && find !== '') {
+            path += '&find=' + find;
+        }
+        if (folderId) {
+            path += '&folder=' + folderId;
+        }
+        const response = await app.apiGet(path);
+        if (!response.ok) {
+            if (response.status !== 418) { // Empty response from SW (offline mode)
                 app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список диалогов!');
             }
             return [];
@@ -628,6 +790,44 @@ export async function handler(element, app) {
     }
 
     /**
+     * Add folder on bottom of dialogues listing
+     *
+     * @param {object} folder folder to add in dialogues list
+     */
+    function addFolderToList(folder) {
+        // create dialogue HTML-element
+        folder.elem = document.createElement('li');
+        folder.elem.id = 'folder-' + folder.id;
+        folder.elem.classList.add('listing-button', 'folder');
+        if (folder.id === currentFolder.id) {
+            folder.elem.classList.add('active');
+            currentFolder.elem = folder.elem;
+        }
+        if (folder.id === selectedElem.id && selectedElem.type === elemTypes.folder) {
+            folder.elem.classList.add('selected');
+            selectedElem.elem = folder.elem;
+        }
+        if (folder.id === 0) { // if it's main folder
+            folder.elem.innerHTML = `
+                <svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.065) translate(90,10)"><path d="M340.80080180740356,203.6081974435188 h-123.02250294685365 c-4.993779848098755,0 -9.871407626152038,-2.050501576423645 -13.239817657470704,-5.535822841644287 l-38.38560207653046,-40.4361036529541 c-9.226877511978149,-9.197270121574402 -21.851013281822205,-14.00125900554657 -34.63685095310211,-13.927620111465455 H47.89109272384644 C21.485096302986143,143.70789167359845 0,165.1929879765846 0,191.59822523358838 v233.156681101799 c0,26.40599642086029 21.485096302986143,47.89109272384644 47.89109272384644,47.89109272384644 h293.0858350982666 h0.04403150367736817 c26.39157230758667,-0.11691123390197757 47.78860560321808,-21.70449465751648 47.67093520545959,-48.03761134815216 V251.49853100350873 C388.69189453125,225.09253458264843 367.2067982282639,203.6081974435188 340.80080180740356,203.6081974435188 zM359.4010754556656,424.66760249188917 c0.04403150367736817,10.251748718261718 -8.259702758789063,18.643545988082884 -18.45299586009979,18.687577491760255 H47.89109272384644 c-10.251748718261718,0 -18.599514484405518,-8.3477657661438 -18.599514484405518,-18.599514484405518 V191.59822523358838 c0,-10.251748718261718 8.3477657661438,-18.599514484405518 18.599514484405518,-18.614697761535645 H131.89712842941285 c0.1609427375793457,0 0.3218854751586914,0 0.48358737659454354,0 c4.891292727470398,0 9.636825994491577,1.9480144557952879 12.82911001110077,5.111450245857239 l38.18062783527374,40.24555352497101 c8.96268848991394,9.25572573852539 21.499520416259767,14.557726112365721 34.38784520816803,14.557726112365721 h123.02250294685365 c10.251748718261718,0 18.599514484405518,8.3477657661438 18.599514484405518,18.599514484405518 V424.66760249188917 z"/><path d="M 79.72623 131.64013 C 82.73375 123.36945 87.7321 118.64883 96.77176 118.33273 C 105.81142 118.01664 183.46435 118.20887 190.12869 120.04583 C 196.79302 121.88278 238.50963 168.42677 251.30868 173.09609 C 264.10774 177.76541 389.39087 174.96474 395.48077 175.83164 C 401.57067 176.69854 410.44077 182.36042 411.03479 192.88673 C 411.62881 203.41304 413.25029 354.17958 412.89442 371.12236 C 412.53855 388.06514 399.04484 386.91183 399.12243 386.95197 C 399.20002 386.99211 398.52843 415.44312 399.20272 415.87927 C 399.87701 416.31542 440.00224 411.49112 440.71397 377.88927 C 441.4257 344.28742 440.59625 211.13798 439.96209 183.90432 C 439.32793 156.67066 421.64409 147.53851 403.11998 147.06221 C 384.59587 146.58591 275.94556 150.90709 263.1636 146.39581 C 250.38164 141.88453 208.99824 93.8881 195.98985 90.1287 C 182.98146 86.3693 97.12204 89.42811 86.57864000000001 88.4156 C 76.03523 87.40308 50.48841 106.46071 49.73653 131.27274"/></g></svg>
+                <div class="text-1 text-bigger dialogue-text centered">${mainFolderName}</div>`;
+        } else {
+            folder.elem.innerHTML = folderInnerHTMLTemplate({
+                        title: folder.title, dialoguesCount: folder.dialoguesCount });
+        }
+        dialoguePreviewsGroup.insertBefore(folder.elem, dialoguePreviewsGroup.firstChild);
+
+        // create Event-listener on folder element to activate it
+        folder.elem.addEventListener('click', async (event) => {
+            await setActiveFolder(event.currentTarget);
+        });
+        // create Event-listener on folder element to select it
+        folder.elem.addEventListener('mousemove', (event) => {
+            selectElem(event.currentTarget);
+        });
+    }
+
+    /**
      * Add dialogue on bottom of dialogues listing
      *
      * @param {object} dialogue dialogue to add in dialogues list
@@ -642,9 +842,9 @@ export async function handler(element, app) {
             dialogue.elem.classList.add('active');
             currentDialogue.elem = dialogue.elem;
         }
-        if (dialogue.id === selectedDialogue.id) {
+        if (dialogue.id === selectedElem.id && selectedElem.type === elemTypes.dialogue) {
             dialogue.elem.classList.add('selected');
-            selectedDialogue.elem = dialogue.elem;
+            selectedElem.elem = dialogue.elem;
         }
         dialogue.elem.innerHTML = dialogueInnerHTMLTemplate(
             { avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body });
@@ -655,9 +855,20 @@ export async function handler(element, app) {
             await setActiveDialogue(event.currentTarget);
         });
         // create Event-listener on dialogue element to select it
-        dialogue.elem.addEventListener('mousemove', async (event) => {
-            selectDialogue(event.currentTarget);
+        dialogue.elem.addEventListener('mousemove', (event) => {
+            selectElem(event.currentTarget);
         });
+    }
+
+    /**
+     * Add divider between folders and dialogues
+     */
+    function addDialoguesDividerElem() {
+        const elem = document.createElement('div');
+        elem.id = 'dialogues-listing-divider';
+        elem.classList.add('dialogues-listing-divider', 'center-text');
+        elem.innerHTML = dividerHTMLTemplate({ folder: currentFolder.title });
+        dialoguePreviewsGroup.insertBefore(elem, dialoguePreviewsGroup.firstChild);
     }
 
     /**
@@ -679,9 +890,58 @@ export async function handler(element, app) {
     }
 
     /**
+     * Set folder active and draw it dialogues
+     *
+     * @param currentElem
+     * @param pushState
+     */
+    async function setActiveFolder(currentElem, pushState = true) {
+        if (currentElem.id === 'folder-' + currentFolder.id) {
+            return;
+        }
+        currentFolder.id = currentElem.id.substr(7); // length of 'folder-' ;
+        currentFolder.elem.classList.remove('active'); // "deactivate" previous folder
+        currentFolder.elem = currentElem;
+        currentFolder.elem.classList.add('active'); // "activate" current folder
+
+        // get folder data
+        const folderIndex = folders.storage.findIndex((item) => item.id === Number(currentFolder.id)); // get folder data
+        let folder = folders.storage[folderIndex];
+
+        // update currentFolder data
+        currentFolder.id = folder.id;
+        currentFolder.title = folder.title;
+
+        // get folder dialogues
+        if (!folder.dialogues || folder.gottenFromSW) {
+            folders.storage[folderIndex].dialogues = await getDialogues(-1, dialoguesByRequest, '', currentFolder.id);
+            folders.storage[folderIndex].gottenFromSW = isLostConnection;
+            folder = folders.storage[folderIndex];
+        }
+
+        if (folder.gottenFromSW) {
+            folders.storage[folderIndex].plug = plugStates.offline;
+        } else if (folders.storage[folderIndex].length < dialoguesByRequest) {
+            folders.storage[folderIndex].plug = plugStates.end;
+        } else {
+            folders.storage[folderIndex].plug = plugStates.loading;
+        }
+
+        // set folder url
+        const currentPath = new URL(window.location.href);
+        currentPath.searchParams.set('folder', folder.id);
+        if (pushState) {
+            history.pushState(null, null, currentPath.toString());
+        }
+
+        redrawDialogues(folders.storage, dialogues.storage);
+    }
+
+    /**
      * Set dialogue active and draw it
      *
      * @param currentElem
+     * @param pushState
      */
     async function setActiveDialogue(currentElem, pushState = true) {
         // For mobile version. Go to messages
@@ -734,9 +994,10 @@ export async function handler(element, app) {
         }
 
         // set dialogue url
-        const currentPath = window.location.pathname + `?with=${currentDialogue.username}`;
+        const currentPath = new URL(window.location.href);
+        currentPath.searchParams.set('with', currentDialogue.username);
         if (pushState) {
-            history.pushState(null, null, currentPath);
+            history.pushState(null, null, currentPath.toString());
         }
         document.title = `${app.name} | ${currentDialogue.username}`;
 
@@ -786,7 +1047,7 @@ export async function handler(element, app) {
         const foundDialogue = dialogues.storage.find(item => item.username === username);
         if (foundDialogue) {
             await setActiveDialogue(foundDialogue.elem);
-            redrawDialogues(dialogues.storage);
+            redrawDialogues(folders.storage, dialogues.storage);
             return;
         }
 
@@ -802,7 +1063,7 @@ export async function handler(element, app) {
 
         addDialogueToList(dialogue);
         await setActiveDialogue(dialogue.elem);
-        redrawDialogues(dialogues.storage);
+        redrawDialogues(folders.storage, dialogues.storage);
         scrollToTop(dialoguePreviewsGroup);
     }
 

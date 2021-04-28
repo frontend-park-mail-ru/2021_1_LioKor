@@ -14,7 +14,14 @@ loading-color = #84adff
 dialogue-color = #185d25AA
 dialogue-color-active = #6b5c13
 dialogue-color-selected = #218633
-dialogue-color-active-selected = #787b15
+dialogue-color-active-selected = #7b7115
+
+folder-color = #6c3b12AA
+folder-color-active = #9a471d
+folder-color-selected = #874b1c
+folder-color-active-selected = #a8511f
+
+dialogues-divider-height = 5px
 
 bg-color-1 = #60606099
 bg-color-2 = #393C3FCC
@@ -40,6 +47,9 @@ middle = 10px
 middle-large = 15px
 large = 20px
 extra-large = 30px
+
+font-size = 16px
+big-font-size = 18px
 
 small-avatar-size = 30px
 middle-avatar-size = 40px
@@ -89,6 +99,12 @@ width-border = 1px
   background bg-color-2
 
 .text-1
+.text-2
+.text-3
+.text-4
+  font-size font-size
+
+.text-1
   color color1
 .text-2
   color color2
@@ -96,6 +112,9 @@ width-border = 1px
   color color3
 .text-4
   color color4
+
+.text-bigger
+  font-size big-font-size
 
 .fullwidth
   width 100%
@@ -123,10 +142,14 @@ width-border = 1px
   overflow hidden
   display flex
   flex-direction row
+.table-columns.reversed
+  flex-direction row-reverse
 .table-rows
   overflow hidden
   display flex
   flex-direction column
+.table-rows.reversed
+  flex-direction column-reverse
 
 .table-column
   height 100%
@@ -236,6 +259,22 @@ width-border = 1px
   border-bottom 1px solid color1
   background-color dialogue-color-active-selected
 
+.listing-button.folder
+  background-color folder-color
+.listing-button.folder.active
+  background-color folder-color-active
+.listing-button.folder.selected
+  background-color folder-color-selected
+.listing-button.folder.active.selected
+  background-color folder-color-active-selected
+
+.dialogues-listing-divider
+  width 100%
+  //height dialogues-divider-height
+  background-color color3
+  border-top 2px solid color4
+  border-bottom 2px solid color4
+
 .empty-dialogue
   min-height dialogue-preview-height
   overflow hidden
@@ -246,6 +285,8 @@ width-border = 1px
 
 .dialogue-text
   padding-left (middle-avatar-size + small)
+.dialogue-text.centered
+  margin-top ((dialogue-preview-height - 2 * middle - big-font-size) / 2)
 .dialogue-body
   overflow hidden
   white-space nowrap
@@ -407,7 +448,7 @@ width-border = 1px
   font-size 14px
   margin-bottom extra-small
   margin-right middle
-  margin-left middle
+  margin-left extra-small
   background #FFFFFF00
   border none
   outline none
@@ -430,12 +471,24 @@ width-border = 1px
 .find-input:focus::placeholder
   color color3
 
-.input-with-clear + .input-clear
+.folders-button
+  min-width 40px
+  opacity 1
+  transition all 0.2s ease
+.find-input:focus ~ .folders-button
+  min-width 0
+  width 0
+  opacity 0
+#folder-icon-arrow
+  transition transform 0.2s ease
+  transform scale(0.03) rotate(0deg) translate(500px, 430px)
+
+.input-with-clear ~ .input-clear
   max-width 0
   transition all ease-out 0.4s
   opacity 0
   transform rotate(45deg)
-.input-with-clear:focus + .input-clear
+.input-with-clear:focus ~ .input-clear
   max-width 100px
   opacity 1
   transform rotate(0)
@@ -578,6 +631,10 @@ width-border = 1px
 .messages-column
   transition width ease 0.2s
 
+.profile-button
+  svg
+    margin ((middle-avatar-size - small-avatar-size) / 2)
+
 @media (max-width: 800px)
   .dialogues-column
   .messages-column
@@ -601,11 +658,16 @@ width-border = 1px
     background-color dialogue-color
   .listing-button.active.selected
     background-color dialogue-color-active
+  .listing-button.folder.selected
+    background-color folder-color
+  .listing-button.folder.active.selected
+    background-color folder-color-active
 
   .profile-button
-    width mobile-profile-button-size
-    height mobile-profile-button-size
     svg
+      width mobile-profile-button-size
+      height mobile-profile-button-size
+      margin ((middle-avatar-size - mobile-profile-button-size) / 2)
       g
         transform scale(1.8)
 
