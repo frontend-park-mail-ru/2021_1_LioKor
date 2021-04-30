@@ -239,7 +239,7 @@ export async function handler(element, app) {
     });
 
     // --- Get folders
-    folders.storage = await getFolders(-1, foldersByRequest);
+    folders.storage = folders.storage.concat(await getFolders(-1, foldersByRequest));
     if (isLostConnection) {
         folders.gottenFromSW = true;
         folders.plug = plugStates.offline;
@@ -247,14 +247,18 @@ export async function handler(element, app) {
         folders.plug = plugStates.end;
     }
 
+    console.log(getChildrenHeight(dialoguePreviewsGroup), dialoguePreviewsGroup.clientHeight,dialogues.plug ,plugStates.loading);
     // --- Get dialogues
-    dialogues.storage = await getDialogues(-1, dialoguesByRequest);
-    if (isLostConnection) {
-        dialogues.gottenFromSW = true;
-        dialogues.plug = plugStates.offline;
-    } else if (dialogues.storage.length < dialoguesByRequest) {
-        dialogues.plug = plugStates.end;
-    }
+    do {
+        dialogues.storage = dialogues.storage.concat(await getDialogues(-1, dialoguesByRequest));
+        if (isLostConnection) {
+            dialogues.gottenFromSW = true;
+            dialogues.plug = plugStates.offline;
+        } else if (dialogues.storage.length < dialoguesByRequest) {
+            dialogues.plug = plugStates.end;
+        }
+        redrawDialogues(folders.storage, dialogues.storage);
+    } while (getChildrenHeight(dialoguePreviewsGroup) < dialoguePreviewsGroup.clientHeight && dialogues.plug === plugStates.loading);
     folders.storage.push({ id: 0, title: mainFolderName, dialogues: dialogues.storage});
 
     // --- Draw dialogues
@@ -443,19 +447,11 @@ export async function handler(element, app) {
 
         // messages that we have already
         const dialogueMessages = messages[currentDialogue.username];
-        let since = 0;
-        if (dialogueMessages.length !== 0) { since = dialogueMessages[dialogueMessages.length - 1].id; }
+        let since = -1;
+        if (dialogueMessages.storage.length !== 0) { since = dialogueMessages.storage
+                [dialogueMessages.storage.length - 1].id; }
         // Get new messages
         const newMessages = await getMessages(currentDialogue.username, since, messagesByRequest);
-
-        // get height for scroll to previous place at end of function
-        const heightToBottom = getChildrenHeight(messagesField) - messagesField.scrollTop;
-        messages[currentDialogue.username] = dialogueMessages.concat(newMessages);
-
-        newMessages.forEach((message) => {
-            addMessageToField(message);
-        });
-
         // set messages plug
         messages[currentDialogue.username].gottenFromSW = false;
         if (isLostConnection) {
@@ -467,10 +463,20 @@ export async function handler(element, app) {
             messages[currentDialogue.username].plug = plugStates.loading;
         }
 
+        // get height for scroll to previous place at end of function
+        const heightToBottom = getChildrenHeight(messagesField) - messagesField.scrollTop;
+
+        convertMessagesToBlocks(newMessages);
+        convertTimesToStr(newMessages);
+        messages[currentDialogue.username].storage = dialogueMessages.storage.concat(newMessages);
+        newMessages.forEach((message) => {
+            addMessageToField(message);
+        });
+
         // Scroll to previous place
         messagesField.scrollTop = getChildrenHeight(messagesField) - heightToBottom;
 
-        redrawMessagesPlug(messages[currentDialogue.username]);
+        redrawMessagesPlug(messages[currentDialogue.username].plug);
 
         mutexScrollMessagesEvent = false; // unblock mutex
     });
@@ -620,13 +626,13 @@ export async function handler(element, app) {
     /**
      * Delete messages plug and draw new
      *
-     * @param message
+     * @param plug
      */
-    function redrawMessagesPlug(message) {
-        const plug = document.getElementById('messages-plug');
-        if (plug) { plug.remove(); }
+    function redrawMessagesPlug(plug) {
+        const prevPlug = document.getElementById('messages-plug');
+        if (prevPlug) { prevPlug.remove(); }
 
-        switch (message.plug) {
+        switch (plug) {
         case plugStates.end:
             addEndMessagesElem(messagesField, 'messages-plug');
             break;
@@ -784,8 +790,6 @@ export async function handler(element, app) {
         if (!messages) {
             return [];
         }
-        convertMessagesToBlocks(messages);
-        convertTimesToStr(messages);
         return messages;
     }
 
@@ -981,16 +985,29 @@ export async function handler(element, app) {
 
         // get dialogue messages
         if (!messages[dialogue.username] || messages[dialogue.username].gottenFromSW) {
-            messages[dialogue.username] = await getMessages(dialogue.username, -1, messagesByRequest);
-            messages[dialogue.username].gottenFromSW = isLostConnection;
-        }
+            if (!messages[dialogue.username]) {
+                messages[dialogue.username] = {storage: []};
+            }
+            do {
+                const dialogueMessages = messages[dialogue.username];
+                let since = -1;
+                if (dialogueMessages && dialogueMessages.storage.length !== 0) { since = dialogueMessages.storage[dialogueMessages.storage.length - 1].id; }
+                const newMessages = await getMessages(dialogue.username, since, messagesByRequest);
+                messages[dialogue.username].gottenFromSW = isLostConnection;
 
-        if (messages[dialogue.username].gottenFromSW) {
-            messages[dialogue.username].plug = plugStates.offline;
-        } else if (messages[dialogue.username].length < messagesByRequest) {
-            messages[dialogue.username].plug = plugStates.end;
-        } else {
-            messages[dialogue.username].plug = plugStates.loading;
+                messages[dialogue.username].plug = plugStates.loading;
+                if (messages[dialogue.username].gottenFromSW) {
+                    messages[dialogue.username].plug = plugStates.offline;
+                } else if (newMessages.length < messagesByRequest) {
+                    messages[dialogue.username].plug = plugStates.end;
+                }
+
+                convertMessagesToBlocks(newMessages);
+                convertTimesToStr(newMessages);
+                messages[dialogue.username].storage = messages[dialogue.username].storage.concat(newMessages);
+                showDialogue(dialogue.username);
+                console.log(getChildrenHeight(messagesField), messagesField.clientHeight , messages[dialogue.username].plug, plugStates.loading);
+            } while (getChildrenHeight(messagesField) < messagesField.clientHeight && messages[dialogue.username].plug === plugStates.loading);
         }
 
         // set dialogue url
@@ -1077,7 +1094,7 @@ export async function handler(element, app) {
 
         if (messages[username].length !== 0) {
             // create bottom message block
-            const messageBlock = messages[username][0];
+            const messageBlock = messages[username].storage[0];
             /* const messageBlockElem = */addMessageToField(messageBlock);
 
             // set default theme of message
@@ -1092,11 +1109,11 @@ export async function handler(element, app) {
             }
 
             // create other messages blocks
-            messages[username].slice(1).forEach((messageBlock) => {
+            messages[username].storage.slice(1).forEach((messageBlock) => {
                 addMessageToField(messageBlock);
             });
         }
-        redrawMessagesPlug(messages[username]);
+        redrawMessagesPlug(messages[username].plug);
         scrollToBottom(messagesField);
         messageInput.focus();
     }
