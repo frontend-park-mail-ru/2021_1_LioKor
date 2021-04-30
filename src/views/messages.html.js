@@ -246,11 +246,30 @@ export async function handler(element, app) {
     } else if (folders.storage.length < dialoguesByRequest) {
         folders.plug = plugStates.end;
     }
+    folders.storage.push({ id: 0, title: mainFolderName, dialogues: undefined});
 
-    console.log(getChildrenHeight(dialoguePreviewsGroup), dialoguePreviewsGroup.clientHeight,dialogues.plug ,plugStates.loading);
+    // get query-parameters
+    const searchParams = new URL(window.location.href).searchParams;
+    const gottenUsername = searchParams.get('with');
+    let gottenFolder = searchParams.get('folder');
+    // if we have get query-parameter "folder" in url => go to this folder
+    let currentFolderIndex;
+    if (gottenFolder) {
+        currentFolder.id = Number(gottenFolder);
+        currentFolderIndex = folders.storage.findIndex(item => item.id === currentFolder.id);
+        if (currentFolderIndex === -1) {
+            currentFolder.id = 0;
+        } else {
+            const curFolder = folders.storage[currentFolderIndex];
+            currentFolder.id = curFolder.id;
+            currentFolder.title = curFolder.title;
+        }
+    }
+
     // --- Get dialogues
     do {
-        dialogues.storage = dialogues.storage.concat(await getDialogues(-1, dialoguesByRequest));
+        dialogues.storage = dialogues.storage.concat(await getDialogues(-1, dialoguesByRequest, '', currentFolder.id));
+        folders.storage[currentFolderIndex].dialogues = dialogues.storage;
         if (isLostConnection) {
             dialogues.gottenFromSW = true;
             dialogues.plug = plugStates.offline;
@@ -259,14 +278,12 @@ export async function handler(element, app) {
         }
         redrawDialogues(folders.storage, dialogues.storage);
     } while (getChildrenHeight(dialoguePreviewsGroup) < dialoguePreviewsGroup.clientHeight && dialogues.plug === plugStates.loading);
-    folders.storage.push({ id: 0, title: mainFolderName, dialogues: dialogues.storage});
 
     // --- Draw dialogues
     redrawDialogues(folders.storage, dialogues.storage);
 
-    // if we have get-parameters in url => go to dialogue
-    const gottenUsername = window.location.search.substring(6);
-    if (gottenUsername !== '') {
+    // if we have get query-parameter "with" in url => go to dialogue
+    if (gottenUsername) {
         const dialogue = dialogues.storage.find(item => item.username === gottenUsername);
         if (dialogue) {
             await setActiveDialogue(dialogue.elem, false);
@@ -321,7 +338,7 @@ export async function handler(element, app) {
         foldersIconArrow.style.transform = 'scale(0.03) rotate(180deg) translate(-950px, -880px)';
         folders.state = foldersStates.opened;
         if (currentFolder.id === 0) {
-            addDialoguesDividerElem();
+            redrawDialoguesDividerElem();
         }
         folders.storage.forEach((folder) => {
             addFolderToList(folder);
@@ -519,7 +536,6 @@ export async function handler(element, app) {
             break;
         case 40: // down arrow
             if (typeof selectedElem.type === 'undefined') {
-                console.log('SELECT');
                 selectElem(dialoguePreviewsGroup.firstElementChild);
                 return;
             }
@@ -581,8 +597,8 @@ export async function handler(element, app) {
     function redrawDialogues(foldersList, dialogues) {
         dialoguePreviewsGroup.innerHTML = '';
 
+        redrawDialoguesDividerElem();
         if (folders.state === foldersStates.opened) {
-            addDialoguesDividerElem();
             foldersList.forEach((folder) => {
                 addFolderToList(folder);
             });
@@ -868,7 +884,14 @@ export async function handler(element, app) {
     /**
      * Add divider between folders and dialogues
      */
-    function addDialoguesDividerElem() {
+    function redrawDialoguesDividerElem() {
+        if (folders.state === foldersStates.closed && currentFolder.id === 0) {
+            return;
+        }
+        const prevElem = document.getElementById('dialogues-listing-divider');
+        if (prevElem) {
+            prevElem.remove();
+        }
         const elem = document.createElement('div');
         elem.id = 'dialogues-listing-divider';
         elem.classList.add('dialogues-listing-divider', 'center-text');
@@ -934,7 +957,11 @@ export async function handler(element, app) {
 
         // set folder url
         const currentPath = new URL(window.location.href);
-        currentPath.searchParams.set('folder', folder.id);
+        if (currentFolder.id === 0) {
+            currentPath.searchParams.delete('folder');
+        } else {
+            currentPath.searchParams.set('folder', folder.id);
+        }
         if (pushState) {
             history.pushState(null, null, currentPath.toString());
         }
@@ -1007,7 +1034,6 @@ export async function handler(element, app) {
                 convertTimesToStr(newMessages);
                 messages[dialogue.username].storage = messages[dialogue.username].storage.concat(newMessages);
                 showDialogue(dialogue.username);
-                console.log(getChildrenHeight(messagesField), messagesField.clientHeight , messages[dialogue.username].plug, plugStates.loading);
             } while (getChildrenHeight(messagesField) < messagesField.clientHeight && messages[dialogue.username].plug === plugStates.loading);
         }
 
@@ -1222,7 +1248,7 @@ export async function handler(element, app) {
             messagesField.appendChild(messageBlockElem);
 
             // add block to messages list
-            messages[currentDialogue.username].unshift({
+            messages[currentDialogue.username].storage.unshift({
                 id: -createdMessages,
                 sender: `${app.storage.username}@liokor.ru`,
                 title: currentTitle,
