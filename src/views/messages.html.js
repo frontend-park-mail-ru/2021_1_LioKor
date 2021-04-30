@@ -518,12 +518,13 @@ export async function handler(element, app) {
             }
             break;
         case 40: // down arrow
-            let nextElem = selectedElem.elem.nextElementSibling;
-            if (!nextElem) {
+            if (typeof selectedElem.type === 'undefined') {
+                console.log('SELECT');
+                selectElem(dialoguePreviewsGroup.firstElementChild);
                 return;
             }
-            if (typeof selectedElem.id === 'undefined') {
-                selectElem(dialoguePreviewsGroup.firstElementChild);
+            let nextElem = selectedElem.elem.nextElementSibling;
+            if (!nextElem) {
                 return;
             }
             if (nextElem.tagName === 'DIV') { // if is in dialogues list (check "overflow")
@@ -535,7 +536,7 @@ export async function handler(element, app) {
             break;
         case 39: // right arrow
         case 13: // enter
-            if (selectedElem.id) {
+            if (typeof selectedElem.id !== 'undefined') {
                 if (selectedElem.type === elemTypes.dialogue) {
                     setActiveDialogue(selectedElem.elem);
                 } else {
@@ -1092,14 +1093,17 @@ export async function handler(element, app) {
     function showDialogue(username) {
         messagesField.innerHTML = '';
 
-        if (messages[username].length !== 0) {
+        if (messages[username].storage.length !== 0) {
             // create bottom message block
             const messageBlock = messages[username].storage[0];
-            /* const messageBlockElem = */addMessageToField(messageBlock);
+            addMessageToField(messageBlock);
 
             // set default theme of message
             if (messageBlock.sender !== app.storage.username && messageBlock.sender !== app.storage.username + '@liokor.ru') {
                 if (messageBlock.title.substr(0, 3).toLowerCase() === 're:') {
+                    const { num, theme } = messageBlock.title.substr(3).split(']');
+                    themeInput.value = 'Re[' + (Number(num) + 1) + ']: ' + theme;
+                } else if (messageBlock.title.substr(0, 3).toLowerCase() === 're[') {
                     themeInput.value = messageBlock.title;
                 } else {
                     themeInput.value = 'Re: ' + messageBlock.title;
