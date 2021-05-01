@@ -184,7 +184,7 @@ export async function handler(element, app) {
                         {{#if isDelivered}}
                             <g transform="scale(0.05)"><path d="M192.485,0C86.173,0,0,86.173,0,192.485S86.173,384.97,192.485,384.97c106.3,0,192.485-86.185,192.485-192.485    C384.97,86.173,298.785,0,192.485,0z M192.485,360.909c-93.018,0-168.424-75.406-168.424-168.424S99.467,24.061,192.485,24.061    s168.424,75.406,168.424,168.424S285.503,360.909,192.485,360.909z"/><path d="M280.306,125.031L156.538,247.692l-51.502-50.479c-4.74-4.704-12.439-4.704-17.179,0c-4.752,4.704-4.752,12.319,0,17.011    l60.139,58.936c4.932,4.343,12.307,4.824,17.179,0l132.321-131.118c4.74-4.692,4.74-12.319,0-17.011    C292.745,120.339,285.058,120.339,280.306,125.031z"/></g>
                         {{else}}
-                            <g transform="scale(0.04)"><path xmlns="http://www.w3.org/2000/svg" d="M505.403,406.394L295.389,58.102c-8.274-13.721-23.367-22.245-39.39-22.245c-16.023,0-31.116,8.524-39.391,22.246    L6.595,406.394c-8.551,14.182-8.804,31.95-0.661,46.37c8.145,14.42,23.491,23.378,40.051,23.378h420.028    c16.56,0,31.907-8.958,40.052-23.379C514.208,438.342,513.955,420.574,505.403,406.394z M477.039,436.372    c-2.242,3.969-6.467,6.436-11.026,6.436H45.985c-4.559,0-8.784-2.466-11.025-6.435c-2.242-3.97-2.172-8.862,0.181-12.765    L245.156,75.316c2.278-3.777,6.433-6.124,10.844-6.124c4.41,0,8.565,2.347,10.843,6.124l210.013,348.292    C479.211,427.512,479.281,432.403,477.039,436.372z"/><path xmlns="http://www.w3.org/2000/svg" d="M256.154,173.005c-12.68,0-22.576,6.804-22.576,18.866c0,36.802,4.329,89.686,4.329,126.489    c0.001,9.587,8.352,13.607,18.248,13.607c7.422,0,17.937-4.02,17.937-13.607c0-36.802,4.329-89.686,4.329-126.489    C278.421,179.81,268.216,173.005,256.154,173.005z"/><path xmlns="http://www.w3.org/2000/svg" d="M256.465,353.306c-13.607,0-23.814,10.824-23.814,23.814c0,12.68,10.206,23.814,23.814,23.814    c12.68,0,23.505-11.134,23.505-23.814C279.97,364.13,269.144,353.306,256.465,353.306z"/></g>
+                            <g transform="scale(0.04)"><path d="M505.403,406.394L295.389,58.102c-8.274-13.721-23.367-22.245-39.39-22.245c-16.023,0-31.116,8.524-39.391,22.246    L6.595,406.394c-8.551,14.182-8.804,31.95-0.661,46.37c8.145,14.42,23.491,23.378,40.051,23.378h420.028    c16.56,0,31.907-8.958,40.052-23.379C514.208,438.342,513.955,420.574,505.403,406.394z M477.039,436.372    c-2.242,3.969-6.467,6.436-11.026,6.436H45.985c-4.559,0-8.784-2.466-11.025-6.435c-2.242-3.97-2.172-8.862,0.181-12.765    L245.156,75.316c2.278-3.777,6.433-6.124,10.844-6.124c4.41,0,8.565,2.347,10.843,6.124l210.013,348.292    C479.211,427.512,479.281,432.403,477.039,436.372z"/><path d="M256.154,173.005c-12.68,0-22.576,6.804-22.576,18.866c0,36.802,4.329,89.686,4.329,126.489    c0.001,9.587,8.352,13.607,18.248,13.607c7.422,0,17.937-4.02,17.937-13.607c0-36.802,4.329-89.686,4.329-126.489    C278.421,179.81,268.216,173.005,256.154,173.005z"/><path xmlns="http://www.w3.org/2000/svg" d="M256.465,353.306c-13.607,0-23.814,10.824-23.814,23.814c0,12.68,10.206,23.814,23.814,23.814    c12.68,0,23.505-11.134,23.505-23.814C279.97,364.13,269.144,353.306,256.465,353.306z"/></g>
                         {{/if}}
                     {{/if}}
                 </svg>
@@ -412,18 +412,18 @@ export async function handler(element, app) {
             findInput.blur();
         } else if (event.keyCode === 13) { // Enter
             const findText = findInput.value;
+            findInput.value = '';
             if (!validateEmail(findText)) {
                 return;
             }
             dialogues.plug = previousDialoguesPlug;
-            await addOrSetDialogue(findInput.value);
+            await addOrSetDialogue(findText);
             findButton.innerHTML = '<g transform="scale(2) translate(0, -2)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g>';
-            findInput.value = '';
         }
     });
 
     // create find-dialogue event-listener
-    document.getElementById('find-dialogue-button').addEventListener('click', (event) => {
+    findButton.addEventListener('click', (event) => {
         if (findInput.value === '') {
             findInput.focus();
             return;
@@ -463,7 +463,7 @@ export async function handler(element, app) {
     // create messages scroll event-listener to upload new messages
     let mutexScrollMessagesEvent = false; // Убейте меня за это пожалусто...
     messagesField.addEventListener('scroll', async (event) => {
-        // if it not scrolled to top
+        // if it not scrolled to top or dialogue not selected
         if (messagesField.scrollTop > messagesScrollLoadOffset || !currentDialogue.username) {
             return;
         }
@@ -924,8 +924,9 @@ export async function handler(element, app) {
 
         // create Event-listener on element
         elem.addEventListener('click', async (event) => {
-            await addOrSetDialogue(findInput.value);
-            findInput.value = '';
+            const newEvent = new Event('keydown');
+            newEvent.keyCode = 13;
+            findInput.dispatchEvent(newEvent); // trigger enter event-listener
         });
     }
 
@@ -1102,7 +1103,7 @@ export async function handler(element, app) {
         themeInput.focus();
         const foundDialogue = dialogues.storage.find(item => item.username === username);
         if (foundDialogue) {
-            await setActiveDialogue(foundDialogue.elem);
+            await setActiveDialogue(foundDialogue.elem, false);
             redrawDialogues(folders.storage, dialogues.storage);
             return;
         }
@@ -1114,7 +1115,6 @@ export async function handler(element, app) {
             body: '',
             time: getCurrentTime()
         };
-        messages[username] = [];
         dialogues.storage.unshift(dialogue);
 
         addDialogueToList(dialogue);
