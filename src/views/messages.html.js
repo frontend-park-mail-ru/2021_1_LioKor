@@ -176,16 +176,27 @@ export async function handler(element, app) {
     // --- Handlebars templates
     const messageBlockInnerHTMLTemplate = Handlebars.compile(`
         <div class="message-block {{ side }}">
-            <img src="{{ avatar }}" alt="avatar" class="middle-avatar">
-            <div class="floatright text-4 p-m">{{ time }}</div>
+            <img src={{ avatar }} alt="avatar" class="middle-avatar">
+            <div class="floatright text-4 p-m">
+                <div>{{ time }}</div>
+                <svg class="floatright svg-button message-status" pointer-events="none" xmlns="http://www.w3.org/2000/svg">
+                    {{#if isStated}}
+                        {{#if isDelivered}}
+                            <g transform="scale(0.05)"><path d="M192.485,0C86.173,0,0,86.173,0,192.485S86.173,384.97,192.485,384.97c106.3,0,192.485-86.185,192.485-192.485    C384.97,86.173,298.785,0,192.485,0z M192.485,360.909c-93.018,0-168.424-75.406-168.424-168.424S99.467,24.061,192.485,24.061    s168.424,75.406,168.424,168.424S285.503,360.909,192.485,360.909z"/><path d="M280.306,125.031L156.538,247.692l-51.502-50.479c-4.74-4.704-12.439-4.704-17.179,0c-4.752,4.704-4.752,12.319,0,17.011    l60.139,58.936c4.932,4.343,12.307,4.824,17.179,0l132.321-131.118c4.74-4.692,4.74-12.319,0-17.011    C292.745,120.339,285.058,120.339,280.306,125.031z"/></g>
+                        {{else}}
+                            <g transform="scale(0.04)"><path xmlns="http://www.w3.org/2000/svg" d="M505.403,406.394L295.389,58.102c-8.274-13.721-23.367-22.245-39.39-22.245c-16.023,0-31.116,8.524-39.391,22.246    L6.595,406.394c-8.551,14.182-8.804,31.95-0.661,46.37c8.145,14.42,23.491,23.378,40.051,23.378h420.028    c16.56,0,31.907-8.958,40.052-23.379C514.208,438.342,513.955,420.574,505.403,406.394z M477.039,436.372    c-2.242,3.969-6.467,6.436-11.026,6.436H45.985c-4.559,0-8.784-2.466-11.025-6.435c-2.242-3.97-2.172-8.862,0.181-12.765    L245.156,75.316c2.278-3.777,6.433-6.124,10.844-6.124c4.41,0,8.565,2.347,10.843,6.124l210.013,348.292    C479.211,427.512,479.281,432.403,477.039,436.372z"/><path xmlns="http://www.w3.org/2000/svg" d="M256.154,173.005c-12.68,0-22.576,6.804-22.576,18.866c0,36.802,4.329,89.686,4.329,126.489    c0.001,9.587,8.352,13.607,18.248,13.607c7.422,0,17.937-4.02,17.937-13.607c0-36.802,4.329-89.686,4.329-126.489    C278.421,179.81,268.216,173.005,256.154,173.005z"/><path xmlns="http://www.w3.org/2000/svg" d="M256.465,353.306c-13.607,0-23.814,10.824-23.814,23.814c0,12.68,10.206,23.814,23.814,23.814    c12.68,0,23.505-11.134,23.505-23.814C279.97,364.13,269.144,353.306,256.465,353.306z"/></g>
+                        {{/if}}
+                    {{/if}}
+                </svg>
+            </div>
             <div class="message-block-title">{{ title }}</div>
             {{#each body}}
-                <div id="{{ @index }}" class="message-body">{{ this }}</div>
+                <div id={{ @index }} class="message-body">{{ this }}</div>
             {{/each}}
         </div>`);
 
     const dialogueInnerHTMLTemplate = Handlebars.compile(`
-        <img src="{{ avatar }}" alt="avatar" class="middle-avatar">
+        <img src={{ avatar }} alt="avatar" class="middle-avatar">
         <div class="floatright text-4">{{ time }}</div>
         <div class="dialogue-text">
             <div class="text-1">{{ title }}</div>
@@ -253,7 +264,7 @@ export async function handler(element, app) {
     const gottenUsername = searchParams.get('with');
     let gottenFolder = searchParams.get('folder');
     // if we have get query-parameter "folder" in url => go to this folder
-    let currentFolderIndex;
+    let currentFolderIndex = folders.storage.length - 1;
     if (gottenFolder) {
         currentFolder.id = Number(gottenFolder);
         currentFolderIndex = folders.storage.findIndex(item => item.id === currentFolder.id);
@@ -552,12 +563,13 @@ export async function handler(element, app) {
             break;
         case 39: // right arrow
         case 13: // enter
-            if (typeof selectedElem.id !== 'undefined') {
-                if (selectedElem.type === elemTypes.dialogue) {
-                    setActiveDialogue(selectedElem.elem);
-                } else {
-                    setActiveFolder(selectedElem.elem);
-                }
+            if (typeof selectedElem.type === 'undefined') {
+                return;
+            }
+            if (selectedElem.type === elemTypes.dialogue) {
+                setActiveDialogue(selectedElem.elem);
+            } else {
+                setActiveFolder(selectedElem.elem);
             }
             break;
         case 37: // left arrow
@@ -1169,34 +1181,33 @@ export async function handler(element, app) {
      * Add message to messages field
      *
      * @param messageBlock
+     * @param toBottom
      * @returns {HTMLDivElement}
      */
-    function addMessageToField(messageBlock) {
+    function addMessageToField(messageBlock, toBottom = false) {
         // create block of messages HTML-element
         const messageBlockElem = document.createElement('div');
         messageBlockElem.id = 'message-' + messageBlock.id;
 
         // render message on right or left side
-        if (messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase()) {
-            messageBlockElem.classList.add('message-block-full', 'right-block');
-            messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate({
-                side: 'your',
-                avatar: app.storage.avatar,
-                time: messageBlock.time,
-                title: messageBlock.title,
-                body: messageBlock.body
-            });
+        const isYour =  messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase();
+
+        messageBlockElem.classList.add('message-block-full', isYour ? 'right-block' : 'left-block');
+        messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate({
+            side: isYour ? 'your' : 'not-your',
+            avatar: app.storage.avatar,
+            time: messageBlock.time,
+            isStated: isYour,
+            isDelivered: (messageBlock.status === 1),
+            title: messageBlock.title,
+            body: messageBlock.body
+        });
+
+        if (toBottom) {
+            messagesField.appendChild(messageBlockElem);
         } else {
-            messageBlockElem.classList.add('message-block-full', 'left-block');
-            messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate({
-                side: 'not-your',
-                avatar: currentDialogue.avatar,
-                time: messageBlock.time,
-                title: messageBlock.title,
-                body: messageBlock.body
-            });
+            messagesField.insertBefore(messageBlockElem, messagesField.firstChild);
         }
-        messagesField.insertBefore(messageBlockElem, messagesField.firstChild);
         return messageBlockElem;
     }
 
@@ -1204,6 +1215,10 @@ export async function handler(element, app) {
      * Sends email
      */
     async function sendMessage() {
+        if (!navigator.onLine) {
+            app.messageError(`Нет соединения`, `Без интернета отправить письмо не получится`);
+            return;
+        }
         // check inputs
         let currentTitle = themeInput.value;
         if (currentTitle === '') { currentTitle = 'Без темы'; }
@@ -1221,7 +1236,6 @@ export async function handler(element, app) {
         if (!response.ok) {
             const data = await response.json();
             app.messageError(`Ошибка ${response.status}`, `Не удалось отправить письмо: ${data.message}`);
-            return;
         }
 
         // clear input
@@ -1231,30 +1245,24 @@ export async function handler(element, app) {
         currentDialogue.elem.lastElementChild.lastElementChild.innerText = message;
 
         // add message HTML-block
-        const lastMessage = messages[currentDialogue.username][0];
-        if (lastMessage && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
+        const nowStatus = response.ok ? 1 : 0;
+        const lastMessage = messages[currentDialogue.username].storage[0];
+        if (lastMessage && nowStatus === lastMessage.status && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
             document.getElementById('message-' + lastMessage.id).firstElementChild.innerHTML += `<div id="${lastMessage.id}" class="message-body">${message}</div>`;
-
-            messages[currentDialogue.username][0].body.push(message);
+            messages[currentDialogue.username].storage[0].body.push(message);
         } else {
-            // create new messages block HTML-element
-            const messageBlockElem = document.createElement('div');
             createdMessages += 1;
-            messageBlockElem.id = 'message-' + -createdMessages;
-            messageBlockElem.classList.add('message-block-full', 'right-block');
-            const currentTime = getCurrentTime();
-            messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate(
-                { side: 'your', avatar: app.storage.avatar, time: currentTime, title: currentTitle, body: [message] });
-            messagesField.appendChild(messageBlockElem);
-
             // add block to messages list
             messages[currentDialogue.username].storage.unshift({
                 id: -createdMessages,
                 sender: `${app.storage.username}@liokor.ru`,
                 title: currentTitle,
-                time: currentTime,
+                time:  getCurrentTime(),
+                status: nowStatus,
                 body: [message]
             });
+            // draw this block
+            addMessageToField(messages[currentDialogue.username].storage[0], true);
         }
         scrollToBottom(messagesField);
     }
