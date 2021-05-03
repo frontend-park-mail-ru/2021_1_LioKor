@@ -1,7 +1,8 @@
 import Handlebars from 'handlebars/dist/cjs/handlebars';
 
 import { validateEmail } from '../modules/validators';
-import { Listing } from '../components/listing';
+import { Listing, plugStates } from '../components/listing'
+import { paginatedGetter } from '../components/paginatedGetter'
 
 const html = `
 <div class="table-columns fullheight p-l bg-5" id="messages-page">
@@ -106,8 +107,7 @@ export async function handler(element, app) {
     const mainFolderName = 'Все входящие';
 
     // --- HTML elements
-    const dialoguesListing = new Listing(document.getElementById('dialogues-listing'));
-    const messagesListing = new Listing(document.getElementById('messages-listing'));
+    const dialoguesListingElem = document.getElementById('dialogues-listing');
 
     const dialogueHeader = document.getElementById('dialogue-header-title');
     const dialogueTime = document.getElementById('dialogue-header-time');
@@ -128,46 +128,34 @@ export async function handler(element, app) {
 
     const themeInput = document.getElementById('theme-input');
     const messageInput = document.getElementById('message-input');
-    // --- Big containers
-    const dialogues = {
-        storage: [],
-        plug: plugStates.loading
+
+    // --- Listings
+    const foundDialogues = {
+        '': new Listing(dialoguesListingElem)
     };
-    let foundDialogues = [];
+    let dialoguesListing = foundDialogues[''];
+
+    const foldersListing = new Listing(dialoguesListingElem);
+    const messagesListing = new Listing(dialoguesListingElem);
+
+
+
+    // --- Network getters
+    const foldersGetter = new paginatedGetter(app.apiUrl + '/email/folders', -1, foldersByRequest, 'id');
+    const dialoguesGetter = new paginatedGetter(app.apiUrl + '/email/dialogues', -1, dialoguesByRequest, 'id');
+    const messagesGetter = new paginatedGetter(app.apiUrl + '/email/emails', -1, messagesByRequest, 'id');
+
+    // --- Enumerations
     const foldersStates = {
         closed: false,
         opened: true
     };
-    const folders = {
-        storage: [],
-        plug: plugStates.loading,
-        state: foldersStates.closed
-    };
-    const messages = {};
+
     // --- One-element containers
-    const currentDialogue = {
-        id: undefined,
-        elem: dialoguePreviewsGroup,
-        avatar: undefined,
-        username: undefined
-    };
-    const currentFolder = {
-        id: 0,
-        elem: dialoguePreviewsGroup,
-        title: mainFolderName,
-    };
-    const elemTypes = {
-        dialogue: false,
-        folder: true
-    };
-    const selectedElem = {
-        id: 0,
-        elem: dialoguePreviewsGroup,
-        type: undefined
-    };
     let createdDialogues = 0;
     let createdMessages = 0;
     let isLostConnection = false;
+
     // --- Handlebars templates
     const messageBlockInnerHTMLTemplate = Handlebars.compile(`
         <div class="message-block {{ side }}">
@@ -213,10 +201,38 @@ export async function handler(element, app) {
     // --- Draw some page elements
     // fill username in header
     document.getElementById('profile-link-username').innerText = app.storage.username[0].toUpperCase() + app.storage.username.slice(1) + '@liokor.ru';
-    // draw default 'Choose dialogue' page
-    drawChooseDialoguePage();
 
-    // --- Connection events
+    // --- Listing events
+    // create Event-listener on folder element to activate it
+    foldersListing.setClickElementHandler((event) => {
+        dialoguesListing.clearSelected();
+        foldersListing.setActive(event.currentTarget.id);
+    });
+    // create Event-listener on folder element to reset selected
+    foldersListing.block.addEventListener('mousemove', (event) => {
+        foldersListing.clearSelected();
+        dialoguesListing.clearSelected();
+        foldersListing.addSelected(event.currentTarget.id);
+    });
+
+    // create Event-listener on dialogue element to activate it
+    dialoguesListing.setClickElementHandler((event) => {
+        foldersListing.clearSelected();
+        dialoguesListing.setActive(event.currentTarget.id);
+    });
+    // create Event-listener on dialogue element to reset selected
+    dialoguesListing.block.addEventListener('mousemove', (event) => {
+        foldersListing.clearSelected();
+        dialoguesListing.clearSelected();
+        dialoguesListing.addSelected(event.currentTarget.id);
+    });
+
+    // create Event-listener on message element to activate it
+    messagesListing.setClickElementHandler((event) => {
+        messagesListing.addSelected(event.currentTarget.id);
+    });
+
+    // --- Lost connection events
     window.addEventListener('offline', (event) => {
         for (let i = 0; i < connectionsInfo.length; i++) {
             connectionsInfo[i].style.visibility = 'visible';
@@ -230,12 +246,8 @@ export async function handler(element, app) {
     }
 
     window.addEventListener('online', (event) => {
-        if (messagesField.scrollTop <= messagesScrollLoadOffset && currentDialogue.username) {
-            messagesField.dispatchEvent(new Event('scroll')); // trigger scroll-update messages
-        }
-        if (dialoguePreviewsGroup.scrollTop + dialoguePreviewsGroup.clientHeight >= dialoguePreviewsGroup.scrollHeight - dialoguesScrollLoadOffset) {
-            dialoguePreviewsGroup.dispatchEvent(new Event('scroll')); // trigger scroll-update dialogues
-        }
+        dialoguesListing.scroll();
+        messagesListing.scroll();
         for (let i = 0; i < connectionsInfo.length; i++) {
             connectionsInfo[i].style.top = '-40px';
             connectionsInfo[i].style.opacity = '0';
@@ -244,59 +256,63 @@ export async function handler(element, app) {
         isLostConnection = false;
     });
 
-    // --- Get folders
-    folders.storage = folders.storage.concat(await getFolders(-1, foldersByRequest));
-    if (isLostConnection) {
-        folders.gottenFromSW = true;
-        folders.plug = plugStates.offline;
-    } else if (folders.storage.length < dialoguesByRequest) {
-        folders.plug = plugStates.end;
-    }
-    folders.storage.push({ id: 0, title: mainFolderName, dialogues: undefined});
-
-    // get query-parameters
+    // --- Get query-parameters
     const searchParams = new URL(window.location.href).searchParams;
-    const gottenUsername = searchParams.get('with');
-    let gottenFolder = searchParams.get('folder');
-    // if we have get query-parameter "folder" in url => go to this folder
-    let currentFolderIndex = folders.storage.length - 1;
+    const gottenDialogue = searchParams.get('dialogue');
+    const gottenFolder = searchParams.get('folder');
+    if (gottenDialogue) {
+        dialoguesListing.setActive(gottenDialogue);
+    }
     if (gottenFolder) {
-        currentFolder.id = Number(gottenFolder);
-        currentFolderIndex = folders.storage.findIndex(item => item.id === currentFolder.id);
-        if (currentFolderIndex === -1) {
-            currentFolder.id = 0;
-        } else {
-            const curFolder = folders.storage[currentFolderIndex];
-            currentFolder.id = curFolder.id;
-            currentFolder.title = curFolder.title;
-        }
+        foldersListing.setActive(gottenFolder);
+    }
+
+    // --- Get folders
+    const elem = document.createElement('li'); // add main folder
+    elem.id = '0';
+    elem.classList.add('listing-button', 'folder');
+    elem.innerHTML = `
+            <svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.065) translate(90,10)"><path d="M340.80080180740356,203.6081974435188 h-123.02250294685365 c-4.993779848098755,0 -9.871407626152038,-2.050501576423645 -13.239817657470704,-5.535822841644287 l-38.38560207653046,-40.4361036529541 c-9.226877511978149,-9.197270121574402 -21.851013281822205,-14.00125900554657 -34.63685095310211,-13.927620111465455 H47.89109272384644 C21.485096302986143,143.70789167359845 0,165.1929879765846 0,191.59822523358838 v233.156681101799 c0,26.40599642086029 21.485096302986143,47.89109272384644 47.89109272384644,47.89109272384644 h293.0858350982666 h0.04403150367736817 c26.39157230758667,-0.11691123390197757 47.78860560321808,-21.70449465751648 47.67093520545959,-48.03761134815216 V251.49853100350873 C388.69189453125,225.09253458264843 367.2067982282639,203.6081974435188 340.80080180740356,203.6081974435188 zM359.4010754556656,424.66760249188917 c0.04403150367736817,10.251748718261718 -8.259702758789063,18.643545988082884 -18.45299586009979,18.687577491760255 H47.89109272384644 c-10.251748718261718,0 -18.599514484405518,-8.3477657661438 -18.599514484405518,-18.599514484405518 V191.59822523358838 c0,-10.251748718261718 8.3477657661438,-18.599514484405518 18.599514484405518,-18.614697761535645 H131.89712842941285 c0.1609427375793457,0 0.3218854751586914,0 0.48358737659454354,0 c4.891292727470398,0 9.636825994491577,1.9480144557952879 12.82911001110077,5.111450245857239 l38.18062783527374,40.24555352497101 c8.96268848991394,9.25572573852539 21.499520416259767,14.557726112365721 34.38784520816803,14.557726112365721 h123.02250294685365 c10.251748718261718,0 18.599514484405518,8.3477657661438 18.599514484405518,18.599514484405518 V424.66760249188917 z"/><path d="M 79.72623 131.64013 C 82.73375 123.36945 87.7321 118.64883 96.77176 118.33273 C 105.81142 118.01664 183.46435 118.20887 190.12869 120.04583 C 196.79302 121.88278 238.50963 168.42677 251.30868 173.09609 C 264.10774 177.76541 389.39087 174.96474 395.48077 175.83164 C 401.57067 176.69854 410.44077 182.36042 411.03479 192.88673 C 411.62881 203.41304 413.25029 354.17958 412.89442 371.12236 C 412.53855 388.06514 399.04484 386.91183 399.12243 386.95197 C 399.20002 386.99211 398.52843 415.44312 399.20272 415.87927 C 399.87701 416.31542 440.00224 411.49112 440.71397 377.88927 C 441.4257 344.28742 440.59625 211.13798 439.96209 183.90432 C 439.32793 156.67066 421.64409 147.53851 403.11998 147.06221 C 384.59587 146.58591 275.94556 150.90709 263.1636 146.39581 C 250.38164 141.88453 208.99824 93.8881 195.98985 90.1287 C 182.98146 86.3693 97.12204 89.42811 86.57864000000001 88.4156 C 76.03523 87.40308 50.48841 106.46071 49.73653 131.27274"/></g></svg>
+            <div class="text-1 text-bigger dialogue-text centered">${mainFolderName}</div>`;
+    foldersListing.push(elem);
+    dialoguesListing.setPlugTopState('folder-0', dividerHTMLTemplate({ folder: 'Все входящие' }));
+
+    foldersGetter.getNextPage().forEach((folder) => {
+        const elem = document.createElement('li');
+        elem.id = folder.id;
+        elem.classList.add('listing-button', 'folder');
+        elem.innerHTML = folderInnerHTMLTemplate({
+            title: folder.title, dialoguesCount: folder.dialoguesCount });
+
+        foldersListing.push(elem);
+        dialoguesListing.setPlugTopState('folder-' + folder.id, dividerHTMLTemplate({ folder: folder.title }));
+    });
+    if (isLostConnection) {
+        foldersListing.plugBottomState = ;
     }
 
     // --- Get dialogues
+    let gottenDialogues;
     do {
-        dialogues.storage = dialogues.storage.concat(await getDialogues(-1, dialoguesByRequest, '', currentFolder.id));
-        folders.storage[currentFolderIndex].dialogues = dialogues.storage;
-        if (isLostConnection) {
-            dialogues.gottenFromSW = true;
-            dialogues.plug = plugStates.offline;
-        } else if (dialogues.storage.length < dialoguesByRequest) {
-            dialogues.plug = plugStates.end;
-        }
-        redrawDialogues(folders.storage, dialogues.storage);
-    } while (getChildrenHeight(dialoguePreviewsGroup) < dialoguePreviewsGroup.clientHeight && dialogues.plug === plugStates.loading);
+        gottenDialogues = await dialoguesGetter.getNextPage();
+        gottenDialogues.forEach((dialogue) => {
+            const elem = document.createElement('li');
+            elem.id = dialogue.id;
+            elem.classList.add('listing-button');
+            elem.innerHTML = dialogueInnerHTMLTemplate(
+                    { avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body });
 
-    // --- Draw dialogues
-    redrawDialogues(folders.storage, dialogues.storage);
+            dialoguesListing.push(elem);
+        });
+    } while (dialoguesListing.getElementsHeight() < dialoguesListing.block.clientHeight && dialoguesListing.plugBottomState === plugStates.loading);
 
-    // if we have get query-parameter "with" in url => go to dialogue
-    if (gottenUsername) {
-        const dialogue = dialogues.storage.find(item => item.username === gottenUsername);
-        if (dialogue) {
-            await setActiveDialogue(dialogue.elem, false);
-        }
+    if (isLostConnection) {
+        dialoguesListing.plugBottomState = plugStates.offline;
+    } else if (gottenDialogues.length < dialoguesByRequest) {
+        dialoguesListing.plug = plugStates.end;
     }
 
-    // create send message event-listener
+    // --- Create send message event-listener
     document.getElementById('message-send-button').addEventListener('click', async (event) => {
         await sendMessage();
         messageInput.dispatchEvent(new Event('input')); // trigger resize event-listener
@@ -317,76 +333,70 @@ export async function handler(element, app) {
     // create resize message input event-listener
     messageInput.addEventListener('input', (event) => {
         // push message and theme into localStorage
-        localStorage.setItem(currentDialogue.username + '-theme', themeInput.value);
-        localStorage.setItem(currentDialogue.username + '-message', messageInput.value);
+        localStorage.setItem(dialoguesListing.activeElem.id + '-theme', themeInput.value);
+        localStorage.setItem(dialoguesListing.activeElem.id + '-message', messageInput.value);
         // resize input element
         messageInput.style.height = messageInput.style.minHeight;
         messageInput.style.height = messageInput.scrollHeight + 2 + 'px'; // 2 = border-width * 2
     });
 
     // --- Folders
+    foldersListing.state = foldersStates.closed;
     foldersButton.addEventListener('click', (event) => {
-        if (folders.state === foldersStates.opened) { // close folders
+        // close folders
+        if (foldersListing.state === foldersStates.opened) {
             foldersIconArrow.style.transform = 'scale(0.03) rotate(0deg) translate(500px, 430px)';
-            folders.state = foldersStates.closed;
-            folders.storage.forEach((folder) => {
-                folder.elem.remove();
-            });
-            if (currentFolder.id === 0) {
-                document.getElementById('dialogues-listing-divider').remove();
+            foldersListing.state = foldersStates.closed;
+
+            if (foldersListing.activeElem.id === 0) {
+                dialoguesListing.plugTopState = plugStates.none;
             }
-            if (selectedElem.type === elemTypes.folder) { // unselect folder
-                selectedElem.id = undefined;
-            }
+            foldersListing.clearSelected();
+            foldersListing.undraw()
             return;
         }
         // open folders
         foldersIconArrow.style.transform = 'scale(0.03) rotate(180deg) translate(-950px, -880px)';
-        folders.state = foldersStates.opened;
-        if (currentFolder.id === 0) {
-            redrawDialoguesDividerElem();
-        }
-        folders.storage.forEach((folder) => {
-            addFolderToList(folder);
-        });
+        foldersListing.state = foldersStates.opened;
+        dialoguesListing.plugTopState = 'folder-' + foldersListing.activeElem.id;
     });
 
     // --- Find dialogues
-    let previousDialoguesPlug = dialogues.plug;
     // create clear-find event-listener
     document.getElementById('clear-find-button').addEventListener('click', (event) => {
-        // "load" previous dialogues plug
-        dialogues.plug = previousDialoguesPlug;
         findInput.value = '';
-        redrawDialogues(folders.storage, dialogues.storage);
+        findInput.dispatchEvent(new Event('input'));
     });
 
     // create find input event-listener
     findInput.addEventListener('input', async (event) => {
-        // "save" previous dialogues plug
-        if (dialogues.plug !== plugStates.none) {
-            previousDialoguesPlug = dialogues.plug;
-            dialogues.plug = plugStates.none;
-        }
         // get find value
         const findText = findInput.value;
-        // "load" previous dialogues plug
-        if (findText === '') {
-            dialogues.plug = previousDialoguesPlug;
-            redrawDialogues(folders.storage, dialogues.storage);
-            return;
-        }
-        // get found dialogues
-        foundDialogues = await getDialogues(-1, dialoguesByRequest, findText);
-        // set offline plug
-        if (isLostConnection) {
-            dialogues.gottenFromSW = true;
-            dialogues.plug = plugStates.offline;
-        }
-        redrawDialogues([], foundDialogues);
+        dialoguesListing = foundDialogues[findText];
+        if (!dialoguesListing) {
+            dialoguesListing = new Listing(dialoguesListingElem);
+            // get found dialogues
+            dialoguesGetter.get(['find', findText]).forEach((dialogue) => {
+                const elem = document.createElement('li');
+                elem.id = dialogue.id;
+                elem.classList.add('listing-button');
+                elem.innerHTML = dialogueInnerHTMLTemplate(
+                        { avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body });
+            });
 
+            dialoguesListing.push(elem);
+            foundDialogues[findText] = dialoguesListing;
+        }
+        // set offline plug
+        dialoguesListing.plug = plugStates.none;
+        if (isLostConnection) {
+            dialoguesListing.plug = plugStates.offline;
+        }
+        dialoguesListing.redraw();
+
+        // redraw add-dialogue button
         if (validateEmail(findText)) { // address valid
-            if (dialogues.storage.findIndex(item => item.username === findText) === -1) { // dialogue with accuracy coincidence not found
+            if (dialoguesListing.findBy('username', findText)) { // dialogue with accuracy coincidence not found
                 addCreateNewDialogueElem(); // draw a button that creates a new dialogue
                 findButton.innerHTML = '<path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z"/>';
             } else { // dialogue found => draw arrow on button
@@ -394,11 +404,17 @@ export async function handler(element, app) {
             }
             return;
         }
-        // addres invalid  => draw magnifier on button
+        // address invalid
+        // findText is empty => draw default "2 dialogues" on button
+        if (findText === '') {
+            findButton.innerHTML = '<g transform="scale(2) translate(0, -2)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g>';
+            return;
+        }
+        // findText isn't empty => draw magnifier on button
         findButton.innerHTML = '<g transform="scale(0.06) translate(40,60)"><path d="M506.141,477.851L361.689,333.399c65.814-80.075,61.336-198.944-13.451-273.73c-79.559-79.559-209.01-79.559-288.569,0    s-79.559,209.01,0,288.569c74.766,74.766,193.62,79.293,273.73,13.451l144.452,144.452c7.812,7.812,20.477,7.812,28.289,0    C513.953,498.328,513.953,485.663,506.141,477.851z M319.949,319.948c-63.96,63.96-168.03,63.959-231.99,0    c-63.96-63.96-63.96-168.03,0-231.99c63.958-63.957,168.028-63.962,231.99,0C383.909,151.918,383.909,255.988,319.949,319.948z"/></g>';
     });
 
-    // create event-listener on 'Enter' in input
+    // create event-listener on press key in input
     findInput.addEventListener('keydown', async (event) => {
         if (controlKeys.includes(event.keyCode)) {
             event.stopPropagation();
@@ -408,56 +424,73 @@ export async function handler(element, app) {
         } else if (event.keyCode === 13) { // Enter
             const findText = findInput.value;
             findInput.value = '';
+            findInput.dispatchEvent(new Event('input'));
+
+            // Set active dialogue
+            themeInput.focus();
+            const foundDialogue = dialoguesListing.findBy('username', findText);
+            if (foundDialogue) {
+                dialoguesListing.setActive(foundDialogue.id);
+                return;
+            }
+
             if (!validateEmail(findText)) {
                 return;
             }
-            dialogues.plug = previousDialoguesPlug;
-            await addOrSetDialogue(findText);
-            findButton.innerHTML = '<g transform="scale(2) translate(0, -2)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g>';
+
+            // Create new dialogue
+            createdDialogues += 1;
+            const elem = document.createElement('li');
+            elem.id = '-' + createdDialogues;
+            elem.classList.add('listing-button');
+            elem.innerHTML = dialogueInnerHTMLTemplate(
+                    { time: getCurrentTime(), title: findText, body: '' });
+
+            dialoguesListing.unshift(elem);
+            dialoguesListing.setActive(-createdDialogues);
+            dialoguesListing.scrollToTop();
         }
     });
 
-    // create find-dialogue event-listener
+    // create find-dialogue click event-listener
     findButton.addEventListener('click', (event) => {
         if (findInput.value === '') {
             findInput.focus();
             return;
         }
         const newEvent = new Event('keydown');
-        newEvent.keyCode = 13;
-        findInput.dispatchEvent(newEvent); // trigger enter event-listener
+        newEvent.keyCode = 13; // key enter
+        findInput.dispatchEvent(newEvent); // trigger press enter event-listener
     });
 
     // create dialogues scroll event-listener to upload new dialogues
     /*
-    dialoguePreviewsGroup.addEventListener('scroll', async (event) => {
-        // if it not scrolled to bottom
-        if (dialoguePreviewsGroup.scrollTop + dialoguePreviewsGroup.clientHeight < dialoguePreviewsGroup.scrollHeight - dialoguesScrollLoadOffset) {
-            return;
-        }
-        // Get new dialogues
-        const newDialogues = await getDialogues(getMaxId(dialogues.storage), dialoguesByRequest);
+    dialoguesListing.setScrollHandlers(null, async (event) => {
+        const newDialogues = await dialoguesGetter.getNextPage();
 
-        dialogues.storage = dialogues.storage.concat(newDialogues);
         newDialogues.forEach((dialogue) => {
-            addDialogueToList(dialogue);
+            const elem = document.createElement('li');
+            elem.id = dialogue.id;
+            elem.classList.add('listing-button');
+            elem.innerHTML = dialogueInnerHTMLTemplate(
+                    { avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body });
+
+            dialoguesListing.push(elem);
         });
 
+        dialoguesListing.plugTopState = plugStates.loading;
         if (isLostConnection) {
-            dialogues.gottenFromSW = true;
-            dialogues.plug = plugStates.offline;
+            dialoguesListing.plugTopState = plugStates.offline;
         } else if (newDialogues.length < dialoguesByRequest) {
-            dialogues.plug = plugStates.end;
-        } else {
-            dialogues.plug = plugStates.loading;
+            dialoguesListing.plugTopState = plugStates.end;
         }
-        redrawDialoguesPlug();
+        dialoguesListing.redraw();
     });
     */
 
     // create messages scroll event-listener to upload new messages
     let mutexScrollMessagesEvent = false; // Убейте меня за это пожалусто...
-    messagesField.addEventListener('scroll', async (event) => {
+    messagesListing.setScrollHandlers(async (event) => {
         // if it not scrolled to top or dialogue not selected
         if (messagesField.scrollTop > messagesScrollLoadOffset || !currentDialogue.username) {
             return;
@@ -476,9 +509,7 @@ export async function handler(element, app) {
         // Get new messages
         const newMessages = await getMessages(currentDialogue.username, since, messagesByRequest);
         // set messages plug
-        messages[currentDialogue.username].gottenFromSW = false;
         if (isLostConnection) {
-            messages[currentDialogue.username].gottenFromSW = true;
             messages[currentDialogue.username].plug = plugStates.offline;
         } else if (newMessages.length < messagesByRequest) {
             messages[currentDialogue.username].plug = plugStates.end;
@@ -502,13 +533,13 @@ export async function handler(element, app) {
         redrawMessagesPlug(messages[currentDialogue.username].plug);
 
         mutexScrollMessagesEvent = false; // unblock mutex
-    });
+    }, null);
 
     backToDialoguesButton.addEventListener('click', (event) => {
-        unsetActiveDialogue();
+        dialoguesListing.unsetActive();
     });
 
-    // Imitate loading work... Simple clicker-game for user
+    // Imitate loading work... Simple clicker-game for our user
     for (let i = 0; i < connectionsInfo.length; i++) {
         const refreshButton = connectionsInfo[i].lastElementChild;
         const connectionText = refreshButton.previousElementSibling;
@@ -835,7 +866,7 @@ export async function handler(element, app) {
             folder.elem.classList.add('selected');
             selectedElem.elem = folder.elem;
         }
-        if (folder.id === 0) { // if it's main folder
+        if (folder.id === '0') { // if it's main folder
             folder.elem.innerHTML = `
                 <svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.065) translate(90,10)"><path d="M340.80080180740356,203.6081974435188 h-123.02250294685365 c-4.993779848098755,0 -9.871407626152038,-2.050501576423645 -13.239817657470704,-5.535822841644287 l-38.38560207653046,-40.4361036529541 c-9.226877511978149,-9.197270121574402 -21.851013281822205,-14.00125900554657 -34.63685095310211,-13.927620111465455 H47.89109272384644 C21.485096302986143,143.70789167359845 0,165.1929879765846 0,191.59822523358838 v233.156681101799 c0,26.40599642086029 21.485096302986143,47.89109272384644 47.89109272384644,47.89109272384644 h293.0858350982666 h0.04403150367736817 c26.39157230758667,-0.11691123390197757 47.78860560321808,-21.70449465751648 47.67093520545959,-48.03761134815216 V251.49853100350873 C388.69189453125,225.09253458264843 367.2067982282639,203.6081974435188 340.80080180740356,203.6081974435188 zM359.4010754556656,424.66760249188917 c0.04403150367736817,10.251748718261718 -8.259702758789063,18.643545988082884 -18.45299586009979,18.687577491760255 H47.89109272384644 c-10.251748718261718,0 -18.599514484405518,-8.3477657661438 -18.599514484405518,-18.599514484405518 V191.59822523358838 c0,-10.251748718261718 8.3477657661438,-18.599514484405518 18.599514484405518,-18.614697761535645 H131.89712842941285 c0.1609427375793457,0 0.3218854751586914,0 0.48358737659454354,0 c4.891292727470398,0 9.636825994491577,1.9480144557952879 12.82911001110077,5.111450245857239 l38.18062783527374,40.24555352497101 c8.96268848991394,9.25572573852539 21.499520416259767,14.557726112365721 34.38784520816803,14.557726112365721 h123.02250294685365 c10.251748718261718,0 18.599514484405518,8.3477657661438 18.599514484405518,18.599514484405518 V424.66760249188917 z"/><path d="M 79.72623 131.64013 C 82.73375 123.36945 87.7321 118.64883 96.77176 118.33273 C 105.81142 118.01664 183.46435 118.20887 190.12869 120.04583 C 196.79302 121.88278 238.50963 168.42677 251.30868 173.09609 C 264.10774 177.76541 389.39087 174.96474 395.48077 175.83164 C 401.57067 176.69854 410.44077 182.36042 411.03479 192.88673 C 411.62881 203.41304 413.25029 354.17958 412.89442 371.12236 C 412.53855 388.06514 399.04484 386.91183 399.12243 386.95197 C 399.20002 386.99211 398.52843 415.44312 399.20272 415.87927 C 399.87701 416.31542 440.00224 411.49112 440.71397 377.88927 C 441.4257 344.28742 440.59625 211.13798 439.96209 183.90432 C 439.32793 156.67066 421.64409 147.53851 403.11998 147.06221 C 384.59587 146.58591 275.94556 150.90709 263.1636 146.39581 C 250.38164 141.88453 208.99824 93.8881 195.98985 90.1287 C 182.98146 86.3693 97.12204 89.42811 86.57864000000001 88.4156 C 76.03523 87.40308 50.48841 106.46071 49.73653 131.27274"/></g></svg>
                 <div class="text-1 text-bigger dialogue-text centered">${mainFolderName}</div>`;

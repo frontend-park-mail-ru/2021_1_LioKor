@@ -8,15 +8,18 @@ export const plugStates = {
 export class Listing {
     block;
     elements = [];
+    placeholder;
 
     scrollHandler;
     clickElementHandler;
 
-    selectedElem;
+    selectedElems = [];
     activeElem;
 
-    plugTop = plugStates.none;
-    plugBottom = plugStates.none;
+    plugTopState = plugStates.none;
+    plugsTop = [];
+    plugBottomState = plugStates.none;
+    plugsBottom = [];
 
     constructor(block) {
         this.block = block;
@@ -26,22 +29,30 @@ export class Listing {
         return this.elements.find(elem => elem.id === id);
     }
 
+    findBy(fieldName, value) {
+        return this.elements.find(elem => elem[fieldName] === value);
+    }
+
     setScrollHandlers(scrollTopHandler, scrollBottomHandler, scrollTopOffset = 0, scrollBottomOffset = 0) {
         this.scrollHandler = (event) => {
             if (this.block.scrollTop < scrollTopOffset) {
-                scrollTopHandler();
+                scrollTopHandler(event);
             }
             if (this.block.scrollTop + this.block.clientHeight < this.block.scrollHeight - scrollTopOffset) {
-                scrollBottomHandler();
+                scrollBottomHandler(event);
             }
         };
 
         this.block.addEventListener('scroll', this.scrollHandler);
     }
 
+    scroll() {
+        this.scrollHandler();
+    }
+
     setClickElementHandler(handler) {
         this.clickElementHandler = (event) => {
-            handler(event.currentTarget.id);
+            handler(event);
         };
 
         this.block.addEventListener('click', this.clickElementHandler);
@@ -75,21 +86,73 @@ export class Listing {
         });
     }
 
-    redraw() {
-        this.elements.forEach((elem) => {
-            this.block.appendChild(elem);
-        });
+    setPlugTopState(state, HTML) {
+        this.plugsTop[state] = HTML;
     }
 
-    setSelected(id) {
-        this.selectedElem.classList.remove('selected');
-        this.selectedElem = this.findById(id);
-        this.selectedElem.classList.add('selected');
+    setPlugBottomState(state, HTML) {
+        this.plugsBottom[state] = HTML;
+    }
+
+    redraw() {
+        this.undraw();
+        this.draw();
+    }
+
+    undraw() {
+        this.block.innerHTML = '';
+    }
+
+    draw() {
+        if (this.plugTopState !== plugStates.none) { // top plug
+            this.block.appendChild(this.plugsTop[this.plugTopState]);
+        }
+
+        if (this.elements.length === 0 && this.placeholder) { // body
+            this.block.appendChild(this.placeholder);
+        } else {
+            this.elements.forEach((elem) => {
+                this.block.appendChild(elem);
+            });
+        }
+
+        if (this.plugBottomState !== plugStates.none) { // bottom plug
+            this.block.appendChild(this.plugsBottom[this.plugBottomState]);
+        }
+    }
+
+    clearSelected() {
+        this.selectedElems.forEach((elem) => { elem.classList.remove('selected'); });
+        this.selectedElems = [];
+    }
+
+    removeSelected(id) {
+        this.findById(id).classList.remove('selected');
+        this.selectedElems.splice(this.selectedElems.findIndex(item => item.id === id), 1); // remove from selectedElems
+    }
+
+    addSelected(id) {
+        const elem = this.findById(id);
+        this.selectedElems.push(elem);
+        elem.classList.add('selected');
+    }
+
+    unsetActive() {
+        if (this.activeElem) {
+            this.activeElem.classList.remove('active');
+        }
+        this.activeElem = null;
     }
 
     setActive(id) {
-        this.activeElem.classList.remove('active');
+        if (this.activeElem) {
+            this.activeElem.classList.remove('active');
+        }
         this.activeElem = this.findById(id);
         this.activeElem.classList.add('active');
+    }
+
+    scrollToTop() {
+        this.block.scrollTop = 0;
     }
 }
