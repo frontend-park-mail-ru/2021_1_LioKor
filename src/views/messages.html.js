@@ -1,8 +1,10 @@
 import Handlebars from 'handlebars/dist/cjs/handlebars';
 
 import { validateEmail } from '../modules/validators';
-import { Listing, plugStates } from '../components/listing'
-import { paginatedGetter } from '../components/paginatedGetter'
+import { Listing, plugStates } from '../components/listing';
+import { paginatedGetter } from '../components/paginatedGetter';
+import convertAvatarUrl from '../modules/defaultAvatars';
+import ParsedDate from '../modules/parsedDate';
 
 const html = `
 <div class="table-columns fullheight p-l bg-5" id="messages-page">
@@ -108,6 +110,7 @@ export async function handler(element, app) {
 
     // --- HTML elements
     const dialoguesListingElem = document.getElementById('dialogues-listing');
+    const messagesListingElem = document.getElementById('messages-listing');
 
     const dialogueHeader = document.getElementById('dialogue-header-title');
     const dialogueTime = document.getElementById('dialogue-header-time');
@@ -117,6 +120,7 @@ export async function handler(element, app) {
 
     const backToDialoguesButton = document.getElementById('header-title-button');
     const messagesFooter = document.getElementById('messages-footer');
+    messagesFooter.style.display = 'block';
 
     const connectionsInfo = document.getElementsByClassName('connection-info');
 
@@ -129,21 +133,9 @@ export async function handler(element, app) {
     const themeInput = document.getElementById('theme-input');
     const messageInput = document.getElementById('message-input');
 
-    // --- Listings
-    const foundDialogues = {
-        '': new Listing(dialoguesListingElem)
-    };
-    let dialoguesListing = foundDialogues[''];
-
-    const foldersListing = new Listing(dialoguesListingElem);
-    const messagesListing = new Listing(dialoguesListingElem);
-
-
-
     // --- Network getters
-    const foldersGetter = new paginatedGetter(app.apiUrl + '/email/folders', -1, foldersByRequest, 'id');
-    const dialoguesGetter = new paginatedGetter(app.apiUrl + '/email/dialogues', -1, dialoguesByRequest, 'id');
-    const messagesGetter = new paginatedGetter(app.apiUrl + '/email/emails', -1, messagesByRequest, 'id');
+    const foldersGetter = new paginatedGetter(app.apiUrl + '/email/folders', 'since', -1, foldersByRequest, 'id');
+    const dialoguesGetter = new paginatedGetter(app.apiUrl + '/email/dialogues', 'since', -1, dialoguesByRequest, 'id');
 
     // --- Enumerations
     const foldersStates = {
@@ -202,7 +194,14 @@ export async function handler(element, app) {
     // fill username in header
     document.getElementById('profile-link-username').innerText = app.storage.username[0].toUpperCase() + app.storage.username.slice(1) + '@liokor.ru';
 
-    // --- Listing events
+    // --- Listings create and configure
+    // create listings
+    const foundDialogues = {
+        '': new Listing(dialoguesListingElem)
+    };
+    let dialoguesListing = foundDialogues[''];
+    const foldersListing = new Listing(dialoguesListingElem);
+
     // create Event-listener on folder element to activate it
     foldersListing.setClickElementHandler((event) => {
         dialoguesListing.clearSelected();
@@ -228,9 +227,201 @@ export async function handler(element, app) {
     });
 
     // create Event-listener on message element to activate it
+    /*
     messagesListing.setClickElementHandler((event) => {
         messagesListing.addSelected(event.currentTarget.id);
     });
+    */
+
+    dialoguesListing.setPlugTopState(plugStates.end, `
+                <svg class="svg-button" pointer-events="none" width="40" height="30" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.6)"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></g></svg>
+                <div class="text-3">Больше диалогов нет</div>`);
+    dialoguesListing.setPlugTopState(plugStates.offline, `
+                <svg class="svg-button centered" pointer-events="none" width="50" height="30" xmlns="http://www.w3.org/2000/svg"><g transform="scale(1.5)"><path d="M21.0303 4.83038C21.3232 4.53749 21.3232 4.06261 21.0303 3.76972C20.7374 3.47683 20.2626 3.47683 19.9697 3.76972L3.96967 19.7697C3.67678 20.0626 3.67678 20.5375 3.96967 20.8304C4.26256 21.1233 4.73744 21.1233 5.03033 20.8304L7.11065 18.7501H18.5233C20.9961 18.7501 23.0008 16.7454 23.0008 14.2725C23.0008 11.7996 20.9961 9.79493 18.5233 9.79493C18.4592 9.79493 18.3955 9.79628 18.3321 9.79895C18.2944 9.15027 18.1424 8.53227 17.8959 7.96479L21.0303 4.83038ZM16.7186 9.14209L8.61065 17.2501H18.5233C20.1677 17.2501 21.5008 15.917 21.5008 14.2725C21.5008 12.628 20.1677 11.2949 18.5233 11.2949C18.2557 11.2949 17.9975 11.33 17.7524 11.3955C17.5122 11.4596 17.2558 11.4006 17.0679 11.2378C16.8799 11.075 16.7849 10.8297 16.8141 10.5828C16.8321 10.4306 16.8414 10.2755 16.8414 10.1178C16.8414 9.78093 16.7987 9.45399 16.7186 9.14209Z"/><path d="M12.9319 4.70837C14.0388 4.70837 15.068 5.04083 15.9252 5.61134C16.0521 5.69579 16.0649 5.87451 15.9571 5.9823L15.2295 6.70991C15.1455 6.79392 15.0144 6.80644 14.912 6.74617C14.3313 6.4044 13.6545 6.20837 12.9319 6.20837C11.3816 6.20837 10.0406 7.1107 9.40813 8.42218C9.23808 8.77479 8.82543 8.9373 8.46061 8.79534C7.96987 8.60439 7.43541 8.49926 6.87461 8.49926C4.45814 8.49926 2.49921 10.4582 2.49921 12.8747C2.49921 14.521 3.40846 15.9549 4.75218 16.7017C4.90497 16.7866 4.94313 16.9963 4.81953 17.1199L4.09641 17.843C4.01666 17.9227 3.89307 17.9397 3.79705 17.8805C2.1183 16.8462 0.999207 14.9911 0.999207 12.8747C0.999207 9.62976 3.62971 6.99925 6.87461 6.99925C7.39427 6.99925 7.89899 7.0669 8.38002 7.19408C9.34177 5.69979 11.0205 4.70837 12.9319 4.70837Z"/></g></svg>
+                <div class="text-1">Это все загруженные диалоги</div>`);
+    dialoguesListing.setPlugTopState(plugStates.loading, '<div class="dot-pulse"></div>');
+
+    dialoguesListing.setOnActiveHandler((elem) => {
+        // Create and configure new element
+        if (!elem.messagesListing) {
+            elem.messagesListing = new Listing(messagesListingElem);
+            elem.messagesListing.networkGetter = new paginatedGetter(app.apiUrl + '/email/emails?with=' + elem.id, 'since', -1, messagesByRequest, 'id');
+
+            elem.messagesListing.placeholder = `
+                <div class="flex-filler center-text"></div>
+                <div class="center-text">
+                    <svg class="svg-button" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></svg>
+                    <div class="text-1">
+                        Выберите диалог <br>
+                        или создайте новый
+                    </div>
+                </div>
+                <div class="flex-filler"></div>`;
+
+            elem.messagesListing.setPlugTopState(plugStates.end, `
+                    <svg class="svg-button centered" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z" fill="currentColor"></path></svg>
+                    <div class="text-1">Это начало истории сообщений</div>`);
+            elem.messagesListing.setPlugTopState(plugStates.offline, `
+                    <svg class="svg-button centered" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><g transform="scale(2.4)"><path d="M21.0303 4.83038C21.3232 4.53749 21.3232 4.06261 21.0303 3.76972C20.7374 3.47683 20.2626 3.47683 19.9697 3.76972L3.96967 19.7697C3.67678 20.0626 3.67678 20.5375 3.96967 20.8304C4.26256 21.1233 4.73744 21.1233 5.03033 20.8304L7.11065 18.7501H18.5233C20.9961 18.7501 23.0008 16.7454 23.0008 14.2725C23.0008 11.7996 20.9961 9.79493 18.5233 9.79493C18.4592 9.79493 18.3955 9.79628 18.3321 9.79895C18.2944 9.15027 18.1424 8.53227 17.8959 7.96479L21.0303 4.83038ZM16.7186 9.14209L8.61065 17.2501H18.5233C20.1677 17.2501 21.5008 15.917 21.5008 14.2725C21.5008 12.628 20.1677 11.2949 18.5233 11.2949C18.2557 11.2949 17.9975 11.33 17.7524 11.3955C17.5122 11.4596 17.2558 11.4006 17.0679 11.2378C16.8799 11.075 16.7849 10.8297 16.8141 10.5828C16.8321 10.4306 16.8414 10.2755 16.8414 10.1178C16.8414 9.78093 16.7987 9.45399 16.7186 9.14209Z"/><path d="M12.9319 4.70837C14.0388 4.70837 15.068 5.04083 15.9252 5.61134C16.0521 5.69579 16.0649 5.87451 15.9571 5.9823L15.2295 6.70991C15.1455 6.79392 15.0144 6.80644 14.912 6.74617C14.3313 6.4044 13.6545 6.20837 12.9319 6.20837C11.3816 6.20837 10.0406 7.1107 9.40813 8.42218C9.23808 8.77479 8.82543 8.9373 8.46061 8.79534C7.96987 8.60439 7.43541 8.49926 6.87461 8.49926C4.45814 8.49926 2.49921 10.4582 2.49921 12.8747C2.49921 14.521 3.40846 15.9549 4.75218 16.7017C4.90497 16.7866 4.94313 16.9963 4.81953 17.1199L4.09641 17.843C4.01666 17.9227 3.89307 17.9397 3.79705 17.8805C2.1183 16.8462 0.999207 14.9911 0.999207 12.8747C0.999207 9.62976 3.62971 6.99925 6.87461 6.99925C7.39427 6.99925 7.89899 7.0669 8.38002 7.19408C9.34177 5.69979 11.0205 4.70837 12.9319 4.70837Z"/></g></svg>
+                    <div class="text-1">Это все загруженные сообщения</div>`);
+
+
+            elem.messagesListing.setScrollHandlers((event) => {
+                // Get new messages
+                const newMessages = elem.messagesListing.networkGetter.getNextPage();
+                // set messages plug
+                if (isLostConnection) {
+                    elem.messagesListing.plugTopState = plugStates.offline;
+                } else if (newMessages.length < messagesByRequest) {
+                    elem.messagesListing.plugTopState = plugStates.end;
+                } else {
+                    elem.messagesListing.plugTopState = plugStates.loading;
+                }
+
+                // get height for scroll to previous place at end of function
+                const heightToBottom = elem.getElementsHeight() - elem.messagesListing.block.scrollTop;
+
+                convertMessagesToBlocks(newMessages);
+                convertTimesToStr(newMessages);
+
+                newMessages.forEach((messageBlock) => {
+                    // create block of messages HTML-element
+                    const messageBlockElem = document.createElement('div');
+                    messageBlockElem.id = messageBlock.id;
+                    const isYour =  messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase();
+                    messageBlockElem.classList.add('message-block-full', isYour ? 'right-block' : 'left-block');
+                    messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate({
+                        side: isYour ? 'your' : 'not-your',
+                        avatar: app.storage.avatar,
+                        time: messageBlock.time,
+                        isStated: isYour,
+                        isDelivered: (messageBlock.status === 1),
+                        title: messageBlock.title,
+                        body: messageBlock.body
+                    });
+
+                    elem.messagesListing.unshift(messageBlockElem);
+                });
+
+                // Scroll to previous place
+                elem.messagesListing.block.scrollTop = elem.messagesListing.getElementsHeight() - heightToBottom;
+                elem.messagesListing.redraw();
+            }, null);
+        }
+
+        // get first part of dialogues
+        if (elem.messagesListing.isEmpty()) {
+            do {
+                const newMessages = elem.messagesListing.networkGetter.getNextPage();
+
+                convertMessagesToBlocks(newMessages);
+                convertTimesToStr(newMessages);
+
+                newMessages.forEach((messageBlock) => {
+                    // create block of messages HTML-element
+                    const messageBlockElem = document.createElement('div');
+                    messageBlockElem.id = messageBlock.id;
+                    const isYour =  messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase();
+                    messageBlockElem.classList.add('message-block-full', isYour ? 'right-block' : 'left-block');
+                    messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate({
+                        side: isYour ? 'your' : 'not-your',
+                        avatar: app.storage.avatar,
+                        time: messageBlock.time,
+                        isStated: isYour,
+                        isDelivered: (messageBlock.status === 1),
+                        title: messageBlock.title,
+                        body: messageBlock.body
+                    });
+
+                    elem.messagesListing.unshift(messageBlockElem);
+                });
+
+                elem.messagesListing.plugTopState = plugStates.loading;
+                if (isLostConnection) {
+                    elem.messagesListing.plugTopState = plugStates.offline;
+                } else if (newMessages.length < messagesByRequest) {
+                    elem.messagesListing.plugTopState = plugStates.end;
+                }
+            } while (elem.getElementsHeight() < elem.block.clientHeight && elem.plugTopState === plugStates.loading);
+        }
+
+        // set default theme of message
+        const messageBlock = elem.messagesListing.getLast();
+        if (messageBlock.sender !== app.storage.username + '@liokor.ru') {
+            if (messageBlock.title.substr(0, 3).toLowerCase() === 're:') {
+                const { num, theme } = messageBlock.title.substr(3).split(']');
+                themeInput.value = 'Re[' + (Number(num) + 1) + ']: ' + theme;
+            } else if (messageBlock.title.substr(0, 3).toLowerCase() === 're[') {
+                themeInput.value = messageBlock.title;
+            } else {
+                themeInput.value = 'Re: ' + messageBlock.title;
+            }
+        } else {
+            themeInput.value = messageBlock.title;
+        }
+
+        messageInput.focus();
+
+        elem.messagesListing.redraw();
+        elem.messagesListing.scrollToBottom();
+    });
+
+    // create dialogues scroll event-listener to upload new dialogues
+    /*
+    dialoguesListing.setScrollHandlers(null, async (event) => {
+        const newDialogues = await dialoguesGetter.getNextPage();
+
+        newDialogues.forEach((dialogue) => {
+            const elem = document.createElement('li');
+            elem.id = dialogue.id;
+            elem.classList.add('listing-button');
+            elem.innerHTML = dialogueInnerHTMLTemplate(
+                    { avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body });
+
+            dialoguesListing.push(elem);
+        });
+
+        dialoguesListing.plugTopState = plugStates.loading;
+        if (isLostConnection) {
+            dialoguesListing.plugTopState = plugStates.offline;
+        } else if (newDialogues.length < dialoguesByRequest) {
+            dialoguesListing.plugTopState = plugStates.end;
+        }
+        dialoguesListing.redraw();
+    });
+    */
+
+/*    foldersListing.setOnActiveHandler((folder) => {
+        // get folder dialogues
+        if (!folder.dialoguesListing || folder.gottenFromSW) {
+            folders.storage[folderIndex].dialogues = await getDialogues(-1, dialoguesByRequest, '', currentFolder.id);
+            folders.storage[folderIndex].gottenFromSW = isLostConnection;
+            folder = folders.storage[folderIndex];
+        }
+
+        if (folder.gottenFromSW) {
+            folders.storage[folderIndex].plug = plugStates.offline;
+        } else if (folders.storage[folderIndex].length < dialoguesByRequest) {
+            folders.storage[folderIndex].plug = plugStates.end;
+        } else {
+            folders.storage[folderIndex].plug = plugStates.loading;
+        }
+
+        // set folder url
+        const currentPath = new URL(window.location.href);
+        if (currentFolder.id === 0) {
+            currentPath.searchParams.delete('folder');
+        } else {
+            currentPath.searchParams.set('folder', folder.id);
+        }
+        if (pushState) {
+            history.pushState(null, null, currentPath.toString());
+        }
+
+        redrawDialogues(folders.storage, dialogues.storage);
+    });
+
+ */
 
     // --- Lost connection events
     window.addEventListener('offline', (event) => {
@@ -277,7 +468,8 @@ export async function handler(element, app) {
     foldersListing.push(elem);
     dialoguesListing.setPlugTopState('folder-0', dividerHTMLTemplate({ folder: 'Все входящие' }));
 
-    foldersGetter.getNextPage().forEach((folder) => {
+    const gottenFolders = await foldersGetter.getNextPage();
+    gottenFolders.forEach((folder) => {
         const elem = document.createElement('li');
         elem.id = folder.id;
         elem.classList.add('listing-button', 'folder');
@@ -288,7 +480,7 @@ export async function handler(element, app) {
         dialoguesListing.setPlugTopState('folder-' + folder.id, dividerHTMLTemplate({ folder: folder.title }));
     });
     if (isLostConnection) {
-        foldersListing.plugBottomState = ;
+        foldersListing.plugBottomState = plugStates.offline;
     }
 
     // --- Get dialogues
@@ -340,7 +532,7 @@ export async function handler(element, app) {
         messageInput.style.height = messageInput.scrollHeight + 2 + 'px'; // 2 = border-width * 2
     });
 
-    // --- Folders
+    // --- Open folders button
     foldersListing.state = foldersStates.closed;
     foldersButton.addEventListener('click', (event) => {
         // close folders
@@ -463,78 +655,6 @@ export async function handler(element, app) {
         findInput.dispatchEvent(newEvent); // trigger press enter event-listener
     });
 
-    // create dialogues scroll event-listener to upload new dialogues
-    /*
-    dialoguesListing.setScrollHandlers(null, async (event) => {
-        const newDialogues = await dialoguesGetter.getNextPage();
-
-        newDialogues.forEach((dialogue) => {
-            const elem = document.createElement('li');
-            elem.id = dialogue.id;
-            elem.classList.add('listing-button');
-            elem.innerHTML = dialogueInnerHTMLTemplate(
-                    { avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body });
-
-            dialoguesListing.push(elem);
-        });
-
-        dialoguesListing.plugTopState = plugStates.loading;
-        if (isLostConnection) {
-            dialoguesListing.plugTopState = plugStates.offline;
-        } else if (newDialogues.length < dialoguesByRequest) {
-            dialoguesListing.plugTopState = plugStates.end;
-        }
-        dialoguesListing.redraw();
-    });
-    */
-
-    // create messages scroll event-listener to upload new messages
-    let mutexScrollMessagesEvent = false; // Убейте меня за это пожалусто...
-    messagesListing.setScrollHandlers(async (event) => {
-        // if it not scrolled to top or dialogue not selected
-        if (messagesField.scrollTop > messagesScrollLoadOffset || !currentDialogue.username) {
-            return;
-        }
-
-        if (mutexScrollMessagesEvent === true) { // mutex logic
-            return;
-        }
-        mutexScrollMessagesEvent = true; // block mutex
-
-        // messages that we have already
-        const dialogueMessages = messages[currentDialogue.username];
-        let since = -1;
-        if (dialogueMessages.storage.length !== 0) { since = dialogueMessages.storage
-                [dialogueMessages.storage.length - 1].id; }
-        // Get new messages
-        const newMessages = await getMessages(currentDialogue.username, since, messagesByRequest);
-        // set messages plug
-        if (isLostConnection) {
-            messages[currentDialogue.username].plug = plugStates.offline;
-        } else if (newMessages.length < messagesByRequest) {
-            messages[currentDialogue.username].plug = plugStates.end;
-        } else {
-            messages[currentDialogue.username].plug = plugStates.loading;
-        }
-
-        // get height for scroll to previous place at end of function
-        const heightToBottom = getChildrenHeight(messagesField) - messagesField.scrollTop;
-
-        convertMessagesToBlocks(newMessages);
-        convertTimesToStr(newMessages);
-        messages[currentDialogue.username].storage = dialogueMessages.storage.concat(newMessages);
-        newMessages.forEach((message) => {
-            addMessageToField(message);
-        });
-
-        // Scroll to previous place
-        messagesField.scrollTop = getChildrenHeight(messagesField) - heightToBottom;
-
-        redrawMessagesPlug(messages[currentDialogue.username].plug);
-
-        mutexScrollMessagesEvent = false; // unblock mutex
-    }, null);
-
     backToDialoguesButton.addEventListener('click', (event) => {
         dialoguesListing.unsetActive();
     });
@@ -553,6 +673,7 @@ export async function handler(element, app) {
     }
 
     // ------ Page navigation using keys arrows + enter + escape
+    /*
     document.addEventListener('keydown', (event) => {
         if (controlKeys.includes(event.keyCode)) {
             event.stopPropagation();
@@ -604,104 +725,7 @@ export async function handler(element, app) {
             break;
         }
     });
-
-    /**
-     * Set element selected
-     *
-     * @param elem element to select
      */
-    function selectElem(element) {
-        if (selectedElem.elem === element) {
-            return;
-        }
-        selectedElem.elem.classList.remove('selected');
-        selectedElem.elem = element;
-        selectedElem.elem.classList.add('selected');
-        if (element.classList.contains('folder')) {
-            selectedElem.id = Number(selectedElem.elem.id.substring(7)); // length of 'folder-'
-            selectedElem.type = elemTypes.folder;
-            return;
-        }
-        selectedElem.id = Number(selectedElem.elem.id.substring(9)); // length of 'dialogue-'
-        selectedElem.type = elemTypes.dialogue;
-    }
-
-    /**
-     * Clear dialogues list and show new
-     *
-     * @param {object} folders folders to redraw
-     * @param {object} dialogues dialogues to redraw
-     */
-    function redrawDialogues(foldersList, dialogues) {
-        dialoguePreviewsGroup.innerHTML = '';
-
-        redrawDialoguesDividerElem();
-        if (folders.state === foldersStates.opened) {
-            foldersList.forEach((folder) => {
-                addFolderToList(folder);
-            });
-        }
-        if (typeof currentFolder.id === 'undefined') {
-            dialogues.forEach((dialogue) => {
-                addDialogueToList(dialogue);
-            });
-        } else {
-            const folder = foldersList.find(item => item.id === currentFolder.id);
-            if (!folder) {
-                return;
-            }
-            folder.dialogues.forEach((dialogue) => {
-                addDialogueToList(dialogue);
-            });
-        }
-
-
-        redrawDialoguesPlug();
-    }
-
-    /**
-     * Delete dialogues plug and draw new
-     */
-    function redrawDialoguesPlug() {
-        const plug = document.getElementById('dialogues-plug');
-        if (plug) { plug.remove(); }
-        switch (dialogues.plug) {
-        case plugStates.end:
-            addEndDialoguesElem(dialoguePreviewsGroup, 'dialogues-plug');
-            break;
-        case plugStates.loading:
-            addLoadingElem(dialoguePreviewsGroup, false, 'empty-dialogue', 'dialogues-plug');
-            break;
-        case plugStates.offline:
-            addOfflineEndDialoguesElem(dialoguePreviewsGroup, 'dialogues-plug');
-            break;
-        }
-    }
-
-    /**
-     * Delete messages plug and draw new
-     *
-     * @param plug
-     */
-    function redrawMessagesPlug(plug) {
-        const prevPlug = document.getElementById('messages-plug');
-        if (prevPlug) { prevPlug.remove(); }
-
-        switch (plug) {
-        case plugStates.end:
-            addEndMessagesElem(messagesField, 'messages-plug');
-            break;
-        case plugStates.loading:
-            addLoadingElem(messagesField, true, 'flex-filler', 'messages-plug');
-            break;
-        case plugStates.none:
-            addFlexFillerElem(messagesField, 'messages-plug');
-            break;
-        case plugStates.offline:
-            addOfflineEndMessagesElem(messagesField, 'messages-plug');
-            break;
-        }
-    }
 
     /**
      * Converts messages to blocks
@@ -731,210 +755,8 @@ export async function handler(element, app) {
      */
     function convertTimesToStr(array) {
         array.forEach((elem) => {
-            const date = new Date(elem.time);
-            const now = new Date();
-            if (date.getDate() === now.getDate()) { // today
-                elem.time = '';
-            } else if (date.getDate() === now.getDate() - 1) { // yesterday
-                elem.time = 'Вчера ';
-            } else { // long time ago
-                elem.time = date.getDate() + '.' + String(date.getMonth()).padStart(2, '0') + ' ';
-            }
-            elem.time += date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0'); // add time
+            elem.time = new ParsedDate(elem.time).getYesterdayFormatString();
         });
-    }
-
-    /**
-     * Sets avatarUrl to default way for dialogue
-     *
-     * @param dialogue to replace avatar in
-     */
-    function convertAvatarUrlToDefault(dialogue) {
-        if (dialogue.avatarUrl) {
-            return;
-        }
-        const tail = dialogue.username.split('@')[1];
-        switch (tail) { // get address after '@'
-        case 'mail.ru':
-            dialogue.avatarUrl = '/images/mail.png';
-            break;
-        case 'gmail.com':
-            dialogue.avatarUrl = '/images/gmail.png';
-            break;
-        case 'yandex.ru':
-        case 'ya.ru':
-            dialogue.avatarUrl = '/images/yandex.png';
-            break;
-        default:
-            dialogue.avatarUrl = app.defaultAvatarUrl;
-        }
-    }
-
-    /**
-     * Get new folders list
-     *
-     * @param since
-     * @param amount
-     * @param find
-     * @returns {Promise<*>}
-     */
-    async function getFolders(since, amount) {
-        let path = `/email/folders`;//?last=${since}&amount=${amount}`;
-        //if (find && find !== '') { path += '&find=' + find; }
-        const response = await app.apiGet(path);
-        if (!response.ok) {
-            if (response.status !== 418) { // Empty response from SW (offline mode)
-                app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список папок!');
-            }
-            return [];
-        }
-        const folders = await response.json();
-        if (!folders) {
-            return [];
-        }
-        return folders;
-    }
-
-    /**
-     * Get new dialogues list
-     *
-     * @param since
-     * @param amount
-     * @param find
-     * @param folderId
-     * @returns {Promise<*>}
-     */
-    async function getDialogues(since, amount, find, folderId = 0) {
-        let path = `/email/dialogues?last=${since}&amount=${amount}`;
-        if (find && find !== '') {
-            path += '&find=' + find;
-        }
-        if (folderId) {
-            path += '&folder=' + folderId;
-        }
-        const response = await app.apiGet(path);
-        if (!response.ok) {
-            if (response.status !== 418) { // Empty response from SW (offline mode)
-                app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список диалогов!');
-            }
-            return [];
-        }
-        const dialogues = await response.json();
-        if (!dialogues) {
-            return [];
-        }
-        convertTimesToStr(dialogues);
-        return dialogues;
-    }
-
-    /**
-     * Get new messages list
-     *
-     * @param withUsername
-     * @param since
-     * @param amount
-     * @returns {Promise<*>}
-     */
-    async function getMessages(withUsername, since, amount) {
-        const response = await app.apiGet(`/email/emails?with=${withUsername}&last=${since}&amount=${amount}`);
-        if (!response.ok) {
-            // Просто открыт новый пустой диалог
-            return [];
-        }
-        const messages = await response.json();
-        if (!messages) {
-            return [];
-        }
-        return messages;
-    }
-
-    /**
-     * Add folder on bottom of dialogues listing
-     *
-     * @param {object} folder folder to add in dialogues list
-     */
-    function addFolderToList(folder) {
-        // create dialogue HTML-element
-        folder.elem = document.createElement('li');
-        folder.elem.id = 'folder-' + folder.id;
-        folder.elem.classList.add('listing-button', 'folder');
-        if (folder.id === currentFolder.id) {
-            folder.elem.classList.add('active');
-            currentFolder.elem = folder.elem;
-        }
-        if (folder.id === selectedElem.id && selectedElem.type === elemTypes.folder) {
-            folder.elem.classList.add('selected');
-            selectedElem.elem = folder.elem;
-        }
-        if (folder.id === '0') { // if it's main folder
-            folder.elem.innerHTML = `
-                <svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.065) translate(90,10)"><path d="M340.80080180740356,203.6081974435188 h-123.02250294685365 c-4.993779848098755,0 -9.871407626152038,-2.050501576423645 -13.239817657470704,-5.535822841644287 l-38.38560207653046,-40.4361036529541 c-9.226877511978149,-9.197270121574402 -21.851013281822205,-14.00125900554657 -34.63685095310211,-13.927620111465455 H47.89109272384644 C21.485096302986143,143.70789167359845 0,165.1929879765846 0,191.59822523358838 v233.156681101799 c0,26.40599642086029 21.485096302986143,47.89109272384644 47.89109272384644,47.89109272384644 h293.0858350982666 h0.04403150367736817 c26.39157230758667,-0.11691123390197757 47.78860560321808,-21.70449465751648 47.67093520545959,-48.03761134815216 V251.49853100350873 C388.69189453125,225.09253458264843 367.2067982282639,203.6081974435188 340.80080180740356,203.6081974435188 zM359.4010754556656,424.66760249188917 c0.04403150367736817,10.251748718261718 -8.259702758789063,18.643545988082884 -18.45299586009979,18.687577491760255 H47.89109272384644 c-10.251748718261718,0 -18.599514484405518,-8.3477657661438 -18.599514484405518,-18.599514484405518 V191.59822523358838 c0,-10.251748718261718 8.3477657661438,-18.599514484405518 18.599514484405518,-18.614697761535645 H131.89712842941285 c0.1609427375793457,0 0.3218854751586914,0 0.48358737659454354,0 c4.891292727470398,0 9.636825994491577,1.9480144557952879 12.82911001110077,5.111450245857239 l38.18062783527374,40.24555352497101 c8.96268848991394,9.25572573852539 21.499520416259767,14.557726112365721 34.38784520816803,14.557726112365721 h123.02250294685365 c10.251748718261718,0 18.599514484405518,8.3477657661438 18.599514484405518,18.599514484405518 V424.66760249188917 z"/><path d="M 79.72623 131.64013 C 82.73375 123.36945 87.7321 118.64883 96.77176 118.33273 C 105.81142 118.01664 183.46435 118.20887 190.12869 120.04583 C 196.79302 121.88278 238.50963 168.42677 251.30868 173.09609 C 264.10774 177.76541 389.39087 174.96474 395.48077 175.83164 C 401.57067 176.69854 410.44077 182.36042 411.03479 192.88673 C 411.62881 203.41304 413.25029 354.17958 412.89442 371.12236 C 412.53855 388.06514 399.04484 386.91183 399.12243 386.95197 C 399.20002 386.99211 398.52843 415.44312 399.20272 415.87927 C 399.87701 416.31542 440.00224 411.49112 440.71397 377.88927 C 441.4257 344.28742 440.59625 211.13798 439.96209 183.90432 C 439.32793 156.67066 421.64409 147.53851 403.11998 147.06221 C 384.59587 146.58591 275.94556 150.90709 263.1636 146.39581 C 250.38164 141.88453 208.99824 93.8881 195.98985 90.1287 C 182.98146 86.3693 97.12204 89.42811 86.57864000000001 88.4156 C 76.03523 87.40308 50.48841 106.46071 49.73653 131.27274"/></g></svg>
-                <div class="text-1 text-bigger dialogue-text centered">${mainFolderName}</div>`;
-        } else {
-            folder.elem.innerHTML = folderInnerHTMLTemplate({
-                        title: folder.title, dialoguesCount: folder.dialoguesCount });
-        }
-        dialoguePreviewsGroup.insertBefore(folder.elem, dialoguePreviewsGroup.firstChild);
-
-        // create Event-listener on folder element to activate it
-        folder.elem.addEventListener('click', async (event) => {
-            await setActiveFolder(event.currentTarget);
-        });
-        // create Event-listener on folder element to select it
-        folder.elem.addEventListener('mousemove', (event) => {
-            selectElem(event.currentTarget);
-        });
-    }
-
-    /**
-     * Add dialogue on bottom of dialogues listing
-     *
-     * @param {object} dialogue dialogue to add in dialogues list
-     */
-    function addDialogueToList(dialogue) {
-        convertAvatarUrlToDefault(dialogue);
-        // create dialogue HTML-element
-        dialogue.elem = document.createElement('li');
-        dialogue.elem.id = 'dialogue-' + dialogue.id;
-        dialogue.elem.classList.add('listing-button');
-        if (dialogue.username === currentDialogue.username) {
-            dialogue.elem.classList.add('active');
-            currentDialogue.elem = dialogue.elem;
-        }
-        if (dialogue.id === selectedElem.id && selectedElem.type === elemTypes.dialogue) {
-            dialogue.elem.classList.add('selected');
-            selectedElem.elem = dialogue.elem;
-        }
-        dialogue.elem.innerHTML = dialogueInnerHTMLTemplate(
-            { avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body });
-        dialoguePreviewsGroup.appendChild(dialogue.elem);
-
-        // create Event-listener on dialogue element to activate it
-        dialogue.elem.addEventListener('click', async (event) => {
-            await setActiveDialogue(event.currentTarget);
-        });
-        // create Event-listener on dialogue element to select it
-        dialogue.elem.addEventListener('mousemove', (event) => {
-            selectElem(event.currentTarget);
-        });
-    }
-
-    /**
-     * Add divider between folders and dialogues
-     */
-    function redrawDialoguesDividerElem() {
-        if (folders.state === foldersStates.closed && currentFolder.id === 0) {
-            return;
-        }
-        const prevElem = document.getElementById('dialogues-listing-divider');
-        if (prevElem) {
-            prevElem.remove();
-        }
-        const elem = document.createElement('div');
-        elem.id = 'dialogues-listing-divider';
-        elem.classList.add('dialogues-listing-divider', 'center-text');
-        elem.innerHTML = dividerHTMLTemplate({ folder: currentFolder.title });
-        dialoguePreviewsGroup.insertBefore(elem, dialoguePreviewsGroup.firstChild);
     }
 
     /**
@@ -946,7 +768,7 @@ export async function handler(element, app) {
         elem.id = 'new-dialogue-button';
         elem.classList.add('listing-button', 'center-text', 'p-xs');
         elem.innerHTML = '<svg class="plus-button" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(3) translate(1, -2)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>';
-        dialoguePreviewsGroup.insertBefore(elem, dialoguePreviewsGroup.firstChild);
+        dialoguesListingElem.insertBefore(elem, dialoguesListingElem.firstChild);
 
         // create Event-listener on element
         elem.addEventListener('click', async (event) => {
@@ -954,287 +776,6 @@ export async function handler(element, app) {
             newEvent.keyCode = 13;
             findInput.dispatchEvent(newEvent); // trigger enter event-listener
         });
-    }
-
-    /**
-     * Set folder active and draw it dialogues
-     *
-     * @param currentElem
-     * @param pushState
-     */
-    async function setActiveFolder(currentElem, pushState = true) {
-        if (currentElem.id === 'folder-' + currentFolder.id) {
-            return;
-        }
-        currentFolder.id = currentElem.id.substr(7); // length of 'folder-' ;
-        currentFolder.elem.classList.remove('active'); // "deactivate" previous folder
-        currentFolder.elem = currentElem;
-        currentFolder.elem.classList.add('active'); // "activate" current folder
-
-        // get folder data
-        const folderIndex = folders.storage.findIndex((item) => item.id === Number(currentFolder.id)); // get folder data
-        let folder = folders.storage[folderIndex];
-
-        // update currentFolder data
-        currentFolder.id = folder.id;
-        currentFolder.title = folder.title;
-
-        // get folder dialogues
-        if (!folder.dialogues || folder.gottenFromSW) {
-            folders.storage[folderIndex].dialogues = await getDialogues(-1, dialoguesByRequest, '', currentFolder.id);
-            folders.storage[folderIndex].gottenFromSW = isLostConnection;
-            folder = folders.storage[folderIndex];
-        }
-
-        if (folder.gottenFromSW) {
-            folders.storage[folderIndex].plug = plugStates.offline;
-        } else if (folders.storage[folderIndex].length < dialoguesByRequest) {
-            folders.storage[folderIndex].plug = plugStates.end;
-        } else {
-            folders.storage[folderIndex].plug = plugStates.loading;
-        }
-
-        // set folder url
-        const currentPath = new URL(window.location.href);
-        if (currentFolder.id === 0) {
-            currentPath.searchParams.delete('folder');
-        } else {
-            currentPath.searchParams.set('folder', folder.id);
-        }
-        if (pushState) {
-            history.pushState(null, null, currentPath.toString());
-        }
-
-        redrawDialogues(folders.storage, dialogues.storage);
-    }
-
-    /**
-     * Set dialogue active and draw it
-     *
-     * @param currentElem
-     * @param pushState
-     */
-    async function setActiveDialogue(currentElem, pushState = true) {
-        // For mobile version. Go to messages
-        dialoguesColumn.classList.remove('mobile-fullwidth');
-        messagesColumn.classList.add('mobile-fullwidth');
-
-        if (currentElem.id === 'dialogue-' + currentDialogue.id) {
-            return;
-        }
-        currentDialogue.id = currentElem.id.substr(9); // length of 'dialogue-' ;
-
-        messagesFooter.style.display = 'flex'; // show message input
-
-        currentDialogue.elem.classList.remove('active'); // "deactivate" previous dialogue
-        currentDialogue.elem = currentElem;
-        currentDialogue.elem.classList.add('active'); // "activate" current dialogue
-
-        // update messages header
-        const dialogue = dialogues.storage.find((item) => item.id === Number(currentDialogue.id)); // get dialogue data
-        dialogueHeader.innerText = dialogue.username;
-        dialogueTime.innerText = dialogue.time;
-
-        // push old message and theme into localStorage
-        localStorage.setItem(currentDialogue.username + '-theme', themeInput.value);
-        localStorage.setItem(currentDialogue.username + '-message', messageInput.value);
-
-        // update currentDialogue data
-        currentDialogue.id = dialogue.id;
-        currentDialogue.avatar = dialogue.avatarUrl;
-        currentDialogue.username = dialogue.username;
-
-        // get new message and theme from localStorage
-        const theme = localStorage.getItem(currentDialogue.username + '-theme');
-        const message = localStorage.getItem(currentDialogue.username + '-message');
-        themeInput.value = theme;
-        messageInput.value = message;
-
-        // get dialogue messages
-        if (!messages[dialogue.username] || messages[dialogue.username].gottenFromSW) {
-            if (!messages[dialogue.username]) {
-                messages[dialogue.username] = {storage: []};
-            }
-            do {
-                const dialogueMessages = messages[dialogue.username];
-                let since = -1;
-                if (dialogueMessages && dialogueMessages.storage.length !== 0) { since = dialogueMessages.storage[dialogueMessages.storage.length - 1].id; }
-                const newMessages = await getMessages(dialogue.username, since, messagesByRequest);
-                messages[dialogue.username].gottenFromSW = isLostConnection;
-
-                messages[dialogue.username].plug = plugStates.loading;
-                if (messages[dialogue.username].gottenFromSW) {
-                    messages[dialogue.username].plug = plugStates.offline;
-                } else if (newMessages.length < messagesByRequest) {
-                    messages[dialogue.username].plug = plugStates.end;
-                }
-
-                convertMessagesToBlocks(newMessages);
-                convertTimesToStr(newMessages);
-                messages[dialogue.username].storage = messages[dialogue.username].storage.concat(newMessages);
-                showDialogue(dialogue.username);
-            } while (getChildrenHeight(messagesField) < messagesField.clientHeight && messages[dialogue.username].plug === plugStates.loading);
-        }
-
-        // set dialogue url
-        const currentPath = new URL(window.location.href);
-        currentPath.searchParams.set('with', currentDialogue.username);
-        if (pushState) {
-            history.pushState(null, null, currentPath.toString());
-        }
-        document.title = `${app.name} | ${currentDialogue.username}`;
-
-        showDialogue(dialogue.username);
-    }
-
-    /**
-     * Unset active dialogue and draw default page
-     */
-    async function unsetActiveDialogue() {
-        // For mobile version. Go to dialogues
-        dialoguesColumn.classList.add('mobile-fullwidth');
-        messagesColumn.classList.remove('mobile-fullwidth');
-
-        // "Deactivate" previous dialogue
-        currentDialogue.elem.classList.remove('active');
-
-        // update messages header
-        dialogueHeader.innerText = '';
-        dialogueTime.innerText = 'Выберите диалог';
-
-        // push old message and theme into localStorage
-        localStorage.setItem(currentDialogue.username + '-theme', themeInput.value);
-        localStorage.setItem(currentDialogue.username + '-message', messageInput.value);
-
-        // update currentDialogue data
-        currentDialogue.id = undefined;
-        currentDialogue.avatar = undefined;
-        currentDialogue.username = undefined;
-
-        // set default url
-        const currentPath = window.location.pathname;
-        history.pushState(null, null, currentPath);
-        document.title = `${app.name} | Диалоги`;
-
-        drawChooseDialoguePage();
-    }
-
-    /**
-     * @param username
-     */
-    async function addOrSetDialogue(username) {
-        if (username === '') {
-            return;
-        }
-        themeInput.focus();
-        const foundDialogue = dialogues.storage.find(item => item.username === username);
-        if (foundDialogue) {
-            await setActiveDialogue(foundDialogue.elem, false);
-            redrawDialogues(folders.storage, dialogues.storage);
-            return;
-        }
-
-        createdDialogues += 1;
-        const dialogue = {
-            id: -createdDialogues,
-            username: username,
-            body: '',
-            time: getCurrentTime()
-        };
-        dialogues.storage.unshift(dialogue);
-
-        addDialogueToList(dialogue);
-        await setActiveDialogue(dialogue.elem);
-        redrawDialogues(folders.storage, dialogues.storage);
-        scrollToTop(dialoguePreviewsGroup);
-    }
-
-    /**
-     * draw all dialogue messages
-     *
-     * @param username
-     */
-    function showDialogue(username) {
-        messagesField.innerHTML = '';
-
-        if (messages[username].storage.length !== 0) {
-            // create bottom message block
-            const messageBlock = messages[username].storage[0];
-            addMessageToField(messageBlock);
-
-            // set default theme of message
-            if (messageBlock.sender !== app.storage.username && messageBlock.sender !== app.storage.username + '@liokor.ru') {
-                if (messageBlock.title.substr(0, 3).toLowerCase() === 're:') {
-                    const { num, theme } = messageBlock.title.substr(3).split(']');
-                    themeInput.value = 'Re[' + (Number(num) + 1) + ']: ' + theme;
-                } else if (messageBlock.title.substr(0, 3).toLowerCase() === 're[') {
-                    themeInput.value = messageBlock.title;
-                } else {
-                    themeInput.value = 'Re: ' + messageBlock.title;
-                }
-            } else {
-                themeInput.value = messageBlock.title;
-            }
-
-            // create other messages blocks
-            messages[username].storage.slice(1).forEach((messageBlock) => {
-                addMessageToField(messageBlock);
-            });
-        }
-        redrawMessagesPlug(messages[username].plug);
-        scrollToBottom(messagesField);
-        messageInput.focus();
-    }
-
-    /**
-     * Show default page with 'Choose dialogue or create new'
-     */
-    function drawChooseDialoguePage() {
-        messagesField.innerHTML = `
-                <div class="flex-filler center-text"></div>
-                <div class="center-text">
-                    <svg class="svg-button" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></svg>
-                    <div class="text-1">
-                        Выберите диалог <br>
-                        или создайте новый
-                    </div>
-                </div>
-                <div class="flex-filler"></div>`;
-        messagesFooter.style.display = 'none';
-    }
-
-    /**
-     * Add message to messages field
-     *
-     * @param messageBlock
-     * @param toBottom
-     * @returns {HTMLDivElement}
-     */
-    function addMessageToField(messageBlock, toBottom = false) {
-        // create block of messages HTML-element
-        const messageBlockElem = document.createElement('div');
-        messageBlockElem.id = 'message-' + messageBlock.id;
-
-        // render message on right or left side
-        const isYour =  messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase();
-
-        messageBlockElem.classList.add('message-block-full', isYour ? 'right-block' : 'left-block');
-        messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate({
-            side: isYour ? 'your' : 'not-your',
-            avatar: app.storage.avatar,
-            time: messageBlock.time,
-            isStated: isYour,
-            isDelivered: (messageBlock.status === 1),
-            title: messageBlock.title,
-            body: messageBlock.body
-        });
-
-        if (toBottom) {
-            messagesField.appendChild(messageBlockElem);
-        } else {
-            messagesField.insertBefore(messageBlockElem, messagesField.firstChild);
-        }
-        return messageBlockElem;
     }
 
     /**
@@ -1255,7 +796,7 @@ export async function handler(element, app) {
 
         // send message request
         const response = await app.apiPost('/email', {
-            recipient: currentDialogue.username,
+            recipient: dialoguesListing.activeElem.username,
             subject: currentTitle,
             body: message
         });
@@ -1268,159 +809,27 @@ export async function handler(element, app) {
         messageInput.value = '';
 
         // update dialogue preview
-        currentDialogue.elem.lastElementChild.lastElementChild.innerText = message;
+        dialoguesListing.activeElem.lastElementChild.lastElementChild.innerText = message;
 
         // add message HTML-block
         const nowStatus = response.ok ? 1 : 0;
-        const lastMessage = messages[currentDialogue.username].storage[0];
+        const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
         if (lastMessage && nowStatus === lastMessage.status && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
-            document.getElementById('message-' + lastMessage.id).firstElementChild.innerHTML += `<div id="${lastMessage.id}" class="message-body">${message}</div>`;
-            messages[currentDialogue.username].storage[0].body.push(message);
+            lastMessage.firstElementChild.innerHTML += `<div id="${lastMessage.id}" class="message-body">${message}</div>`;
+            dialoguesListing.activeElem.messagesListing.push(message);
         } else {
             createdMessages += 1;
             // add block to messages list
-            messages[currentDialogue.username].storage.unshift({
+            dialoguesListing.activeElem.messagesListing.unshift({
                 id: -createdMessages,
                 sender: `${app.storage.username}@liokor.ru`,
                 title: currentTitle,
-                time:  getCurrentTime(),
+                time:  new ParsedDate(new Date().toString()).getYesterdayFormatString(),
                 status: nowStatus,
                 body: [message]
             });
-            // draw this block
-            addMessageToField(messages[currentDialogue.username].storage[0], true);
         }
-        scrollToBottom(messagesField);
-    }
-
-    /**
-     * Returns current time in string format
-     *
-     * @returns {string}
-     */
-    function getCurrentTime() {
-        const date = new Date();
-        return date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0');
-    }
-
-    /**
-     * Scroll scrollable element to bottom
-     *
-     * @param element
-     */
-    function scrollToBottom(element) {
-        element.scrollTop = element.scrollHeight;
-    }
-
-    /**
-     * Scroll scrollable element to top
-     *
-     * @param element
-     */
-    function scrollToTop(element) {
-        element.scrollTop = 0;
-    }
-
-    /**
-     * Add plug-end of messages element
-     *
-     * @param parent
-     * @param id
-     */
-    function addEndMessagesElem(parent, id) {
-        const elem = document.createElement('div');
-        elem.classList.add('center-text', 'top-filler');
-        elem.id = id;
-        elem.innerHTML = `
-                    <svg class="svg-button centered" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z" fill="currentColor"></path></svg>
-                    <div class="text-1">Это начало истории сообщений</div>`;
-        parent.insertBefore(elem, parent.firstChild);
-    }
-
-    /**
-     * Add plug-end of messages offline element
-     *
-     * @param parent
-     * @param id
-     */
-    function addOfflineEndMessagesElem(parent, id) {
-        const elem = document.createElement('div');
-        elem.classList.add('center-text', 'top-filler');
-        elem.id = id;
-        elem.innerHTML = `
-                    <svg class="svg-button centered" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><g transform="scale(2.4)"><path d="M21.0303 4.83038C21.3232 4.53749 21.3232 4.06261 21.0303 3.76972C20.7374 3.47683 20.2626 3.47683 19.9697 3.76972L3.96967 19.7697C3.67678 20.0626 3.67678 20.5375 3.96967 20.8304C4.26256 21.1233 4.73744 21.1233 5.03033 20.8304L7.11065 18.7501H18.5233C20.9961 18.7501 23.0008 16.7454 23.0008 14.2725C23.0008 11.7996 20.9961 9.79493 18.5233 9.79493C18.4592 9.79493 18.3955 9.79628 18.3321 9.79895C18.2944 9.15027 18.1424 8.53227 17.8959 7.96479L21.0303 4.83038ZM16.7186 9.14209L8.61065 17.2501H18.5233C20.1677 17.2501 21.5008 15.917 21.5008 14.2725C21.5008 12.628 20.1677 11.2949 18.5233 11.2949C18.2557 11.2949 17.9975 11.33 17.7524 11.3955C17.5122 11.4596 17.2558 11.4006 17.0679 11.2378C16.8799 11.075 16.7849 10.8297 16.8141 10.5828C16.8321 10.4306 16.8414 10.2755 16.8414 10.1178C16.8414 9.78093 16.7987 9.45399 16.7186 9.14209Z"/><path d="M12.9319 4.70837C14.0388 4.70837 15.068 5.04083 15.9252 5.61134C16.0521 5.69579 16.0649 5.87451 15.9571 5.9823L15.2295 6.70991C15.1455 6.79392 15.0144 6.80644 14.912 6.74617C14.3313 6.4044 13.6545 6.20837 12.9319 6.20837C11.3816 6.20837 10.0406 7.1107 9.40813 8.42218C9.23808 8.77479 8.82543 8.9373 8.46061 8.79534C7.96987 8.60439 7.43541 8.49926 6.87461 8.49926C4.45814 8.49926 2.49921 10.4582 2.49921 12.8747C2.49921 14.521 3.40846 15.9549 4.75218 16.7017C4.90497 16.7866 4.94313 16.9963 4.81953 17.1199L4.09641 17.843C4.01666 17.9227 3.89307 17.9397 3.79705 17.8805C2.1183 16.8462 0.999207 14.9911 0.999207 12.8747C0.999207 9.62976 3.62971 6.99925 6.87461 6.99925C7.39427 6.99925 7.89899 7.0669 8.38002 7.19408C9.34177 5.69979 11.0205 4.70837 12.9319 4.70837Z"/></g></svg>
-                    <div class="text-1">Это все загруженные сообщения</div>`;
-        parent.insertBefore(elem, parent.firstChild);
-    }
-
-    /**
-     * @param parent
-     * @param id
-     */
-    function addFlexFillerElem(parent, id) {
-        const elem = document.createElement('div');
-        elem.classList.add('flex-filler');
-        if (id !== '') { elem.id = id; }
-        parent.insertBefore(elem, parent.firstChild);
-    }
-
-    /**
-     * Add plug-end of dialogues element
-     *
-     * @param parent
-     * @param id
-     */
-    function addEndDialoguesElem(parent, id) {
-        const elem = document.createElement('div');
-        elem.classList.add('center-text', 'empty-dialogue');
-        elem.id = id;
-        elem.innerHTML = `
-                <svg class="svg-button" pointer-events="none" width="40" height="30" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.6)"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></g></svg>
-                <div class="text-3">Больше диалогов нет</div>`;
-        parent.appendChild(elem);
-    }
-
-    /**
-     * Add plug-end of dialogues offline element
-     *
-     * @param parent
-     * @param id
-     */
-    function addOfflineEndDialoguesElem(parent, id) {
-        const elem = document.createElement('div');
-        elem.classList.add('center-text', 'empty-dialogue');
-        elem.id = id;
-        elem.innerHTML = `
-                    <svg class="svg-button centered" pointer-events="none" width="50" height="30" xmlns="http://www.w3.org/2000/svg"><g transform="scale(1.5)"><path d="M21.0303 4.83038C21.3232 4.53749 21.3232 4.06261 21.0303 3.76972C20.7374 3.47683 20.2626 3.47683 19.9697 3.76972L3.96967 19.7697C3.67678 20.0626 3.67678 20.5375 3.96967 20.8304C4.26256 21.1233 4.73744 21.1233 5.03033 20.8304L7.11065 18.7501H18.5233C20.9961 18.7501 23.0008 16.7454 23.0008 14.2725C23.0008 11.7996 20.9961 9.79493 18.5233 9.79493C18.4592 9.79493 18.3955 9.79628 18.3321 9.79895C18.2944 9.15027 18.1424 8.53227 17.8959 7.96479L21.0303 4.83038ZM16.7186 9.14209L8.61065 17.2501H18.5233C20.1677 17.2501 21.5008 15.917 21.5008 14.2725C21.5008 12.628 20.1677 11.2949 18.5233 11.2949C18.2557 11.2949 17.9975 11.33 17.7524 11.3955C17.5122 11.4596 17.2558 11.4006 17.0679 11.2378C16.8799 11.075 16.7849 10.8297 16.8141 10.5828C16.8321 10.4306 16.8414 10.2755 16.8414 10.1178C16.8414 9.78093 16.7987 9.45399 16.7186 9.14209Z"/><path d="M12.9319 4.70837C14.0388 4.70837 15.068 5.04083 15.9252 5.61134C16.0521 5.69579 16.0649 5.87451 15.9571 5.9823L15.2295 6.70991C15.1455 6.79392 15.0144 6.80644 14.912 6.74617C14.3313 6.4044 13.6545 6.20837 12.9319 6.20837C11.3816 6.20837 10.0406 7.1107 9.40813 8.42218C9.23808 8.77479 8.82543 8.9373 8.46061 8.79534C7.96987 8.60439 7.43541 8.49926 6.87461 8.49926C4.45814 8.49926 2.49921 10.4582 2.49921 12.8747C2.49921 14.521 3.40846 15.9549 4.75218 16.7017C4.90497 16.7866 4.94313 16.9963 4.81953 17.1199L4.09641 17.843C4.01666 17.9227 3.89307 17.9397 3.79705 17.8805C2.1183 16.8462 0.999207 14.9911 0.999207 12.8747C0.999207 9.62976 3.62971 6.99925 6.87461 6.99925C7.39427 6.99925 7.89899 7.0669 8.38002 7.19408C9.34177 5.69979 11.0205 4.70837 12.9319 4.70837Z"/></g></svg>
-                    <div class="text-1">Это все загруженные диалоги</div>`;
-        parent.appendChild(elem);
-    }
-
-    /**
-     * Add plug-loading element
-     *
-     * @param listingElem
-     * @param isAddToTop
-     * @param addClasses
-     * @param id
-     */
-    function addLoadingElem(listingElem, isAddToTop, addClasses, id) {
-        const elem = document.createElement('div');
-        elem.classList.add('center-text', 'load-animation', addClasses);
-        elem.id = id;
-        elem.innerHTML = '<div class="dot-pulse"></div>';
-        if (isAddToTop === true) { listingElem.insertBefore(elem, listingElem.firstChild); } else { listingElem.appendChild(elem); }
-    }
-
-    /**
-     * Return sum of element children height
-     *
-     * @param elem
-     * @returns {number}
-     */
-    function getChildrenHeight(elem) {
-        let height = 0;
-        elem.childNodes.forEach((child) => { height += child.clientHeight; });
-        return height;
+        dialoguesListing.activeElem.redraw();
+        dialoguesListing.activeElem.messagesListing.scrollToBottom();
     }
 }

@@ -12,6 +12,7 @@ export class Listing {
 
     scrollHandler;
     clickElementHandler;
+    onActiveHandler;
 
     selectedElems = [];
     activeElem;
@@ -31,6 +32,14 @@ export class Listing {
 
     findBy(fieldName, value) {
         return this.elements.find(elem => elem[fieldName] === value);
+    }
+
+    getFirst() {
+        return this.elements[0];
+    }
+
+    getLast() {
+        return this.elements[this.elements.length - 1];
     }
 
     setScrollHandlers(scrollTopHandler, scrollBottomHandler, scrollTopOffset = 0, scrollBottomOffset = 0) {
@@ -145,14 +154,34 @@ export class Listing {
     }
 
     setActive(id) {
+        if (this.activeElem.id === id) {
+            return;
+        }
+
         if (this.activeElem) {
             this.activeElem.classList.remove('active');
         }
         this.activeElem = this.findById(id);
         this.activeElem.classList.add('active');
+
+        if (this.onActiveHandler) {
+            this.onActiveHandler(this.activeElem);
+        }
+    }
+
+    setOnActiveHandler(handler) {
+        this.onActiveHandler = handler;
     }
 
     scrollToTop() {
         this.block.scrollTop = 0;
+    }
+
+    scrollToBottom() {
+        this.block.scrollTop = this.block.scrollHeight;
+    }
+
+    isEmpty() {
+        return (this.elements.length === 0);
     }
 }
