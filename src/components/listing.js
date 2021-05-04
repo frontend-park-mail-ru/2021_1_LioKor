@@ -89,11 +89,15 @@ export class Listing {
     unshift(element) {
         this.elements.unshift(element);
     }
+    forEach(handler) {
+        this.elements.forEach(handler);
+    }
 
     delete(id) {
         const index = this.elements.findIndex(elem => elem.id === id);
         this.elements[index].remove();
         this.elements[index].removeEventListener(this.clickElementHandler);
+        this.elements[index].removeEventListener(this.mousemoveElementHandler);
         this.elements.splice(index, 1);
     }
 
@@ -107,6 +111,7 @@ export class Listing {
         this.elements.forEach((elem) => {
             elem.remove();
             elem.removeEventListener(this.clickElementHandler);
+            elem.removeEventListener(this.mousemoveElementHandler);
         });
     }
 
