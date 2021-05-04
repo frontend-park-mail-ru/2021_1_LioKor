@@ -193,11 +193,7 @@ export async function handler(element, app) {
     document.getElementById('profile-link-username').innerText = app.storage.username[0].toUpperCase() + app.storage.username.slice(1) + '@liokor.ru';
 
     // --- Listings create and configure
-    // create listings
-    const foundDialogues = {
-        '': newDialoguesListing()
-    };
-    let dialoguesListing = foundDialogues[''];
+    // Create folders listing
     const foldersListing = new Listing(dialoguesListingElem);
     // create Event-listener on folder element to activate it
     foldersListing.setClickElementHandler((event) => {
@@ -226,6 +222,31 @@ export async function handler(element, app) {
             'div', '', 'fullheight', 'table-rows');
     defaultPageListing.redraw();
 
+    // --- Get folders
+    // create main folder
+    const elem = newElem(`<svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.065) translate(90,10)"><path d="M340.80080180740356,203.6081974435188 h-123.02250294685365 c-4.993779848098755,0 -9.871407626152038,-2.050501576423645 -13.239817657470704,-5.535822841644287 l-38.38560207653046,-40.4361036529541 c-9.226877511978149,-9.197270121574402 -21.851013281822205,-14.00125900554657 -34.63685095310211,-13.927620111465455 H47.89109272384644 C21.485096302986143,143.70789167359845 0,165.1929879765846 0,191.59822523358838 v233.156681101799 c0,26.40599642086029 21.485096302986143,47.89109272384644 47.89109272384644,47.89109272384644 h293.0858350982666 h0.04403150367736817 c26.39157230758667,-0.11691123390197757 47.78860560321808,-21.70449465751648 47.67093520545959,-48.03761134815216 V251.49853100350873 C388.69189453125,225.09253458264843 367.2067982282639,203.6081974435188 340.80080180740356,203.6081974435188 zM359.4010754556656,424.66760249188917 c0.04403150367736817,10.251748718261718 -8.259702758789063,18.643545988082884 -18.45299586009979,18.687577491760255 H47.89109272384644 c-10.251748718261718,0 -18.599514484405518,-8.3477657661438 -18.599514484405518,-18.599514484405518 V191.59822523358838 c0,-10.251748718261718 8.3477657661438,-18.599514484405518 18.599514484405518,-18.614697761535645 H131.89712842941285 c0.1609427375793457,0 0.3218854751586914,0 0.48358737659454354,0 c4.891292727470398,0 9.636825994491577,1.9480144557952879 12.82911001110077,5.111450245857239 l38.18062783527374,40.24555352497101 c8.96268848991394,9.25572573852539 21.499520416259767,14.557726112365721 34.38784520816803,14.557726112365721 h123.02250294685365 c10.251748718261718,0 18.599514484405518,8.3477657661438 18.599514484405518,18.599514484405518 V424.66760249188917 z"/><path d="M 79.72623 131.64013 C 82.73375 123.36945 87.7321 118.64883 96.77176 118.33273 C 105.81142 118.01664 183.46435 118.20887 190.12869 120.04583 C 196.79302 121.88278 238.50963 168.42677 251.30868 173.09609 C 264.10774 177.76541 389.39087 174.96474 395.48077 175.83164 C 401.57067 176.69854 410.44077 182.36042 411.03479 192.88673 C 411.62881 203.41304 413.25029 354.17958 412.89442 371.12236 C 412.53855 388.06514 399.04484 386.91183 399.12243 386.95197 C 399.20002 386.99211 398.52843 415.44312 399.20272 415.87927 C 399.87701 416.31542 440.00224 411.49112 440.71397 377.88927 C 441.4257 344.28742 440.59625 211.13798 439.96209 183.90432 C 439.32793 156.67066 421.64409 147.53851 403.11998 147.06221 C 384.59587 146.58591 275.94556 150.90709 263.1636 146.39581 C 250.38164 141.88453 208.99824 93.8881 195.98985 90.1287 C 182.98146 86.3693 97.12204 89.42811 86.57864000000001 88.4156 C 76.03523 87.40308 50.48841 106.46071 49.73653 131.27274"/></g></svg>
+            <div class="text-1 text-bigger dialogue-text centered">${mainFolderName}</div>`, 'li', '0', 'listing-button', 'folder');
+    elem.title = mainFolderName;
+    foldersListing.push(elem);
+    foldersListing.setActiveNoHandlers('0');
+
+    const gottenFolders = await foldersGetter.getNextPage();
+    gottenFolders.forEach((folder) => {
+        const elem = newElem(folderInnerHTMLTemplate({ title: folder.title, dialoguesCount: folder.dialoguesCount }),
+                'div', folder.id, 'listing-button', 'folder');
+        elem.title = folder.title;
+        foldersListing.push(elem);
+    });
+    if (isLostConnection) {
+        foldersListing.plugBottomState = plugStates.offline;
+    }
+
+    // Create dialogues listing
+    const foundDialogues = {
+        '': newDialoguesListing()
+    };
+    let dialoguesListing = foundDialogues[''];
+    foldersListing.findById('0').dialoguesListing = dialoguesListing;
     let currentDialoguesListing;
     /**
      * Creates new configured dialoguesListing
@@ -239,6 +260,11 @@ export async function handler(element, app) {
                 app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список диалогов!');
             }
         }
+
+        // create folders plugs for dialoguesListing
+        foldersListing.forEach((folder) => {
+            dialoguesListing.setPlugTopState('folder-' + folder.id, newElem(dividerHTMLTemplate({ folder: folder.title }), 'div', '', 'dialogues-listing-divider', 'center-text'));
+        });
 
         dialoguesListing.setPlugBottomState(plugStates.end, newElem(`
             <svg class="svg-button" pointer-events="none" width="40" height="30" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.6)"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></g></svg>
@@ -454,10 +480,6 @@ export async function handler(element, app) {
         if (!folder.dialoguesListing || folder.plugBottomState === plugStates.offline) {
             dialoguesListing = newDialoguesListing();
             folder.dialoguesListing = dialoguesListing;
-            // create folders plugs for dialoguesListing
-            foldersListing.forEach((folder) => {
-                dialoguesListing.setPlugTopState('folder-' + folder.id, newElem(dividerHTMLTemplate({ folder: folder.title }), 'div', '', 'dialogues-listing-divider', 'center-text'));
-            });
 
             // get folder dialogues
             do {
@@ -527,28 +549,6 @@ export async function handler(element, app) {
         }
         isLostConnection = false;
     });
-
-    // --- Get folders
-    // create main folder
-    const elem = newElem(`<svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.065) translate(90,10)"><path d="M340.80080180740356,203.6081974435188 h-123.02250294685365 c-4.993779848098755,0 -9.871407626152038,-2.050501576423645 -13.239817657470704,-5.535822841644287 l-38.38560207653046,-40.4361036529541 c-9.226877511978149,-9.197270121574402 -21.851013281822205,-14.00125900554657 -34.63685095310211,-13.927620111465455 H47.89109272384644 C21.485096302986143,143.70789167359845 0,165.1929879765846 0,191.59822523358838 v233.156681101799 c0,26.40599642086029 21.485096302986143,47.89109272384644 47.89109272384644,47.89109272384644 h293.0858350982666 h0.04403150367736817 c26.39157230758667,-0.11691123390197757 47.78860560321808,-21.70449465751648 47.67093520545959,-48.03761134815216 V251.49853100350873 C388.69189453125,225.09253458264843 367.2067982282639,203.6081974435188 340.80080180740356,203.6081974435188 zM359.4010754556656,424.66760249188917 c0.04403150367736817,10.251748718261718 -8.259702758789063,18.643545988082884 -18.45299586009979,18.687577491760255 H47.89109272384644 c-10.251748718261718,0 -18.599514484405518,-8.3477657661438 -18.599514484405518,-18.599514484405518 V191.59822523358838 c0,-10.251748718261718 8.3477657661438,-18.599514484405518 18.599514484405518,-18.614697761535645 H131.89712842941285 c0.1609427375793457,0 0.3218854751586914,0 0.48358737659454354,0 c4.891292727470398,0 9.636825994491577,1.9480144557952879 12.82911001110077,5.111450245857239 l38.18062783527374,40.24555352497101 c8.96268848991394,9.25572573852539 21.499520416259767,14.557726112365721 34.38784520816803,14.557726112365721 h123.02250294685365 c10.251748718261718,0 18.599514484405518,8.3477657661438 18.599514484405518,18.599514484405518 V424.66760249188917 z"/><path d="M 79.72623 131.64013 C 82.73375 123.36945 87.7321 118.64883 96.77176 118.33273 C 105.81142 118.01664 183.46435 118.20887 190.12869 120.04583 C 196.79302 121.88278 238.50963 168.42677 251.30868 173.09609 C 264.10774 177.76541 389.39087 174.96474 395.48077 175.83164 C 401.57067 176.69854 410.44077 182.36042 411.03479 192.88673 C 411.62881 203.41304 413.25029 354.17958 412.89442 371.12236 C 412.53855 388.06514 399.04484 386.91183 399.12243 386.95197 C 399.20002 386.99211 398.52843 415.44312 399.20272 415.87927 C 399.87701 416.31542 440.00224 411.49112 440.71397 377.88927 C 441.4257 344.28742 440.59625 211.13798 439.96209 183.90432 C 439.32793 156.67066 421.64409 147.53851 403.11998 147.06221 C 384.59587 146.58591 275.94556 150.90709 263.1636 146.39581 C 250.38164 141.88453 208.99824 93.8881 195.98985 90.1287 C 182.98146 86.3693 97.12204 89.42811 86.57864000000001 88.4156 C 76.03523 87.40308 50.48841 106.46071 49.73653 131.27274"/></g></svg>
-            <div class="text-1 text-bigger dialogue-text centered">${mainFolderName}</div>`, 'li', '0', 'listing-button', 'folder');
-    elem.dialoguesListing = dialoguesListing;
-    elem.title = mainFolderName;
-    foldersListing.push(elem);
-    foldersListing.setActiveNoHandlers('0');
-    dialoguesListing.setPlugTopState('folder-0', newElem(dividerHTMLTemplate({ folder: 'Все входящие' }), 'div', '', 'dialogues-listing-divider', 'center-text'));
-
-    const gottenFolders = await foldersGetter.getNextPage();
-    gottenFolders.forEach((folder) => {
-        const elem = newElem(folderInnerHTMLTemplate({ title: folder.title, dialoguesCount: folder.dialoguesCount }),
-            'div', folder.id, 'listing-button', 'folder');
-        elem.title = folder.title;
-        foldersListing.push(elem);
-        dialoguesListing.setPlugTopState('folder-' + folder.id, newElem(dividerHTMLTemplate({ folder: folder.title }), 'div', '', 'dialogues-listing-divider', 'center-text'));
-    });
-    if (isLostConnection) {
-        foldersListing.plugBottomState = plugStates.offline;
-    }
 
     // --- Get dialogues
     do {
@@ -647,9 +647,10 @@ export async function handler(element, app) {
         const findText = findInput.value;
         dialoguesListing = foundDialogues[findText];
         if (!dialoguesListing) {
-            dialoguesListing = new Listing(dialoguesListingElem);
+            dialoguesListing = newDialoguesListing();
             // get found dialogues
-            dialoguesListing.networkGetter.get(['find', findText]).forEach((dialogue) => {
+            const gottenDialogues = await dialoguesListing.networkGetter.get(['find', findText]);
+            gottenDialogues.forEach((dialogue) => {
                 dialogue.time = new ParsedDate(dialogue.time).getYesterdayFormatString();
                 convertAvatarUrlToDefault(dialogue, app.defaultAvatarUrl);
                 const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body }),
@@ -659,7 +660,6 @@ export async function handler(element, app) {
                 dialoguesListing.push(elem);
             });
 
-            dialoguesListing.push(elem);
             foundDialogues[findText] = dialoguesListing;
         }
         // set offline plug
@@ -668,6 +668,7 @@ export async function handler(element, app) {
             dialoguesListing.plugBottomState = plugStates.offline;
         }
         dialoguesListing.redraw();
+        dialoguesListing.scrollToTop();
 
         // redraw add-dialogue button
         if (validateEmail(findText)) { // address valid
@@ -698,13 +699,13 @@ export async function handler(element, app) {
             findInput.blur();
         } else if (event.keyCode === 13) { // Enter
             const findText = findInput.value;
-            findInput.value = '';
             findInput.dispatchEvent(new Event('input'));
 
             // Set active dialogue
-            themeInput.focus();
             const foundDialogue = dialoguesListing.findBy('username', findText);
             if (foundDialogue) {
+                findInput.value = '';
+                messageInput.focus();
                 dialoguesListing.setActive(foundDialogue.id);
                 return;
             }
@@ -713,6 +714,8 @@ export async function handler(element, app) {
                 return;
             }
 
+            findInput.value = '';
+            themeInput.focus();
             // Create new dialogue
             createdDialogues += 1;
             const tmpAvatarContainer = {};
