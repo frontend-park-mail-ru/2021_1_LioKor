@@ -28,7 +28,9 @@ export class paginatedGetter {
         }
 
         query.forEach((param) => {
-            this.URL.searchParams.set(param[0], param[1]);
+            if (param.length === 2) {
+                this.URL.searchParams.set(param[0], param[1]);
+            }
         });
         const nowPath = this.URL.toString();
         query.forEach((param) => {

@@ -44,13 +44,19 @@ export class Listing {
     }
 
     setScrollHandlers(scrollTopHandler, scrollBottomHandler, scrollTopOffset = 0, scrollBottomOffset = 0) {
+        let isMutexBlocked = false;
         this.scrollHandler = (event) => {
+            if (isMutexBlocked) {
+                return;
+            }
+            isMutexBlocked = true;
             if (this.block.scrollTop <= scrollTopOffset && scrollTopHandler) {
                 scrollTopHandler(event);
             }
             if (this.block.scrollTop + this.block.clientHeight >= this.block.scrollHeight - scrollBottomOffset && scrollBottomHandler) {
                 scrollBottomHandler(event);
             }
+            isMutexBlocked = false;
         };
 
         this.block.addEventListener('scroll', this.scrollHandler);
