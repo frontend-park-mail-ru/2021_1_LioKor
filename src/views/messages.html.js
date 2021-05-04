@@ -199,6 +199,19 @@ export async function handler(element, app) {
     };
     let dialoguesListing = foundDialogues[''];
     const foldersListing = new Listing(dialoguesListingElem);
+    // create Event-listener on folder element to activate it
+    foldersListing.setClickElementHandler((event) => {
+        foldersListing.clearSelected();
+        dialoguesListing.clearSelected();
+        foldersListing.setActive(event.currentTarget.id);
+    });
+    // create Event-listener on folder element to reset selected
+    foldersListing.setMousemoveElementHandler((event) => {
+        foldersListing.clearSelected();
+        dialoguesListing.clearSelected();
+        foldersListing.addSelected(event.currentTarget.id);
+    });
+
     const defaultPageListing = new Listing(messagesListingElem);
     defaultPageListing.placeholder = newElem(`
                 <div class="flex-filler center-text"></div>
@@ -213,6 +226,7 @@ export async function handler(element, app) {
             'div', '', 'fullheight', 'table-rows');
     defaultPageListing.redraw();
 
+    let currentDialoguesListing;
     /**
      * Creates new configured dialoguesListing
      * @returns {Listing}
@@ -237,7 +251,7 @@ export async function handler(element, app) {
         dialoguesListing.setPlugBottomState(plugStates.loading, newElem('<div class="dot-pulse"></div>',
             'div', '', 'center-text', 'load-animation'));
 
-        dialoguesListing.setOnActiveHandler(async (dialogue, prevDialogue) => {
+        dialoguesListing.setOnActiveHandler(async (dialogue) => {
             // Create and configure new element
             if (!dialogue.messagesListing) {
                 dialogue.messagesListing = new Listing(messagesListingElem);
@@ -285,7 +299,7 @@ export async function handler(element, app) {
                             'div', messageBlock.id, 'message-block-full', isYour ? 'right-block' : 'left-block');
                         messageBlockElem.sender = messageBlock.sender;
                         messageBlockElem.title = messageBlock.title;
-
+                        messageBlockElem.status = messageBlock.status;
                         dialogue.messagesListing.unshift(messageBlockElem);
                     });
 
@@ -319,7 +333,7 @@ export async function handler(element, app) {
                             'div', messageBlock.id, 'message-block-full', isYour ? 'right-block' : 'left-block');
                         messageBlockElem.sender = messageBlock.sender;
                         messageBlockElem.title = messageBlock.title;
-
+                        messageBlockElem.status = messageBlock.status;
                         dialogue.messagesListing.unshift(messageBlockElem);
                     });
 
@@ -334,6 +348,15 @@ export async function handler(element, app) {
                 } while (dialogue.messagesListing.getElementsHeight() < dialogue.messagesListing.block.clientHeight && dialogue.messagesListing.plugTopState === plugStates.loading);
             }
 
+            // Deactivate scroll on previous element and activate current
+            if (currentDialoguesListing && currentDialoguesListing.prevActiveElem) {
+                currentDialoguesListing.prevActiveElem.messagesListing.scrollActive = false;
+                if (currentDialoguesListing !== dialoguesListing) {
+                    currentDialoguesListing.unsetActive();
+                }
+            }
+            dialogue.messagesListing.scrollActive = true;
+
             // For mobile version. Go to messages column, hide dialogues
             dialoguesColumn.classList.remove('mobile-fullwidth');
             messagesColumn.classList.add('mobile-fullwidth');
@@ -345,12 +368,12 @@ export async function handler(element, app) {
             dialogueHeader.innerText = dialogue.username;
             dialogueTime.innerText = dialogue.time;
 
-            // push old message and theme into localStorage
-            if (prevDialogue) {
-                localStorage.setItem(prevDialogue.username + '-theme', themeInput.value);
-                localStorage.setItem(prevDialogue.username + '-message', messageInput.value);
+            // push old message-input and theme into localStorage
+            if (currentDialoguesListing && currentDialoguesListing.prevActiveElem) {
+                localStorage.setItem(currentDialoguesListing.prevActiveElem.username + '-theme', themeInput.value);
+                localStorage.setItem(currentDialoguesListing.prevActiveElem.username + '-message', messageInput.value);
             }
-            // get new message and theme from localStorage
+            // get new message-input and theme from localStorage
             const theme = localStorage.getItem(dialogue.username + '-theme');
             const message = localStorage.getItem(dialogue.username + '-message');
             themeInput.value = theme;
@@ -383,6 +406,9 @@ export async function handler(element, app) {
 
             dialogue.messagesListing.redraw();
             dialogue.messagesListing.scrollToBottom();
+
+            currentDialoguesListing = dialoguesListing;
+            currentDialoguesListing.prevActiveElem = dialogue;
         });
 
         // create dialogues scroll event-listener to upload new dialogues
@@ -390,9 +416,12 @@ export async function handler(element, app) {
             const newDialogues = await dialoguesListing.networkGetter.getNextPage();
 
             newDialogues.forEach((dialogue) => {
+                dialogue.time = new ParsedDate(dialogue.time).getYesterdayFormatString();
+                convertAvatarUrlToDefault(dialogue, app.defaultAvatarUrl);
                 const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body }),
                         'li', dialogue.id, 'listing-button');
                 elem.username = dialogue.username;
+                elem.time = dialogue.time;
                 dialoguesListing.push(elem);
             });
 
@@ -405,6 +434,18 @@ export async function handler(element, app) {
             dialoguesListing.redraw();
         }, 0, dialoguesScrollLoadOffset);
 
+        // create Event-listener on dialogue element to activate it
+        dialoguesListing.setClickElementHandler((event) => {
+            foldersListing.clearSelected();
+            dialoguesListing.clearSelected();
+            dialoguesListing.setActive(event.currentTarget.id);
+        });
+        // create Event-listener on dialogue element to reset selected
+        dialoguesListing.setMousemoveElementHandler((event) => {
+            foldersListing.clearSelected();
+            dialoguesListing.clearSelected();
+            dialoguesListing.addSelected(event.currentTarget.id);
+        });
         return dialoguesListing;
     }
 
@@ -427,7 +468,7 @@ export async function handler(element, app) {
                     const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body }),
                             'li', dialogue.id, 'listing-button')
                     elem.username = dialogue.username;
-
+                    elem.time = dialogue.time;
                     dialoguesListing.push(elem);
                 });
 
@@ -442,12 +483,17 @@ export async function handler(element, app) {
         }
         dialoguesListing = folder.dialoguesListing;
         dialoguesListing.plugTopState = 'folder-' + folder.id;
-        foldersListing.redraw();
+        foldersListing.undraw();
+        if (foldersListing.isOpened) {
+            foldersListing.draw();
+        }
         dialoguesListing.draw();
+
+        foldersListing.scrollToTop();
 
         // set folder url
         const currentPath = new URL(window.location.href);
-        if (folder.id === 0) {
+        if (folder.id === '0') {
             currentPath.searchParams.delete('folder');
             currentPath.searchParams.delete('folder');
         } else {
@@ -489,9 +535,8 @@ export async function handler(element, app) {
     elem.dialoguesListing = dialoguesListing;
     elem.title = mainFolderName;
     foldersListing.push(elem);
+    foldersListing.setActiveNoHandlers('0');
     dialoguesListing.setPlugTopState('folder-0', newElem(dividerHTMLTemplate({ folder: 'Все входящие' }), 'div', '', 'dialogues-listing-divider', 'center-text'));
-    foldersListing.setActive('0');
-    dialoguesListing.plugTopState = plugStates.none;
 
     const gottenFolders = await foldersGetter.getNextPage();
     gottenFolders.forEach((folder) => {
@@ -514,7 +559,7 @@ export async function handler(element, app) {
             const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body }),
                 'li', dialogue.id, 'listing-button')
             elem.username = dialogue.username;
-
+            elem.time = dialogue.time;
             dialoguesListing.push(elem);
         });
 
@@ -526,34 +571,6 @@ export async function handler(element, app) {
         }
         dialoguesListing.redraw(); // to get elements height. Before drawing it equals 0
     } while (dialoguesListing.getElementsHeight() < dialoguesListing.block.clientHeight && dialoguesListing.plugBottomState === plugStates.loading);
-
-    // --- Add event-listeners on folders and dialogues
-    // (we need to get elements before add their event-listeners)
-    // create Event-listener on folder element to activate it
-    foldersListing.setClickElementHandler((event) => {
-        foldersListing.clearSelected();
-        dialoguesListing.clearSelected();
-        foldersListing.setActive(event.currentTarget.id);
-    });
-    // create Event-listener on folder element to reset selected
-    foldersListing.setMousemoveElementHandler((event) => {
-        foldersListing.clearSelected();
-        dialoguesListing.clearSelected();
-        foldersListing.addSelected(event.currentTarget.id);
-    });
-
-    // create Event-listener on dialogue element to activate it
-    dialoguesListing.setClickElementHandler((event) => {
-        foldersListing.clearSelected();
-        dialoguesListing.clearSelected();
-        dialoguesListing.setActive(event.currentTarget.id);
-    });
-    // create Event-listener on dialogue element to reset selected
-    dialoguesListing.setMousemoveElementHandler((event) => {
-        foldersListing.clearSelected();
-        dialoguesListing.clearSelected();
-        dialoguesListing.addSelected(event.currentTarget.id);
-    });
 
     // --- Get query-parameters
     const searchParams = new URL(window.location.href).searchParams;
@@ -638,7 +655,7 @@ export async function handler(element, app) {
                 const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body }),
                         'li', dialogue.id, 'listing-button')
                 elem.username = dialogue.username;
-
+                elem.time = dialogue.time;
                 dialoguesListing.push(elem);
             });
 
@@ -700,7 +717,7 @@ export async function handler(element, app) {
             createdDialogues += 1;
             const tmpAvatarContainer = {};
             convertAvatarUrlToDefault(tmpAvatarContainer, app.defaultAvatarUrl);
-            const elem = newElem(dialogueInnerHTMLTemplate({ avatar: tmpAvatarContainer.avatarUrl, time: new ParsedDate(new Date().toString()).getYesterdayFormatString(), title: findText, body: '' }),
+            const elem = newElem(dialogueInnerHTMLTemplate({ avatar: tmpAvatarContainer.avatarUrl, time: new ParsedDate().getYesterdayFormatString(), title: findText, body: '' }),
                     'li', '-' + createdDialogues, 'listing-button')
             elem.username = findText;
 
@@ -722,7 +739,15 @@ export async function handler(element, app) {
     });
 
     backToDialoguesButton.addEventListener('click', (event) => {
-        dialoguesListing.unsetActive();
+        // For mobile version. Go to dialogues
+        dialoguesColumn.classList.add('mobile-fullwidth');
+        messagesColumn.classList.remove('mobile-fullwidth');
+
+        // delete dialogue from url
+        const currentPath = new URL(window.location.href);
+        currentPath.searchParams.delete('dialogue');
+        history.pushState(null, null, currentPath.toString());
+        document.title = `${app.name} | Диалоги`;
     });
 
     // Imitate loading work... Simple clicker-game for our user
@@ -869,37 +894,42 @@ export async function handler(element, app) {
         const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
         if (lastMessage && nowStatus === lastMessage.status && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
             lastMessage.firstElementChild.innerHTML += `<div id="${lastMessage.id}" class="message-body">${message}</div>`;
-            dialoguesListing.activeElem.messagesListing.push(message);
         } else {
             createdMessages += 1;
             // add block to messages list
-            dialoguesListing.activeElem.messagesListing.unshift({
-                id: -createdMessages,
-                sender: `${app.storage.username}@liokor.ru`,
-                title: currentTitle,
-                time: new ParsedDate(new Date().toString()).getYesterdayFormatString(),
-                status: nowStatus,
-                body: [message]
-            });
+            const elem = newElem(messageBlockInnerHTMLTemplate({
+                        side: 'your',
+                        avatar: app.storage.avatar,
+                        time: new ParsedDate().getYesterdayFormatString(),
+                        isStated: true,
+                        isDelivered: response.ok,
+                        title: currentTitle,
+                        body: [message]
+                    }),
+                    'div', -createdMessages, 'message-block-full', 'right-block');
+            elem.title = currentTitle;
+            elem.sender = `${app.storage.username}@liokor.ru`;
+            elem.status = nowStatus;
+            dialoguesListing.activeElem.messagesListing.push(elem);
         }
         dialoguesListing.activeElem.messagesListing.redraw();
         dialoguesListing.activeElem.messagesListing.scrollToBottom();
     }
-}
 
-/**
- * Creates new HTML element
- *
- * @param innerHTML
- * @param tag
- * @param id
- * @param classes
- * @returns {*}
- */
-function newElem(innerHTML, tag, id, ...classes) {
-    const elem = document.createElement(tag);
-    elem.id = id;
-    elem.classList.add(...classes);
-    elem.innerHTML = innerHTML;
-    return elem;
+    /**
+     * Creates new HTML element
+     *
+     * @param innerHTML
+     * @param tag
+     * @param id
+     * @param classes
+     * @returns {*}
+     */
+    function newElem(innerHTML, tag, id, ...classes) {
+        const elem = document.createElement(tag);
+        elem.id = id;
+        elem.classList.add(...classes);
+        elem.innerHTML = innerHTML;
+        return elem;
+    }
 }

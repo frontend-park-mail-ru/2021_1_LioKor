@@ -23,6 +23,8 @@ export class Listing {
     plugBottomState = plugStates.none;
     plugsBottom = [];
 
+    scrollActive = true;
+
     constructor(block) {
         this.block = block;
     }
@@ -46,7 +48,7 @@ export class Listing {
     setScrollHandlers(scrollTopHandler, scrollBottomHandler, scrollTopOffset = 0, scrollBottomOffset = 0) {
         let isMutexBlocked = false;
         this.scrollHandler = (event) => {
-            if (isMutexBlocked) {
+            if (isMutexBlocked || !this.scrollActive) {
                 return;
             }
             isMutexBlocked = true;
@@ -68,36 +70,40 @@ export class Listing {
 
     setClickElementHandler(handler) {
         this.clickElementHandler = handler;
-
-        this.elements.forEach((elem) => {
-            elem.addEventListener('click', this.clickElementHandler);
-        });
     }
 
     setMousemoveElementHandler(handler) {
         this.mousemoveElementHandler = handler;
+    }
 
-        this.elements.forEach((elem) => {
-            elem.addEventListener('mousemove', this.mousemoveElementHandler);
-        });
+    addAllListeners(element) {
+        element.addEventListener('click', this.clickElementHandler);
+        element.addEventListener('mousemove', this.mousemoveElementHandler);
+    }
+
+    removeAllListeners(element) {
+        element.removeEventListener('click', this.clickElementHandler);
+        element.removeEventListener('mousemove', this.mousemoveElementHandler);
     }
 
     push(element) {
         this.elements.push(element);
+        this.addAllListeners(element);
     }
 
     unshift(element) {
         this.elements.unshift(element);
+        this.addAllListeners(element);
     }
+
     forEach(handler) {
         this.elements.forEach(handler);
     }
 
     delete(id) {
         const index = this.elements.findIndex(elem => elem.id === id);
+        this.removeAllListeners(this.elements[index])
         this.elements[index].remove();
-        this.elements[index].removeEventListener(this.clickElementHandler);
-        this.elements[index].removeEventListener(this.mousemoveElementHandler);
         this.elements.splice(index, 1);
     }
 
@@ -109,9 +115,8 @@ export class Listing {
 
     clear() {
         this.elements.forEach((elem) => {
+            this.removeAllListeners(elem)
             elem.remove();
-            elem.removeEventListener(this.clickElementHandler);
-            elem.removeEventListener(this.mousemoveElementHandler);
         });
     }
 
@@ -174,6 +179,13 @@ export class Listing {
     }
 
     setActive(id) {
+        this.setActiveNoHandlers(id);
+        if (this.onActiveHandler) {
+            this.onActiveHandler(this.activeElem);
+        }
+    }
+
+    setActiveNoHandlers(id) {
         if (this.activeElem) {
             if (this.activeElem.id === id) {
                 return;
@@ -183,13 +195,8 @@ export class Listing {
                 this.activeElem.classList.remove('active');
             }
         }
-        const previousActive = this.activeElem;
         this.activeElem = this.findById(id);
         this.activeElem.classList.add('active');
-
-        if (this.onActiveHandler) {
-            this.onActiveHandler(this.activeElem, previousActive);
-        }
     }
 
     setOnActiveHandler(handler) {
