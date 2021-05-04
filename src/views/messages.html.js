@@ -632,6 +632,7 @@ export async function handler(element, app) {
         dialoguesListing.plugTopState = 'folder-' + foldersListing.activeElem.id;
         foldersListing.redraw();
         dialoguesListing.draw();
+        foldersListing.scrollToTop();
     });
 
     // --- Find dialogues
@@ -829,7 +830,7 @@ export async function handler(element, app) {
     function convertMessagesToBlocks(messages) {
         messages.forEach((elem) => {
             elem.time = new Date(elem.time);
-            elem.body = [elem.body];
+            elem.body = [new Handlebars.SafeString(elem.body)];
         });
 
         let previousElem = messages[messages.length - 1];
@@ -881,8 +882,8 @@ export async function handler(element, app) {
             subject: currentTitle,
             body: message
         });
+        const responseData = await response.json();
         if (!response.ok) {
-            const data = await response.json();
             app.messageError(`Ошибка ${response.status}`, `Не удалось отправить письмо: ${data.message}`);
         }
 
@@ -906,8 +907,8 @@ export async function handler(element, app) {
                         time: new ParsedDate().getYesterdayFormatString(),
                         isStated: true,
                         isDelivered: response.ok,
-                        title: currentTitle,
-                        body: [message]
+                        title: response.ok ? responseData.subject : currentTitle,
+                        body: [response.ok ? new Handlebars.SafeString(responseData.body) : message]
                     }),
                     'div', -createdMessages, 'message-block-full', 'right-block');
             elem.title = currentTitle;
