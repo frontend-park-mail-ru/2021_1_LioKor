@@ -2,9 +2,10 @@ import Handlebars from 'handlebars/dist/cjs/handlebars';
 
 import { validateEmail } from '../modules/validators';
 import { Listing, plugStates } from '../components/listing';
-import { paginatedGetter } from '../components/paginatedGetter';
+import { paginatedGetter } from '../modules/paginatedGetter';
 import convertAvatarUrl from '../modules/defaultAvatars';
 import ParsedDate from '../modules/parsedDate';
+import convertAvatarUrlToDefault from '../modules/defaultAvatars'
 
 const html = `
 <div class="table-columns fullheight p-l bg-5" id="messages-page">
@@ -39,7 +40,7 @@ const html = `
                 <span class="text-1 centered-vertical" style="margin-left: 5px" id="dialogue-header-title"></span>
             </div>
             <div class="text-3 centered desktop-only" id="dialogue-header-time" style="margin-left: 10px">Выберите диалог</div>
-            <div class="flex-filler"/>
+            <div class="flex-filler"></div>
             <span class="text-2 centered-vertical desktop-only" id="profile-link-username" style="margin-right: 5px">username@liokor.ru</span>
             <linkbutton class="svg-button middle-avatar centered-vertical profile-button" href="/user" pointer-events="auto"><svg pointer-events="none" id="clear-find-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(1.5)"><path d="m3.0000001 14.5c0-3.1424487 3.08132567-4.50000038 6.9999999-4.50000038 3.9186742 0 6.9999999 1.35755168 6.9999999 4.50000038 0 1.615596-1.0761803 2.5000004-2.3000001 2.5000004h-9.39999961c-1.22381984 0-2.30000009-.8844044-2.30000009-2.5000004zm1.8 0c0 .5349234.20087263.7000004.50000009.7000004h9.39999961c.2991275 0 .5000001-.165077.5000001-.7000004 0-1.7450508-2.1675128-2.7000004-5.1999999-2.7000004-3.03248714 0-5.1999999.9549496-5.1999999 2.7000004zm9.0999999-9.5c0 2.15455627-1.7454437 3.9-3.9 3.9-2.15455627 0-3.9-1.74544373-3.9-3.9s1.74544373-3.9 3.9-3.9c2.1545563 0 3.9 1.74544373 3.9 3.9zm-1.8 0c0-1.16044373-.9395563-2.1-2.1-2.1-1.16044373 0-2.1.93955627-2.1 2.1s.93955627 2.1 2.1 2.1c1.1604437 0 2.1-.93955627 2.1-2.1z"/></g></svg></linkbutton>
         </div>
@@ -120,7 +121,6 @@ export async function handler(element, app) {
 
     const backToDialoguesButton = document.getElementById('header-title-button');
     const messagesFooter = document.getElementById('messages-footer');
-    messagesFooter.style.display = 'block';
 
     const connectionsInfo = document.getElementsByClassName('connection-info');
 
@@ -134,9 +134,18 @@ export async function handler(element, app) {
     const messageInput = document.getElementById('message-input');
 
     // --- Network getters
-    const foldersGetter = new paginatedGetter(app.apiUrl + '/email/folders', 'since', -1, foldersByRequest, 'id');
-    const dialoguesGetter = new paginatedGetter(app.apiUrl + '/email/dialogues', 'since', -1, dialoguesByRequest, 'id');
-
+    const foldersGetter = new paginatedGetter(app.apiUrl + '/email/folders', 'since', -1, 'amount', foldersByRequest, 'id');
+    foldersGetter.onErrorHandler = (response) => {
+        if (response.status !== 418) { // Empty response from SW (offline mode)
+            app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список папок!');
+        }
+    }
+    const dialoguesGetter = new paginatedGetter(app.apiUrl + '/email/dialogues', 'since', -1, 'amount', dialoguesByRequest, 'id');
+    dialoguesGetter.onErrorHandler = (response) => {
+        if (response.status !== 418) { // Empty response from SW (offline mode)
+            app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список диалогов!');
+        }
+    }
     // --- Enumerations
     const foldersStates = {
         closed: false,
@@ -202,52 +211,24 @@ export async function handler(element, app) {
     let dialoguesListing = foundDialogues[''];
     const foldersListing = new Listing(dialoguesListingElem);
 
-    // create Event-listener on folder element to activate it
-    foldersListing.setClickElementHandler((event) => {
-        dialoguesListing.clearSelected();
-        foldersListing.setActive(event.currentTarget.id);
-    });
-    // create Event-listener on folder element to reset selected
-    foldersListing.block.addEventListener('mousemove', (event) => {
-        foldersListing.clearSelected();
-        dialoguesListing.clearSelected();
-        foldersListing.addSelected(event.currentTarget.id);
-    });
+    dialoguesListing.setPlugBottomState(plugStates.end, newElem(`
+        <svg class="svg-button" pointer-events="none" width="40" height="30" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.6)"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></g></svg>
+        <div class="text-3">Больше диалогов нет</div>`,
+        'div', '', 'center-text', 'empty-dialogue'));
+    dialoguesListing.setPlugBottomState(plugStates.offline, newElem(`
+        <svg class="svg-button centered" pointer-events="none" width="50" height="30" xmlns="http://www.w3.org/2000/svg"><g transform="scale(1.5)"><path d="M21.0303 4.83038C21.3232 4.53749 21.3232 4.06261 21.0303 3.76972C20.7374 3.47683 20.2626 3.47683 19.9697 3.76972L3.96967 19.7697C3.67678 20.0626 3.67678 20.5375 3.96967 20.8304C4.26256 21.1233 4.73744 21.1233 5.03033 20.8304L7.11065 18.7501H18.5233C20.9961 18.7501 23.0008 16.7454 23.0008 14.2725C23.0008 11.7996 20.9961 9.79493 18.5233 9.79493C18.4592 9.79493 18.3955 9.79628 18.3321 9.79895C18.2944 9.15027 18.1424 8.53227 17.8959 7.96479L21.0303 4.83038ZM16.7186 9.14209L8.61065 17.2501H18.5233C20.1677 17.2501 21.5008 15.917 21.5008 14.2725C21.5008 12.628 20.1677 11.2949 18.5233 11.2949C18.2557 11.2949 17.9975 11.33 17.7524 11.3955C17.5122 11.4596 17.2558 11.4006 17.0679 11.2378C16.8799 11.075 16.7849 10.8297 16.8141 10.5828C16.8321 10.4306 16.8414 10.2755 16.8414 10.1178C16.8414 9.78093 16.7987 9.45399 16.7186 9.14209Z"/><path d="M12.9319 4.70837C14.0388 4.70837 15.068 5.04083 15.9252 5.61134C16.0521 5.69579 16.0649 5.87451 15.9571 5.9823L15.2295 6.70991C15.1455 6.79392 15.0144 6.80644 14.912 6.74617C14.3313 6.4044 13.6545 6.20837 12.9319 6.20837C11.3816 6.20837 10.0406 7.1107 9.40813 8.42218C9.23808 8.77479 8.82543 8.9373 8.46061 8.79534C7.96987 8.60439 7.43541 8.49926 6.87461 8.49926C4.45814 8.49926 2.49921 10.4582 2.49921 12.8747C2.49921 14.521 3.40846 15.9549 4.75218 16.7017C4.90497 16.7866 4.94313 16.9963 4.81953 17.1199L4.09641 17.843C4.01666 17.9227 3.89307 17.9397 3.79705 17.8805C2.1183 16.8462 0.999207 14.9911 0.999207 12.8747C0.999207 9.62976 3.62971 6.99925 6.87461 6.99925C7.39427 6.99925 7.89899 7.0669 8.38002 7.19408C9.34177 5.69979 11.0205 4.70837 12.9319 4.70837Z"/></g></svg>
+        <div class="text-1">Это все загруженные диалоги</div>`,
+        'div', '', 'center-text', 'empty-dialogue'));
+    dialoguesListing.setPlugBottomState(plugStates.loading, newElem('<div class="dot-pulse"></div>',
+        'div', '', 'center-text', 'load-animation'));
 
-    // create Event-listener on dialogue element to activate it
-    dialoguesListing.setClickElementHandler((event) => {
-        foldersListing.clearSelected();
-        dialoguesListing.setActive(event.currentTarget.id);
-    });
-    // create Event-listener on dialogue element to reset selected
-    dialoguesListing.block.addEventListener('mousemove', (event) => {
-        foldersListing.clearSelected();
-        dialoguesListing.clearSelected();
-        dialoguesListing.addSelected(event.currentTarget.id);
-    });
-
-    // create Event-listener on message element to activate it
-    /*
-    messagesListing.setClickElementHandler((event) => {
-        messagesListing.addSelected(event.currentTarget.id);
-    });
-    */
-
-    dialoguesListing.setPlugTopState(plugStates.end, `
-                <svg class="svg-button" pointer-events="none" width="40" height="30" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.6)"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></g></svg>
-                <div class="text-3">Больше диалогов нет</div>`);
-    dialoguesListing.setPlugTopState(plugStates.offline, `
-                <svg class="svg-button centered" pointer-events="none" width="50" height="30" xmlns="http://www.w3.org/2000/svg"><g transform="scale(1.5)"><path d="M21.0303 4.83038C21.3232 4.53749 21.3232 4.06261 21.0303 3.76972C20.7374 3.47683 20.2626 3.47683 19.9697 3.76972L3.96967 19.7697C3.67678 20.0626 3.67678 20.5375 3.96967 20.8304C4.26256 21.1233 4.73744 21.1233 5.03033 20.8304L7.11065 18.7501H18.5233C20.9961 18.7501 23.0008 16.7454 23.0008 14.2725C23.0008 11.7996 20.9961 9.79493 18.5233 9.79493C18.4592 9.79493 18.3955 9.79628 18.3321 9.79895C18.2944 9.15027 18.1424 8.53227 17.8959 7.96479L21.0303 4.83038ZM16.7186 9.14209L8.61065 17.2501H18.5233C20.1677 17.2501 21.5008 15.917 21.5008 14.2725C21.5008 12.628 20.1677 11.2949 18.5233 11.2949C18.2557 11.2949 17.9975 11.33 17.7524 11.3955C17.5122 11.4596 17.2558 11.4006 17.0679 11.2378C16.8799 11.075 16.7849 10.8297 16.8141 10.5828C16.8321 10.4306 16.8414 10.2755 16.8414 10.1178C16.8414 9.78093 16.7987 9.45399 16.7186 9.14209Z"/><path d="M12.9319 4.70837C14.0388 4.70837 15.068 5.04083 15.9252 5.61134C16.0521 5.69579 16.0649 5.87451 15.9571 5.9823L15.2295 6.70991C15.1455 6.79392 15.0144 6.80644 14.912 6.74617C14.3313 6.4044 13.6545 6.20837 12.9319 6.20837C11.3816 6.20837 10.0406 7.1107 9.40813 8.42218C9.23808 8.77479 8.82543 8.9373 8.46061 8.79534C7.96987 8.60439 7.43541 8.49926 6.87461 8.49926C4.45814 8.49926 2.49921 10.4582 2.49921 12.8747C2.49921 14.521 3.40846 15.9549 4.75218 16.7017C4.90497 16.7866 4.94313 16.9963 4.81953 17.1199L4.09641 17.843C4.01666 17.9227 3.89307 17.9397 3.79705 17.8805C2.1183 16.8462 0.999207 14.9911 0.999207 12.8747C0.999207 9.62976 3.62971 6.99925 6.87461 6.99925C7.39427 6.99925 7.89899 7.0669 8.38002 7.19408C9.34177 5.69979 11.0205 4.70837 12.9319 4.70837Z"/></g></svg>
-                <div class="text-1">Это все загруженные диалоги</div>`);
-    dialoguesListing.setPlugTopState(plugStates.loading, '<div class="dot-pulse"></div>');
-
-    dialoguesListing.setOnActiveHandler((elem) => {
+    dialoguesListing.setOnActiveHandler(async (elem, lastElem) => {
         // Create and configure new element
         if (!elem.messagesListing) {
             elem.messagesListing = new Listing(messagesListingElem);
-            elem.messagesListing.networkGetter = new paginatedGetter(app.apiUrl + '/email/emails?with=' + elem.id, 'since', -1, messagesByRequest, 'id');
+            elem.messagesListing.networkGetter = new paginatedGetter(app.apiUrl + '/email/emails?with=' + elem.username, 'since', -1, 'amount', messagesByRequest, 'id');
 
-            elem.messagesListing.placeholder = `
+            elem.messagesListing.placeholder = newElem(`
                 <div class="flex-filler center-text"></div>
                 <div class="center-text">
                     <svg class="svg-button" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></svg>
@@ -256,19 +237,21 @@ export async function handler(element, app) {
                         или создайте новый
                     </div>
                 </div>
-                <div class="flex-filler"></div>`;
+                <div class="flex-filler"></div>`,
+                'div', '');
 
-            elem.messagesListing.setPlugTopState(plugStates.end, `
-                    <svg class="svg-button centered" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z" fill="currentColor"></path></svg>
-                    <div class="text-1">Это начало истории сообщений</div>`);
-            elem.messagesListing.setPlugTopState(plugStates.offline, `
-                    <svg class="svg-button centered" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><g transform="scale(2.4)"><path d="M21.0303 4.83038C21.3232 4.53749 21.3232 4.06261 21.0303 3.76972C20.7374 3.47683 20.2626 3.47683 19.9697 3.76972L3.96967 19.7697C3.67678 20.0626 3.67678 20.5375 3.96967 20.8304C4.26256 21.1233 4.73744 21.1233 5.03033 20.8304L7.11065 18.7501H18.5233C20.9961 18.7501 23.0008 16.7454 23.0008 14.2725C23.0008 11.7996 20.9961 9.79493 18.5233 9.79493C18.4592 9.79493 18.3955 9.79628 18.3321 9.79895C18.2944 9.15027 18.1424 8.53227 17.8959 7.96479L21.0303 4.83038ZM16.7186 9.14209L8.61065 17.2501H18.5233C20.1677 17.2501 21.5008 15.917 21.5008 14.2725C21.5008 12.628 20.1677 11.2949 18.5233 11.2949C18.2557 11.2949 17.9975 11.33 17.7524 11.3955C17.5122 11.4596 17.2558 11.4006 17.0679 11.2378C16.8799 11.075 16.7849 10.8297 16.8141 10.5828C16.8321 10.4306 16.8414 10.2755 16.8414 10.1178C16.8414 9.78093 16.7987 9.45399 16.7186 9.14209Z"/><path d="M12.9319 4.70837C14.0388 4.70837 15.068 5.04083 15.9252 5.61134C16.0521 5.69579 16.0649 5.87451 15.9571 5.9823L15.2295 6.70991C15.1455 6.79392 15.0144 6.80644 14.912 6.74617C14.3313 6.4044 13.6545 6.20837 12.9319 6.20837C11.3816 6.20837 10.0406 7.1107 9.40813 8.42218C9.23808 8.77479 8.82543 8.9373 8.46061 8.79534C7.96987 8.60439 7.43541 8.49926 6.87461 8.49926C4.45814 8.49926 2.49921 10.4582 2.49921 12.8747C2.49921 14.521 3.40846 15.9549 4.75218 16.7017C4.90497 16.7866 4.94313 16.9963 4.81953 17.1199L4.09641 17.843C4.01666 17.9227 3.89307 17.9397 3.79705 17.8805C2.1183 16.8462 0.999207 14.9911 0.999207 12.8747C0.999207 9.62976 3.62971 6.99925 6.87461 6.99925C7.39427 6.99925 7.89899 7.0669 8.38002 7.19408C9.34177 5.69979 11.0205 4.70837 12.9319 4.70837Z"/></g></svg>
-                    <div class="text-1">Это все загруженные сообщения</div>`);
+            elem.messagesListing.setPlugTopState(plugStates.end, newElem(`<svg class="svg-button centered" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z" fill="currentColor"></path></svg>
+                    <div class="text-1">Это начало истории сообщений</div>`,
+                    'div', '', 'center-text', 'top-filler'));
+            elem.messagesListing.setPlugTopState(plugStates.offline, newElem(`<svg class="svg-button centered" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><g transform="scale(2.4)"><path d="M21.0303 4.83038C21.3232 4.53749 21.3232 4.06261 21.0303 3.76972C20.7374 3.47683 20.2626 3.47683 19.9697 3.76972L3.96967 19.7697C3.67678 20.0626 3.67678 20.5375 3.96967 20.8304C4.26256 21.1233 4.73744 21.1233 5.03033 20.8304L7.11065 18.7501H18.5233C20.9961 18.7501 23.0008 16.7454 23.0008 14.2725C23.0008 11.7996 20.9961 9.79493 18.5233 9.79493C18.4592 9.79493 18.3955 9.79628 18.3321 9.79895C18.2944 9.15027 18.1424 8.53227 17.8959 7.96479L21.0303 4.83038ZM16.7186 9.14209L8.61065 17.2501H18.5233C20.1677 17.2501 21.5008 15.917 21.5008 14.2725C21.5008 12.628 20.1677 11.2949 18.5233 11.2949C18.2557 11.2949 17.9975 11.33 17.7524 11.3955C17.5122 11.4596 17.2558 11.4006 17.0679 11.2378C16.8799 11.075 16.7849 10.8297 16.8141 10.5828C16.8321 10.4306 16.8414 10.2755 16.8414 10.1178C16.8414 9.78093 16.7987 9.45399 16.7186 9.14209Z"/><path d="M12.9319 4.70837C14.0388 4.70837 15.068 5.04083 15.9252 5.61134C16.0521 5.69579 16.0649 5.87451 15.9571 5.9823L15.2295 6.70991C15.1455 6.79392 15.0144 6.80644 14.912 6.74617C14.3313 6.4044 13.6545 6.20837 12.9319 6.20837C11.3816 6.20837 10.0406 7.1107 9.40813 8.42218C9.23808 8.77479 8.82543 8.9373 8.46061 8.79534C7.96987 8.60439 7.43541 8.49926 6.87461 8.49926C4.45814 8.49926 2.49921 10.4582 2.49921 12.8747C2.49921 14.521 3.40846 15.9549 4.75218 16.7017C4.90497 16.7866 4.94313 16.9963 4.81953 17.1199L4.09641 17.843C4.01666 17.9227 3.89307 17.9397 3.79705 17.8805C2.1183 16.8462 0.999207 14.9911 0.999207 12.8747C0.999207 9.62976 3.62971 6.99925 6.87461 6.99925C7.39427 6.99925 7.89899 7.0669 8.38002 7.19408C9.34177 5.69979 11.0205 4.70837 12.9319 4.70837Z"/></g></svg>
+                    <div class="text-1">Это все загруженные сообщения</div>`,
+                   'div', '', 'center-text', 'top-filler'));
+            elem.messagesListing.setPlugTopState(plugStates.loading, newElem('<div class="dot-pulse"></div>',
+                    'div', '', 'center-text', 'load-animation'));
 
-
-            elem.messagesListing.setScrollHandlers((event) => {
-                // Get new messages
-                const newMessages = elem.messagesListing.networkGetter.getNextPage();
+            elem.messagesListing.setScrollHandlers(async (event) => {
+                // Get messages
+                const newMessages = await elem.messagesListing.networkGetter.getNextPage();
                 // set messages plug
                 if (isLostConnection) {
                     elem.messagesListing.plugTopState = plugStates.offline;
@@ -279,59 +262,60 @@ export async function handler(element, app) {
                 }
 
                 // get height for scroll to previous place at end of function
-                const heightToBottom = elem.getElementsHeight() - elem.messagesListing.block.scrollTop;
+                const heightToBottom = elem.messagesListing.getElementsHeight() - elem.messagesListing.block.scrollTop;
 
                 convertMessagesToBlocks(newMessages);
-                convertTimesToStr(newMessages);
 
                 newMessages.forEach((messageBlock) => {
-                    // create block of messages HTML-element
-                    const messageBlockElem = document.createElement('div');
-                    messageBlockElem.id = messageBlock.id;
                     const isYour =  messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase();
-                    messageBlockElem.classList.add('message-block-full', isYour ? 'right-block' : 'left-block');
-                    messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate({
-                        side: isYour ? 'your' : 'not-your',
-                        avatar: app.storage.avatar,
-                        time: messageBlock.time,
-                        isStated: isYour,
-                        isDelivered: (messageBlock.status === 1),
-                        title: messageBlock.title,
-                        body: messageBlock.body
-                    });
+                    messageBlock.time = new ParsedDate(messageBlock.time).getYesterdayFormatString();
+                    const messageBlockElem = newElem(
+                            messageBlockInnerHTMLTemplate({
+                                side: isYour ? 'your' : 'not-your',
+                                avatar: app.storage.avatar,
+                                time: messageBlock.time,
+                                isStated: isYour,
+                                isDelivered: (messageBlock.status === 1),
+                                title: messageBlock.title,
+                                body: messageBlock.body
+                            }),
+                            'div', messageBlock.id, 'message-block-full', isYour ? 'right-block' : 'left-block');
+                    messageBlockElem.sender = messageBlock.sender;
+                    messageBlockElem.title = messageBlock.title;
 
                     elem.messagesListing.unshift(messageBlockElem);
                 });
 
+                elem.messagesListing.redraw();
+
                 // Scroll to previous place
                 elem.messagesListing.block.scrollTop = elem.messagesListing.getElementsHeight() - heightToBottom;
-                elem.messagesListing.redraw();
-            }, null);
+            }, null, messagesScrollLoadOffset, 0);
         }
 
         // get first part of dialogues
         if (elem.messagesListing.isEmpty()) {
             do {
-                const newMessages = elem.messagesListing.networkGetter.getNextPage();
+                const newMessages = await elem.messagesListing.networkGetter.getNextPage();
 
                 convertMessagesToBlocks(newMessages);
-                convertTimesToStr(newMessages);
 
                 newMessages.forEach((messageBlock) => {
-                    // create block of messages HTML-element
-                    const messageBlockElem = document.createElement('div');
-                    messageBlockElem.id = messageBlock.id;
                     const isYour =  messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase();
-                    messageBlockElem.classList.add('message-block-full', isYour ? 'right-block' : 'left-block');
-                    messageBlockElem.innerHTML = messageBlockInnerHTMLTemplate({
-                        side: isYour ? 'your' : 'not-your',
-                        avatar: app.storage.avatar,
-                        time: messageBlock.time,
-                        isStated: isYour,
-                        isDelivered: (messageBlock.status === 1),
-                        title: messageBlock.title,
-                        body: messageBlock.body
-                    });
+                    messageBlock.time = new ParsedDate(messageBlock.time).getYesterdayFormatString();
+                    const messageBlockElem = newElem(
+                        messageBlockInnerHTMLTemplate({
+                            side: isYour ? 'your' : 'not-your',
+                            avatar: app.storage.avatar,
+                            time: messageBlock.time,
+                            isStated: isYour,
+                            isDelivered: (messageBlock.status === 1),
+                            title: messageBlock.title,
+                            body: messageBlock.body
+                        }),
+                        'div', messageBlock.id, 'message-block-full', isYour ? 'right-block' : 'left-block');
+                    messageBlockElem.sender = messageBlock.sender;
+                    messageBlockElem.title = messageBlock.title;
 
                     elem.messagesListing.unshift(messageBlockElem);
                 });
@@ -342,8 +326,32 @@ export async function handler(element, app) {
                 } else if (newMessages.length < messagesByRequest) {
                     elem.messagesListing.plugTopState = plugStates.end;
                 }
-            } while (elem.getElementsHeight() < elem.block.clientHeight && elem.plugTopState === plugStates.loading);
+
+                elem.messagesListing.redraw(); // to get elements height
+            } while (elem.messagesListing.getElementsHeight() < elem.messagesListing.block.clientHeight && elem.messagesListing.plugTopState === plugStates.loading);
         }
+
+        // For mobile version. Go to messages
+        dialoguesColumn.classList.remove('mobile-fullwidth');
+        messagesColumn.classList.add('mobile-fullwidth');
+
+        messagesFooter.style.display = 'flex'; // show message input
+
+        // update messages header
+        dialogueHeader.innerText = elem.username;
+        dialogueTime.innerText = elem.time;
+
+        // push old message and theme into localStorage
+        if (lastElem) {
+            localStorage.setItem(lastElem.username + '-theme', themeInput.value);
+            localStorage.setItem(lastElem.username + '-message', messageInput.value);
+        }
+
+        // get new message and theme from localStorage
+        const theme = localStorage.getItem(elem.username + '-theme');
+        const message = localStorage.getItem(elem.username + '-message');
+        themeInput.value = theme;
+        messageInput.value = message;
 
         // set default theme of message
         const messageBlock = elem.messagesListing.getLast();
@@ -367,29 +375,24 @@ export async function handler(element, app) {
     });
 
     // create dialogues scroll event-listener to upload new dialogues
-    /*
     dialoguesListing.setScrollHandlers(null, async (event) => {
         const newDialogues = await dialoguesGetter.getNextPage();
 
         newDialogues.forEach((dialogue) => {
-            const elem = document.createElement('li');
-            elem.id = dialogue.id;
-            elem.classList.add('listing-button');
-            elem.innerHTML = dialogueInnerHTMLTemplate(
-                    { avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body });
-
+            const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body }),
+                    'li', dialogue.id, 'listing-button');
+            elem.username = dialogue.username;
             dialoguesListing.push(elem);
         });
 
-        dialoguesListing.plugTopState = plugStates.loading;
+        dialoguesListing.plugBottomState = plugStates.loading;
         if (isLostConnection) {
-            dialoguesListing.plugTopState = plugStates.offline;
+            dialoguesListing.plugBottomState = plugStates.offline;
         } else if (newDialogues.length < dialoguesByRequest) {
-            dialoguesListing.plugTopState = plugStates.end;
+            dialoguesListing.plugBottomState = plugStates.end;
         }
         dialoguesListing.redraw();
-    });
-    */
+    }, 0, dialoguesScrollLoadOffset);
 
 /*    foldersListing.setOnActiveHandler((folder) => {
         // get folder dialogues
@@ -400,11 +403,11 @@ export async function handler(element, app) {
         }
 
         if (folder.gottenFromSW) {
-            folders.storage[folderIndex].plug = plugStates.offline;
+            folders.storage[folderIndex].plugBottomState = plugStates.offline;
         } else if (folders.storage[folderIndex].length < dialoguesByRequest) {
-            folders.storage[folderIndex].plug = plugStates.end;
+            folders.storage[folderIndex].plugBottomState = plugStates.end;
         } else {
-            folders.storage[folderIndex].plug = plugStates.loading;
+            folders.storage[folderIndex].plugBottomState = plugStates.loading;
         }
 
         // set folder url
@@ -459,25 +462,17 @@ export async function handler(element, app) {
     }
 
     // --- Get folders
-    const elem = document.createElement('li'); // add main folder
-    elem.id = '0';
-    elem.classList.add('listing-button', 'folder');
-    elem.innerHTML = `
-            <svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.065) translate(90,10)"><path d="M340.80080180740356,203.6081974435188 h-123.02250294685365 c-4.993779848098755,0 -9.871407626152038,-2.050501576423645 -13.239817657470704,-5.535822841644287 l-38.38560207653046,-40.4361036529541 c-9.226877511978149,-9.197270121574402 -21.851013281822205,-14.00125900554657 -34.63685095310211,-13.927620111465455 H47.89109272384644 C21.485096302986143,143.70789167359845 0,165.1929879765846 0,191.59822523358838 v233.156681101799 c0,26.40599642086029 21.485096302986143,47.89109272384644 47.89109272384644,47.89109272384644 h293.0858350982666 h0.04403150367736817 c26.39157230758667,-0.11691123390197757 47.78860560321808,-21.70449465751648 47.67093520545959,-48.03761134815216 V251.49853100350873 C388.69189453125,225.09253458264843 367.2067982282639,203.6081974435188 340.80080180740356,203.6081974435188 zM359.4010754556656,424.66760249188917 c0.04403150367736817,10.251748718261718 -8.259702758789063,18.643545988082884 -18.45299586009979,18.687577491760255 H47.89109272384644 c-10.251748718261718,0 -18.599514484405518,-8.3477657661438 -18.599514484405518,-18.599514484405518 V191.59822523358838 c0,-10.251748718261718 8.3477657661438,-18.599514484405518 18.599514484405518,-18.614697761535645 H131.89712842941285 c0.1609427375793457,0 0.3218854751586914,0 0.48358737659454354,0 c4.891292727470398,0 9.636825994491577,1.9480144557952879 12.82911001110077,5.111450245857239 l38.18062783527374,40.24555352497101 c8.96268848991394,9.25572573852539 21.499520416259767,14.557726112365721 34.38784520816803,14.557726112365721 h123.02250294685365 c10.251748718261718,0 18.599514484405518,8.3477657661438 18.599514484405518,18.599514484405518 V424.66760249188917 z"/><path d="M 79.72623 131.64013 C 82.73375 123.36945 87.7321 118.64883 96.77176 118.33273 C 105.81142 118.01664 183.46435 118.20887 190.12869 120.04583 C 196.79302 121.88278 238.50963 168.42677 251.30868 173.09609 C 264.10774 177.76541 389.39087 174.96474 395.48077 175.83164 C 401.57067 176.69854 410.44077 182.36042 411.03479 192.88673 C 411.62881 203.41304 413.25029 354.17958 412.89442 371.12236 C 412.53855 388.06514 399.04484 386.91183 399.12243 386.95197 C 399.20002 386.99211 398.52843 415.44312 399.20272 415.87927 C 399.87701 416.31542 440.00224 411.49112 440.71397 377.88927 C 441.4257 344.28742 440.59625 211.13798 439.96209 183.90432 C 439.32793 156.67066 421.64409 147.53851 403.11998 147.06221 C 384.59587 146.58591 275.94556 150.90709 263.1636 146.39581 C 250.38164 141.88453 208.99824 93.8881 195.98985 90.1287 C 182.98146 86.3693 97.12204 89.42811 86.57864000000001 88.4156 C 76.03523 87.40308 50.48841 106.46071 49.73653 131.27274"/></g></svg>
-            <div class="text-1 text-bigger dialogue-text centered">${mainFolderName}</div>`;
+    // create main folder
+    const elem = newElem(`<svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.065) translate(90,10)"><path d="M340.80080180740356,203.6081974435188 h-123.02250294685365 c-4.993779848098755,0 -9.871407626152038,-2.050501576423645 -13.239817657470704,-5.535822841644287 l-38.38560207653046,-40.4361036529541 c-9.226877511978149,-9.197270121574402 -21.851013281822205,-14.00125900554657 -34.63685095310211,-13.927620111465455 H47.89109272384644 C21.485096302986143,143.70789167359845 0,165.1929879765846 0,191.59822523358838 v233.156681101799 c0,26.40599642086029 21.485096302986143,47.89109272384644 47.89109272384644,47.89109272384644 h293.0858350982666 h0.04403150367736817 c26.39157230758667,-0.11691123390197757 47.78860560321808,-21.70449465751648 47.67093520545959,-48.03761134815216 V251.49853100350873 C388.69189453125,225.09253458264843 367.2067982282639,203.6081974435188 340.80080180740356,203.6081974435188 zM359.4010754556656,424.66760249188917 c0.04403150367736817,10.251748718261718 -8.259702758789063,18.643545988082884 -18.45299586009979,18.687577491760255 H47.89109272384644 c-10.251748718261718,0 -18.599514484405518,-8.3477657661438 -18.599514484405518,-18.599514484405518 V191.59822523358838 c0,-10.251748718261718 8.3477657661438,-18.599514484405518 18.599514484405518,-18.614697761535645 H131.89712842941285 c0.1609427375793457,0 0.3218854751586914,0 0.48358737659454354,0 c4.891292727470398,0 9.636825994491577,1.9480144557952879 12.82911001110077,5.111450245857239 l38.18062783527374,40.24555352497101 c8.96268848991394,9.25572573852539 21.499520416259767,14.557726112365721 34.38784520816803,14.557726112365721 h123.02250294685365 c10.251748718261718,0 18.599514484405518,8.3477657661438 18.599514484405518,18.599514484405518 V424.66760249188917 z"/><path d="M 79.72623 131.64013 C 82.73375 123.36945 87.7321 118.64883 96.77176 118.33273 C 105.81142 118.01664 183.46435 118.20887 190.12869 120.04583 C 196.79302 121.88278 238.50963 168.42677 251.30868 173.09609 C 264.10774 177.76541 389.39087 174.96474 395.48077 175.83164 C 401.57067 176.69854 410.44077 182.36042 411.03479 192.88673 C 411.62881 203.41304 413.25029 354.17958 412.89442 371.12236 C 412.53855 388.06514 399.04484 386.91183 399.12243 386.95197 C 399.20002 386.99211 398.52843 415.44312 399.20272 415.87927 C 399.87701 416.31542 440.00224 411.49112 440.71397 377.88927 C 441.4257 344.28742 440.59625 211.13798 439.96209 183.90432 C 439.32793 156.67066 421.64409 147.53851 403.11998 147.06221 C 384.59587 146.58591 275.94556 150.90709 263.1636 146.39581 C 250.38164 141.88453 208.99824 93.8881 195.98985 90.1287 C 182.98146 86.3693 97.12204 89.42811 86.57864000000001 88.4156 C 76.03523 87.40308 50.48841 106.46071 49.73653 131.27274"/></g></svg>
+            <div class="text-1 text-bigger dialogue-text centered">${mainFolderName}</div>`, 'li', '0', 'listing-button', 'folder');
     foldersListing.push(elem);
-    dialoguesListing.setPlugTopState('folder-0', dividerHTMLTemplate({ folder: 'Все входящие' }));
+    dialoguesListing.setPlugTopState('folder-0', newElem(dividerHTMLTemplate({ folder: 'Все входящие' }), 'div', '', 'dialogues-listing-divider', 'center-text'));
 
     const gottenFolders = await foldersGetter.getNextPage();
     gottenFolders.forEach((folder) => {
-        const elem = document.createElement('li');
-        elem.id = folder.id;
-        elem.classList.add('listing-button', 'folder');
-        elem.innerHTML = folderInnerHTMLTemplate({
-            title: folder.title, dialoguesCount: folder.dialoguesCount });
-
-        foldersListing.push(elem);
-        dialoguesListing.setPlugTopState('folder-' + folder.id, dividerHTMLTemplate({ folder: folder.title }));
+        foldersListing.push(newElem(folderInnerHTMLTemplate({ title: folder.title, dialoguesCount: folder.dialoguesCount }),
+            'div', folder.id, 'listing-button', 'folder'));
+        dialoguesListing.setPlugTopState('folder-' + folder.id, newElem(dividerHTMLTemplate({ folder: folder.title }), 'div', '', 'dialogues-listing-divider', 'center-text'));
     });
     if (isLostConnection) {
         foldersListing.plugBottomState = plugStates.offline;
@@ -488,21 +483,51 @@ export async function handler(element, app) {
     do {
         gottenDialogues = await dialoguesGetter.getNextPage();
         gottenDialogues.forEach((dialogue) => {
-            const elem = document.createElement('li');
-            elem.id = dialogue.id;
-            elem.classList.add('listing-button');
-            elem.innerHTML = dialogueInnerHTMLTemplate(
-                    { avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body });
+            dialogue.time = new ParsedDate(dialogue.time).getYesterdayFormatString();
+            convertAvatarUrlToDefault(dialogue, app.defaultAvatarUrl);
+            const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body }),
+                'li', dialogue.id, 'listing-button')
+            elem.username = dialogue.username;
 
             dialoguesListing.push(elem);
         });
-    } while (dialoguesListing.getElementsHeight() < dialoguesListing.block.clientHeight && dialoguesListing.plugBottomState === plugStates.loading);
 
-    if (isLostConnection) {
-        dialoguesListing.plugBottomState = plugStates.offline;
-    } else if (gottenDialogues.length < dialoguesByRequest) {
-        dialoguesListing.plug = plugStates.end;
-    }
+        dialoguesListing.plugBottomState = plugStates.loading;
+        if (isLostConnection) {
+            dialoguesListing.plugBottomState = plugStates.offline;
+        } else if (gottenDialogues.length < dialoguesByRequest) {
+            dialoguesListing.plugBottomState = plugStates.end;
+        }
+    } while (dialoguesListing.getElementsHeight() < dialoguesListing.block.clientHeight && dialoguesListing.plugBottomState === plugStates.loading);
+    dialoguesListing.redraw();
+
+    // --- Add event-listeners on folders and dialogues
+    // (we need to get elements before add their event-listeners)
+    // create Event-listener on folder element to activate it
+    foldersListing.setClickElementHandler((event) => {
+        foldersListing.clearSelected();
+        dialoguesListing.clearSelected();
+        foldersListing.setActive(event.currentTarget.id);
+    });
+    // create Event-listener on folder element to reset selected
+    foldersListing.setMousemoveElementHandler((event) => {
+        foldersListing.clearSelected();
+        dialoguesListing.clearSelected();
+        foldersListing.addSelected(event.currentTarget.id);
+    });
+
+    // create Event-listener on dialogue element to activate it
+    dialoguesListing.setClickElementHandler((event) => {
+        foldersListing.clearSelected();
+        dialoguesListing.clearSelected();
+        dialoguesListing.setActive(event.currentTarget.id);
+    });
+    // create Event-listener on dialogue element to reset selected
+    dialoguesListing.setMousemoveElementHandler((event) => {
+        foldersListing.clearSelected();
+        dialoguesListing.clearSelected();
+        dialoguesListing.addSelected(event.currentTarget.id);
+    });
 
     // --- Create send message event-listener
     document.getElementById('message-send-button').addEventListener('click', async (event) => {
@@ -525,8 +550,8 @@ export async function handler(element, app) {
     // create resize message input event-listener
     messageInput.addEventListener('input', (event) => {
         // push message and theme into localStorage
-        localStorage.setItem(dialoguesListing.activeElem.id + '-theme', themeInput.value);
-        localStorage.setItem(dialoguesListing.activeElem.id + '-message', messageInput.value);
+        localStorage.setItem(dialoguesListing.activeElem.username + '-theme', themeInput.value);
+        localStorage.setItem(dialoguesListing.activeElem.username + '-message', messageInput.value);
         // resize input element
         messageInput.style.height = messageInput.style.minHeight;
         messageInput.style.height = messageInput.scrollHeight + 2 + 'px'; // 2 = border-width * 2
@@ -569,20 +594,22 @@ export async function handler(element, app) {
             dialoguesListing = new Listing(dialoguesListingElem);
             // get found dialogues
             dialoguesGetter.get(['find', findText]).forEach((dialogue) => {
-                const elem = document.createElement('li');
-                elem.id = dialogue.id;
-                elem.classList.add('listing-button');
-                elem.innerHTML = dialogueInnerHTMLTemplate(
-                        { avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body });
+                dialogue.time = new ParsedDate(dialogue.time).getYesterdayFormatString();
+                convertAvatarUrlToDefault(dialogue, app.defaultAvatarUrl);
+                const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body }),
+                        'li', dialogue.id, 'listing-button')
+                elem.username = dialogue.username;
+
+                dialoguesListing.push(elem);
             });
 
             dialoguesListing.push(elem);
             foundDialogues[findText] = dialoguesListing;
         }
         // set offline plug
-        dialoguesListing.plug = plugStates.none;
+        dialoguesListing.plugBottomState = plugStates.none;
         if (isLostConnection) {
-            dialoguesListing.plug = plugStates.offline;
+            dialoguesListing.plugBottomState = plugStates.offline;
         }
         dialoguesListing.redraw();
 
@@ -632,11 +659,11 @@ export async function handler(element, app) {
 
             // Create new dialogue
             createdDialogues += 1;
-            const elem = document.createElement('li');
-            elem.id = '-' + createdDialogues;
-            elem.classList.add('listing-button');
-            elem.innerHTML = dialogueInnerHTMLTemplate(
-                    { time: getCurrentTime(), title: findText, body: '' });
+            const tmpAvatarContainer = {};
+            convertAvatarUrlToDefault(tmpAvatarContainer, app.defaultAvatarUrl);
+            const elem = newElem(dialogueInnerHTMLTemplate({ avatar: tmpAvatarContainer.avatarUrl, time: new ParsedDate(new Date().toString()).getYesterdayFormatString(), title: findText, body: '' }),
+                    'li', '-' + createdDialogues, 'listing-button')
+            elem.username = findText;
 
             dialoguesListing.unshift(elem);
             dialoguesListing.setActive(-createdDialogues);
@@ -749,25 +776,12 @@ export async function handler(element, app) {
     }
 
     /**
-     * Converts DateTime format to string in all array elements
-     *
-     * @param array to replace time in
-     */
-    function convertTimesToStr(array) {
-        array.forEach((elem) => {
-            elem.time = new ParsedDate(elem.time).getYesterdayFormatString();
-        });
-    }
-
-    /**
      * Add create new dialogue element on top of dialogues listing
      */
     function addCreateNewDialogueElem() {
         // create dialogue HTML-element
-        const elem = document.createElement('li');
-        elem.id = 'new-dialogue-button';
-        elem.classList.add('listing-button', 'center-text', 'p-xs');
-        elem.innerHTML = '<svg class="plus-button" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(3) translate(1, -2)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>';
+        const elem = newElem('<svg class="plus-button" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(3) translate(1, -2)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>',
+                'li', 'new-dialogue-button', 'listing-button', 'center-text', 'p-xs');
         dialoguesListingElem.insertBefore(elem, dialoguesListingElem.firstChild);
 
         // create Event-listener on element
@@ -824,7 +838,7 @@ export async function handler(element, app) {
                 id: -createdMessages,
                 sender: `${app.storage.username}@liokor.ru`,
                 title: currentTitle,
-                time:  new ParsedDate(new Date().toString()).getYesterdayFormatString(),
+                time: new ParsedDate(new Date().toString()).getYesterdayFormatString(),
                 status: nowStatus,
                 body: [message]
             });
@@ -832,4 +846,21 @@ export async function handler(element, app) {
         dialoguesListing.activeElem.redraw();
         dialoguesListing.activeElem.messagesListing.scrollToBottom();
     }
+}
+
+/**
+ * Creates new HTML element
+ *
+ * @param innerHTML
+ * @param tag
+ * @param id
+ * @param classes
+ * @returns {*}
+ */
+function newElem(innerHTML, tag, id, ...classes) {
+    const elem = document.createElement(tag);
+    elem.id = id;
+    elem.classList.add(...classes);
+    elem.innerHTML = innerHTML;
+    return elem;
 }

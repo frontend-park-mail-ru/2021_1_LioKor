@@ -12,6 +12,7 @@ export class Listing {
 
     scrollHandler;
     clickElementHandler;
+    mousemoveElementHandler
     onActiveHandler;
 
     selectedElems = [];
@@ -44,10 +45,10 @@ export class Listing {
 
     setScrollHandlers(scrollTopHandler, scrollBottomHandler, scrollTopOffset = 0, scrollBottomOffset = 0) {
         this.scrollHandler = (event) => {
-            if (this.block.scrollTop < scrollTopOffset) {
+            if (this.block.scrollTop <= scrollTopOffset && scrollTopHandler) {
                 scrollTopHandler(event);
             }
-            if (this.block.scrollTop + this.block.clientHeight < this.block.scrollHeight - scrollTopOffset) {
+            if (this.block.scrollTop + this.block.clientHeight >= this.block.scrollHeight - scrollBottomOffset && scrollBottomHandler) {
                 scrollBottomHandler(event);
             }
         };
@@ -60,11 +61,19 @@ export class Listing {
     }
 
     setClickElementHandler(handler) {
-        this.clickElementHandler = (event) => {
-            handler(event);
-        };
+        this.clickElementHandler = handler;
 
-        this.block.addEventListener('click', this.clickElementHandler);
+        this.elements.forEach((elem) => {
+            elem.addEventListener('click', this.clickElementHandler);
+        });
+    }
+
+    setMousemoveElementHandler(handler) {
+        this.mousemoveElementHandler = handler;
+
+        this.elements.forEach((elem) => {
+            elem.addEventListener('mousemove', this.mousemoveElementHandler);
+        });
     }
 
     push(element) {
@@ -154,18 +163,21 @@ export class Listing {
     }
 
     setActive(id) {
-        if (this.activeElem.id === id) {
-            return;
-        }
-
         if (this.activeElem) {
-            this.activeElem.classList.remove('active');
+            if (this.activeElem.id === id) {
+                return;
+            }
+
+            if (this.activeElem) {
+                this.activeElem.classList.remove('active');
+            }
         }
+        const previousActive = this.activeElem;
         this.activeElem = this.findById(id);
         this.activeElem.classList.add('active');
 
         if (this.onActiveHandler) {
-            this.onActiveHandler(this.activeElem);
+            this.onActiveHandler(this.activeElem, previousActive);
         }
     }
 

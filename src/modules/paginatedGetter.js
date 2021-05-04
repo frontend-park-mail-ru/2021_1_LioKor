@@ -1,22 +1,32 @@
-import { request } from '../modules/requests';
+import { request } from './requests';
 
 export class paginatedGetter {
     URL;
     elementsByRequest;
     sortBy;
     sinceParamName;
+    amountParamName;
 
     currentLastElement;
 
-    constructor(baseURL, sinceParamName, startFrom, elementsByRequest, sortBy) {
+    onErrorHandler;
+
+    constructor(baseURL, sinceParamName, startFrom, amountParamName, elementsByRequest, sortBy) {
         this.URL = new URL(baseURL);
         this.currentLastElement = startFrom;
         this.elementsByRequest = elementsByRequest;
         this.sinceParamName = sinceParamName;
+        this.amountParamName = amountParamName;
+        this.sortBy = sortBy;
         this.URL.searchParams.set(sinceParamName, startFrom);
+        this.URL.searchParams.set(amountParamName, elementsByRequest);
     }
 
     queryToURL(query) {
+        if (!query) {
+            return this.URL.toString();
+        }
+
         query.forEach((param) => {
             this.URL.searchParams.set(param[0], param[1]);
         });
@@ -28,7 +38,7 @@ export class paginatedGetter {
     }
 
     async getNextPage(...query) {
-        const gotten = await request('GET', this.queryToURL(query), {});
+        const gotten = await this.get(query);
         gotten.forEach((item) => {
             this.currentLastElement = Math.max(this.currentLastElement, item[this.sortBy]);
         });
@@ -37,6 +47,14 @@ export class paginatedGetter {
     }
 
     async get(...query) {
-        return await request('GET', this.queryToURL(query), {});
+        const res = await request('GET', this.queryToURL(query), {});
+        if (!res.ok) {
+            if (this.onErrorHandler) {
+                this.onErrorHandler(res);
+            }
+            return [];
+        }
+
+        return await res.json();
     }
 }
