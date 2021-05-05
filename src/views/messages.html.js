@@ -143,7 +143,6 @@ export async function handler(element, app) {
 
     // --- One-element containers
     let createdDialogues = 0;
-    let createdMessages = 0;
     let isLostConnection = false;
 
     // --- Handlebars templates
@@ -427,7 +426,7 @@ export async function handler(element, app) {
 
             // set dialogue url
             const currentPath = new URL(window.location.href);
-            currentPath.searchParams.set('dialogue', dialogue.id);
+            currentPath.searchParams.set('dialogue', dialogue.username);
             history.pushState(null, null, currentPath.toString());
             document.title = `${app.name} | ${dialogue.username}`;
 
@@ -483,6 +482,7 @@ export async function handler(element, app) {
     foldersListing.setOnActiveHandler(async (folder) => {
         // create new dialoguesListing for folder
         if (!folder.dialoguesListing || folder.plugBottomState === plugStates.offline) {
+            dialoguesListing.scrollActive = false;
             dialoguesListing = newDialoguesListing();
             folder.dialoguesListing = dialoguesListing;
 
@@ -509,7 +509,9 @@ export async function handler(element, app) {
                 dialoguesListing.redraw(); // to get elements height. Before drawing it equals 0
             } while (dialoguesListing.getElementsHeight() < dialoguesListing.block.clientHeight && dialoguesListing.plugBottomState === plugStates.loading);
         }
+        dialoguesListing.scrollActive = false;
         dialoguesListing = folder.dialoguesListing;
+        dialoguesListing.scrollActive = true;
         dialoguesListing.plugTopState = 'folder-' + folder.id;
         foldersListing.undraw();
         if (foldersListing.isOpened) {
@@ -584,7 +586,7 @@ export async function handler(element, app) {
     const gottenDialogue = searchParams.get('dialogue');
     const gottenFolder = searchParams.get('folder');
     if (gottenDialogue) {
-        dialoguesListing.setActive(gottenDialogue);
+        dialoguesListing.setActive(dialoguesListing.findBy('username', gottenDialogue).id);
     }
     if (gottenFolder) {
         foldersListing.setActive(gottenFolder);
@@ -653,6 +655,7 @@ export async function handler(element, app) {
     findInput.addEventListener('input', async (event) => {
         // get find value
         const findText = findInput.value;
+        dialoguesListing.scrollActive = false;
         dialoguesListing = foundDialogues[findText];
         if (!dialoguesListing) {
             dialoguesListing = newDialoguesListing();
@@ -677,6 +680,8 @@ export async function handler(element, app) {
 
             foundDialogues[findText] = dialoguesListing;
         }
+        dialoguesListing.scrollActive = true;
+
         // set offline plug
         dialoguesListing.plugBottomState = plugStates.none;
         if (isLostConnection) {
@@ -687,7 +692,7 @@ export async function handler(element, app) {
 
         // redraw add-dialogue button
         if (validateEmail(findText)) { // address valid
-            if (dialoguesListing.findBy('username', findText)) { // dialogue with accuracy coincidence not found
+            if (!dialoguesListing.findBy('username', findText)) { // dialogue with accuracy coincidence not found
                 addCreateNewDialogueElem(); // draw a button that creates a new dialogue
                 findButton.innerHTML = '<path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z"/>';
             } else { // dialogue found => draw arrow on button
@@ -714,12 +719,12 @@ export async function handler(element, app) {
             findInput.blur();
         } else if (event.keyCode === 13) { // Enter
             const findText = findInput.value;
-            findInput.dispatchEvent(new Event('input'));
 
             // Set active dialogue
             const foundDialogue = dialoguesListing.findBy('username', findText);
             if (foundDialogue) {
                 findInput.value = '';
+                findInput.dispatchEvent(new Event('input'));
                 messageInput.focus();
                 dialoguesListing.setActive(foundDialogue.id);
                 return;
@@ -730,10 +735,11 @@ export async function handler(element, app) {
             }
 
             findInput.value = '';
+            findInput.dispatchEvent(new Event('input'));
             themeInput.focus();
             // Create new dialogue
             createdDialogues += 1;
-            const tmpAvatarContainer = {};
+            const tmpAvatarContainer = {username: findText};
             convertAvatarUrlToDefault(tmpAvatarContainer, app.defaultAvatarUrl);
             const elem = newElem(dialogueInnerHTMLTemplate({ avatar: tmpAvatarContainer.avatarUrl, time: new ParsedDate().getYesterdayFormatString(), title: findText, body: '' }),
                 'li', '-' + createdDialogues, 'listing-button', 'droppable');
@@ -742,6 +748,11 @@ export async function handler(element, app) {
 
             dialoguesListing.unshift(elem);
             dialoguesListing.setActive(-createdDialogues);
+            foldersListing.undraw();
+            if (foldersListing.isOpened) {
+                foldersListing.draw()
+            }
+            dialoguesListing.draw();
             dialoguesListing.scrollToTop();
         }
     });
@@ -917,7 +928,6 @@ export async function handler(element, app) {
         if (lastMessage && nowStatus === lastMessage.status && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
             lastMessage.firstElementChild.innerHTML += `<div id="${lastMessage.id}" class="message-body">${message}</div>`;
         } else {
-            createdMessages += 1;
             // add block to messages list
             const elem = newElem(messageBlockInnerHTMLTemplate({
                 side: 'your',
@@ -928,7 +938,7 @@ export async function handler(element, app) {
                 title: currentTitle,
                 body: [message]
             }),
-            'div', -createdMessages, 'message-block-full', 'right-block');
+            'div', lastMessage ? lastMessage.id + 1 : 0, 'message-block-full', 'right-block');
             elem.title = currentTitle;
             elem.sender = `${app.storage.username}@liokor.ru`;
             elem.status = nowStatus;
@@ -966,7 +976,7 @@ export async function handler(element, app) {
         });
         const responseData = await response.json();
         if (!response.ok) {
-            app.messages.error(`Ошибка ${response.status}`, `Не удалось отправить письмо: ${responseData.message}`);
+            app.messages.error(`Ошибка ${response.status}`, `Не удалось добавить в папку: ${responseData.message}`);
             return;
         }
         app.messages.success('Диалог перемещён', '');
@@ -977,7 +987,7 @@ export async function handler(element, app) {
      */
     async function createNewFolder(title) {
         const response = await app.apiPost('/email/folder', {
-            folderName: title
+            name: title
         });
         const responseData = await response.json();
         if (!response.ok) {

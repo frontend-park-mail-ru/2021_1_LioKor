@@ -29,7 +29,7 @@ export class Listing {
     }
 
     findById(id) {
-        return this.elements.find(elem => elem.id === id);
+        return this.elements.find(elem => elem.id === String(id));
     }
 
     findBy(fieldName, value) {
