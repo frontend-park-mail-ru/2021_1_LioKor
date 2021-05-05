@@ -1,15 +1,6 @@
 import { request } from './requests';
 
 export default class paginatedGetter {
-    URL;
-    elementsByRequest;
-    sortBy;
-    sinceParamName;
-    amountParamName;
-
-    currentLastElement;
-
-    onErrorHandler;
 
     constructor(baseURL, sinceParamName, startFrom, amountParamName, elementsByRequest, sortBy) {
         this.URL = new URL(baseURL);
@@ -20,6 +11,8 @@ export default class paginatedGetter {
         this.sortBy = sortBy;
         this.URL.searchParams.set(sinceParamName, startFrom);
         this.URL.searchParams.set(amountParamName, elementsByRequest);
+
+        this.onErrorHandler = null;
     }
 
     queryToURL(query) {

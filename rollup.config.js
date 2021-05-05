@@ -5,13 +5,13 @@ import commonjs from '@rollup/plugin-commonjs';
 
 import styles from "rollup-plugin-styles";
 import copy from 'rollup-plugin-copy'
-import { uglify } from "rollup-plugin-uglify";
+// import { uglify } from "rollup-plugin-uglify";
 
 export default {
     input: 'src/index.js',
     output: {
         sourcemap: true,
-        file: 'build/bundle.min.js',
+        file: 'build/bundle.js',
         format: 'cjs',
         assetFileNames: "assets/[name][extname]"
     },
@@ -30,7 +30,7 @@ export default {
             throwOnError: true,
             exclude: 'src/styles/**'
         }),*/
-        uglify(),
+        // uglify(),
         copy({
             targets: [
                 { src: 'src/images/*', dest: 'build/images' },

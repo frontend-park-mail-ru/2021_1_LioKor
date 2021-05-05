@@ -6,27 +6,27 @@ export const plugStates = {
 };
 
 export class Listing {
-    block;
-    elements = [];
-    placeholder;
-
-    scrollHandler;
-    clickElementHandler;
-    mousemoveElementHandler
-    onActiveHandler;
-
-    selectedElems = [];
-    activeElem;
-
-    plugTopState = plugStates.none;
-    plugsTop = [];
-    plugBottomState = plugStates.none;
-    plugsBottom = [];
-
-    scrollActive = true;
-
     constructor(block) {
         this.block = block;
+
+        this.block;
+        this.elements = [];
+        this.placeholder;
+
+        this.scrollHandler;
+        this.clickElementHandler;
+        this.mousemoveElementHandler
+        this.onActiveHandler;
+
+        this.selectedElems = [];
+        this.activeElem;
+
+        this.plugTopState = plugStates.none;
+        this.plugsTop = [];
+        this.plugBottomState = plugStates.none;
+        this.plugsBottom = [];
+
+        this.scrollActive = true;
     }
 
     findById(id) {
