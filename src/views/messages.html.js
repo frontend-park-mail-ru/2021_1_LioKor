@@ -107,7 +107,7 @@ export async function handler(element, app) {
 
     const controlKeys = [13, 27, 37, 38, 39, 40]; // enter, escape, [arrows]
 
-    const mainFolderName = 'Все входящие';
+    const mainFolderName = 'Общая';
 
     // --- HTML elements
     const dialoguesListingElem = document.getElementById('dialogues-listing');
@@ -586,12 +586,19 @@ export async function handler(element, app) {
     const gottenDialogue = searchParams.get('dialogue');
     const gottenFolder = searchParams.get('folder');
     if (gottenFolder) {
-        await foldersListing.setActive(gottenFolder);
+        if (foldersListing.findById(gottenFolder)) {
+            await foldersListing.setActive(gottenFolder);
+        } else {
+            app.messages.error(`Папка не найдена`, 'ID: ' + gottenFolder);
+        }
     }
     if (gottenDialogue) {
-        console.log(dialoguesListing.findBy('username', gottenDialogue));
-        console.log(gottenDialogue);
-        await dialoguesListing.setActive(dialoguesListing.findBy('username', gottenDialogue).id);
+        const foundDialogue = dialoguesListing.findBy('username', gottenDialogue);
+        if (foundDialogue) {
+            await dialoguesListing.setActive(foundDialogue.id);
+        } else {
+            app.messages.error(`Диалог не найден`, gottenDialogue);
+        }
     }
 
     // --- Create send message event-listener
@@ -658,7 +665,11 @@ export async function handler(element, app) {
         // get find value
         const findText = findInput.value;
         dialoguesListing.scrollActive = false;
-        dialoguesListing = foundDialogues[findText];
+        if (findText === '') {
+            dialoguesListing = foldersListing.activeElem.dialoguesListing;
+        } else {
+            dialoguesListing = foundDialogues[findText];
+        }
         if (!dialoguesListing) {
             dialoguesListing = newDialoguesListing();
             // get found dialogues
