@@ -21,6 +21,17 @@ export default class ParsedDate {
         this.second = this.dt.getSeconds().toString().padStart(2, '0');
     }
 
+    getYesterdayFormatString(): string {
+        const now = new Date();
+        if (this.dt.getDate() === now.getDate()) { // today
+            return `${this.hour}:${this.minute}`;
+        } else if (this.dt.getDate() === now.getDate() - 1) { // yesterday
+            return `Вчера ${this.hour}:${this.minute}`;
+        }
+        // long time ago
+        return `${this.day}.${this.month} ${this.hour}:${this.minute}`;
+    }
+
     getDateString(): string {
         return `${this.day}.${this.month}.${this.yearShort} ${this.hour}:${this.minute}:${this.second}`;
     }

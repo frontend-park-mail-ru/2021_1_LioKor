@@ -75,7 +75,7 @@ export default class App {
                 authRequired: true
             },
             {
-                urlRegex: /^\/(\?with=.*)?$/,
+                urlRegex: /^\/(\?.*)?$/,
                 handler: messages.handler,
                 authRequired: true
             }
