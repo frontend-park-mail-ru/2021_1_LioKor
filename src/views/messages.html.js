@@ -254,9 +254,9 @@ export async function handler(element, app) {
      *
      * @returns {Listing}
      */
-    function newDialoguesListing() {
+    function newDialoguesListing(additionalQuery = '') {
         const dialoguesListing = new Listing(dialoguesListingElem);
-        dialoguesListing.networkGetter = new PaginatedGetter(app.apiUrl + '/email/dialogues', 'since', -1, 'amount', dialoguesByRequest, 'id');
+        dialoguesListing.networkGetter = new PaginatedGetter(app.apiUrl + '/email/dialogues' + additionalQuery, 'since', -1, 'amount', dialoguesByRequest, 'id');
         dialoguesListing.networkGetter.onErrorHandler = (response) => {
             if (response.status !== 418) { // Empty response from SW (offline mode)
                 app.messages.error(`Ошибка ${response.status}`, 'Не удалось получить список диалогов!');
@@ -483,7 +483,7 @@ export async function handler(element, app) {
         // create new dialoguesListing for folder
         if (!folder.dialoguesListing || folder.plugBottomState === plugStates.offline) {
             dialoguesListing.scrollActive = false;
-            dialoguesListing = newDialoguesListing();
+            dialoguesListing = newDialoguesListing('?folder=' + folder.id);
             folder.dialoguesListing = dialoguesListing;
 
             // get folder dialogues
@@ -685,10 +685,19 @@ export async function handler(element, app) {
         dialoguesListing.scrollActive = true;
 
         // set offline plug
-        dialoguesListing.plugBottomState = plugStates.none;
-        if (isLostConnection) {
-            dialoguesListing.plugBottomState = plugStates.offline;
+        if (findText !== '') {
+            dialoguesListing.plugBottomState = plugStates.none;
+            if (isLostConnection) {
+                dialoguesListing.plugBottomState = plugStates.offline;
+            }
         }
+
+        // close folders listing
+        if (foldersListing.isOpened) {
+            foldersButton.dispatchEvent(new Event('click'));
+        }
+
+        // redraw dialogues
         dialoguesListing.redraw();
         dialoguesListing.scrollToTop();
 
@@ -973,19 +982,20 @@ export async function handler(element, app) {
      */
     async function addDialogueToFolder(dialogue, folder) {
         const response = await app.apiPut('/email/folder', {
-            dialogueId: dialogue,
-            folderId: folder
+            dialogueId: Number(dialogue),
+            folderId: Number(folder)
         });
         const responseData = await response.json();
         if (!response.ok) {
             app.messages.error(`Ошибка ${response.status}`, `Не удалось добавить в папку: ${responseData.message}`);
             return;
         }
-        app.messages.success('Диалог перемещён', '');
+        app.messages.success(`Диалог перемещён`, `Диалог ${dialoguesListing.findById(dialogue).username} в папку ${foldersListing.findById(folder).title}`);
     }
 
     /**
      * @param title
+     * @return id
      */
     async function createNewFolder(title) {
         const response = await app.apiPost('/email/folder', {
@@ -1020,8 +1030,8 @@ export async function handler(element, app) {
                     return;
                 }
                 if (underElem.classList.contains('folder')) {
-                    const curDialogues = foldersListing.findById(underElem.id).dialoguesListing;
-                    if (!isInside || curDialogues === dialoguesListing) {
+                    const folderDialogues = foldersListing.findById(underElem.id).dialoguesListing;
+                    if (!isInside || folderDialogues === dialoguesListing) {
                         elem.remove();
                         foldersListing.undraw();
                         if (foldersListing.isOpened) {
@@ -1030,12 +1040,13 @@ export async function handler(element, app) {
                         dialoguesListing.draw();
                         return;
                     }
+                    await addDialogueToFolder(elem.id, underElem.id);
+
                     dialoguesListing.delete(elem.id);
 
-                    if (curDialogues) {
-                        curDialogues.unshift(elem);
+                    if (folderDialogues) {
+                        folderDialogues.unshift(elem);
                     }
-                    await addDialogueToFolder(elem.id, underElem.id);
                     return;
                 }
                 // drop dialogue on dialogue => create folder
@@ -1048,18 +1059,22 @@ export async function handler(element, app) {
                     dialoguesListing.draw();
                     return;
                 }
-                dialoguesListing.delete(elem.id);
-                dialoguesListing.delete(underElem.id);
-
+                // create folder
                 const folderId = await createNewFolder(elem.username);
-                await addDialogueToFolder(elem.id, folderId);
-                await addDialogueToFolder(underElem.id, folderId);
-
                 const folderElem = newElem(folderInnerHTMLTemplate({ title: elem.username, dialoguesCount: 2 }),
                     'div', folderId, 'listing-button', 'folder', 'droppable');
                 folderElem.name = elem.username;
                 foldersListing.push(folderElem);
 
+                // put dialogues into folder
+                await addDialogueToFolder(elem.id, folderId);
+                await addDialogueToFolder(underElem.id, folderId);
+
+                // delete dialogues from current page
+                dialoguesListing.delete(elem.id);
+                dialoguesListing.delete(underElem.id);
+
+                // open dialogues listing
                 if (foldersListing.isOpened) {
                     foldersListing.redraw();
                     dialoguesListing.draw();
