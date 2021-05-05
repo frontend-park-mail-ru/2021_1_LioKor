@@ -1061,7 +1061,13 @@ export async function handler(element, app) {
                     return;
                 }
                 // drop dialogue on dialogue => create folder
-                if (!isInside) {
+                let folderName;
+                if (isInside) {
+                    // Ask user for name of folder
+                    folderName = window.prompt(`Вы собираетесь создать новую папку из двух диалогов.
+Как она будет называться?`);
+                }
+                if (!folderName) {
                     elem.remove();
                     foldersListing.undraw();
                     if (foldersListing.isOpened) {
@@ -1070,9 +1076,10 @@ export async function handler(element, app) {
                     dialoguesListing.draw();
                     return;
                 }
+
                 // create folder
-                const folderId = await createNewFolder(elem.username);
-                const folderElem = newElem(folderInnerHTMLTemplate({ title: elem.username, dialoguesCount: 2 }),
+                const folderId = await createNewFolder(folderName);
+                const folderElem = newElem(folderInnerHTMLTemplate({ title: folderName, dialoguesCount: 2 }),
                     'div', folderId, 'listing-button', 'folder', 'droppable');
                 folderElem.name = elem.username;
                 foldersListing.push(folderElem);
