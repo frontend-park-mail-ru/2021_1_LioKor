@@ -1,12 +1,18 @@
 const moveOffset = 5;
 
+/**
+ * @param elem
+ * @param enterDroppableHandler
+ * @param leaveDroppableHandler
+ * @param mouseUpHandler
+ */
 export default function setDraggable(elem, enterDroppableHandler, leaveDroppableHandler, mouseUpHandler) {
     elem.onmousedown = (event) => {
         let currentDroppable;
-        let shiftX = event.clientX - elem.getBoundingClientRect().left;
-        let shiftY = event.clientY - elem.getBoundingClientRect().top;
-        let initialX = event.clientX;
-        let initialY = event.clientY;
+        const shiftX = event.clientX - elem.getBoundingClientRect().left;
+        const shiftY = event.clientY - elem.getBoundingClientRect().top;
+        const initialX = event.clientX;
+        const initialY = event.clientY;
         let canMove = false;
 
         const onMouseMove = (event) => {
@@ -35,7 +41,7 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
 
             // получаем элемент под ним
             elem.style.display = 'none';
-            let elemBelow = document.elementFromPoint(event.clientX, event.clientY);
+            const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
             elem.style.display = 'block';
 
             if (!elemBelow) return;
@@ -53,7 +59,7 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
                     enterDroppableHandler(currentDroppable);
                 }
             }
-        }
+        };
 
         document.addEventListener('mousemove', onMouseMove);
 
@@ -76,11 +82,15 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
         };
     };
 
-    elem.ondragstart = function() {
+    elem.ondragstart = function () {
         return false;
     };
 }
 
+/**
+ * @param x
+ * @param y
+ */
 function isOnDroppable(x, y) {
     const closestDraggable = document.elementFromPoint(x, y).closest('.droppable');
     if (!closestDraggable) {

@@ -1,7 +1,6 @@
 import { request } from './requests';
 
-export default class paginatedGetter {
-
+export default class PaginatedGetter {
     constructor(baseURL, sinceParamName, startFrom, amountParamName, elementsByRequest, sortBy) {
         this.URL = new URL(baseURL);
         this.currentLastElement = startFrom;

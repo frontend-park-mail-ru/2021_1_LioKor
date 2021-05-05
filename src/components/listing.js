@@ -9,17 +9,16 @@ export class Listing {
     constructor(block) {
         this.block = block;
 
-        this.block;
         this.elements = [];
-        this.placeholder;
+        this.placeholder = null;
 
-        this.scrollHandler;
-        this.clickElementHandler;
-        this.mousemoveElementHandler
-        this.onActiveHandler;
+        this.scrollHandler = null;
+        this.clickElementHandler = null;
+        this.mousemoveElementHandler = null;
+        this.onActiveHandler = null;
 
         this.selectedElems = [];
-        this.activeElem;
+        this.activeElem = null;
 
         this.plugTopState = plugStates.none;
         this.plugsTop = [];
@@ -102,7 +101,7 @@ export class Listing {
 
     delete(id) {
         const index = this.elements.findIndex(elem => elem.id === id);
-        this.removeAllListeners(this.elements[index])
+        this.removeAllListeners(this.elements[index]);
         this.elements[index].remove();
         this.elements.splice(index, 1);
     }
@@ -115,7 +114,7 @@ export class Listing {
 
     clear() {
         this.elements.forEach((elem) => {
-            this.removeAllListeners(elem)
+            this.removeAllListeners(elem);
             elem.remove();
         });
     }

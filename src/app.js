@@ -1,5 +1,3 @@
-import Handlebars from 'handlebars/dist/cjs/handlebars';
-
 import * as renderer from './modules/renderer';
 
 import { request } from './modules/requests';
