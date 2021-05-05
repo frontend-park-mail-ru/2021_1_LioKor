@@ -195,16 +195,16 @@ export async function handler(element, app) {
     // Create folders listing
     const foldersListing = new Listing(dialoguesListingElem);
     // create Event-listener on folder element to activate it
-    foldersListing.setClickElementHandler((event) => {
+    foldersListing.setClickElementHandler(async (event) => {
         foldersListing.clearSelected();
         dialoguesListing.clearSelected();
-        foldersListing.setActive(event.currentTarget.id);
+        await foldersListing.setActive(event.currentTarget.id);
     });
     // create Event-listener on folder element to reset selected
-    foldersListing.setMousemoveElementHandler((event) => {
+    foldersListing.setMousemoveElementHandler(async (event) => {
         foldersListing.clearSelected();
         dialoguesListing.clearSelected();
-        foldersListing.addSelected(event.currentTarget.id);
+        await foldersListing.addSelected(event.currentTarget.id);
     });
 
     messagesListingElem.innerHTML = `
@@ -464,16 +464,16 @@ export async function handler(element, app) {
         }, 0, dialoguesScrollLoadOffset);
 
         // create Event-listener on dialogue element to activate it
-        dialoguesListing.setClickElementHandler((event) => {
+        dialoguesListing.setClickElementHandler(async (event) => {
             foldersListing.clearSelected();
             dialoguesListing.clearSelected();
-            dialoguesListing.setActive(event.currentTarget.id);
+            await dialoguesListing.setActive(event.currentTarget.id);
         });
         // create Event-listener on dialogue element to reset selected
-        dialoguesListing.setMousemoveElementHandler((event) => {
+        dialoguesListing.setMousemoveElementHandler(async (event) => {
             foldersListing.clearSelected();
             dialoguesListing.clearSelected();
-            dialoguesListing.addSelected(event.currentTarget.id);
+            await dialoguesListing.addSelected(event.currentTarget.id);
         });
 
         return dialoguesListing;
@@ -585,11 +585,13 @@ export async function handler(element, app) {
     const searchParams = new URL(window.location.href).searchParams;
     const gottenDialogue = searchParams.get('dialogue');
     const gottenFolder = searchParams.get('folder');
-    if (gottenDialogue) {
-        dialoguesListing.setActive(dialoguesListing.findBy('username', gottenDialogue).id);
-    }
     if (gottenFolder) {
-        foldersListing.setActive(gottenFolder);
+        await foldersListing.setActive(gottenFolder);
+    }
+    if (gottenDialogue) {
+        console.log(dialoguesListing.findBy('username', gottenDialogue));
+        console.log(gottenDialogue);
+        await dialoguesListing.setActive(dialoguesListing.findBy('username', gottenDialogue).id);
     }
 
     // --- Create send message event-listener
@@ -726,7 +728,7 @@ export async function handler(element, app) {
                 findInput.value = '';
                 findInput.dispatchEvent(new Event('input'));
                 messageInput.focus();
-                dialoguesListing.setActive(foundDialogue.id);
+                await dialoguesListing.setActive(foundDialogue.id);
                 return;
             }
 
@@ -747,7 +749,7 @@ export async function handler(element, app) {
             setDialogueDraggable(elem);
 
             dialoguesListing.unshift(elem);
-            dialoguesListing.setActive(-createdDialogues);
+            await dialoguesListing.setActive(-createdDialogues);
             foldersListing.undraw();
             if (foldersListing.isOpened) {
                 foldersListing.draw()
