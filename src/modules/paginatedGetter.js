@@ -1,6 +1,6 @@
 import { request } from './requests';
 
-export class paginatedGetter {
+export default class paginatedGetter {
     URL;
     elementsByRequest;
     sortBy;
