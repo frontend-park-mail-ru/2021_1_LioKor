@@ -440,7 +440,7 @@ export async function handler(element, app) {
         });
 
         // create dialogues scroll event-listener to upload new dialogues
-        dialoguesListing.setScrollHandlers(null, async (event) => {
+        /* dialoguesListing.setScrollHandlers(null, async (event) => {
             const newDialogues = await dialoguesListing.networkGetter.getNextPage();
 
             newDialogues.forEach((dialogue) => {
@@ -461,7 +461,7 @@ export async function handler(element, app) {
                 dialoguesListing.plugBottomState = plugStates.end;
             }
             dialoguesListing.redraw();
-        }, 0, dialoguesScrollLoadOffset);
+        }, 0, dialoguesScrollLoadOffset); */
 
         // create Event-listener on dialogue element to activate it
         dialoguesListing.setClickElementHandler(async (event) => {
