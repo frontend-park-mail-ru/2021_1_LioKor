@@ -112,18 +112,18 @@ export async function handler(element, app) {
 
         const response = await app.apiPut(`/user/${username}`, { fullname, avatarUrl, reserveEmail });
         if (!response.ok) {
-            app.messageError(`Ошибка ${response.status}!`, 'Не удалось изменить данные!');
+            app.messages.error(`Ошибка ${response.status}!`, 'Не удалось изменить данные!');
             return;
         }
         app.storage.avatar = avatarUrl;
-        app.messageSuccess('Успех!', 'Данные успешно изменены!');
+        app.messages.success('Успех!', 'Данные успешно изменены!');
     });
 
     document.getElementById('logoutButton').addEventListener('click', async (event) => {
         event.preventDefault();
         await app.apiDelete('/user/session');
         app.clearStorage();
-        app.messageSuccess('До свидания!', 'Вы успешно вышли из аккаунта!');
+        app.messages.success('До свидания!', 'Вы успешно вышли из аккаунта!');
         await app.goto('/auth');
     });
 
@@ -145,7 +145,7 @@ export async function handler(element, app) {
         const response = await app.apiPut(`/user/${username}`, { fullname, avatarUrl, reserveEmail });
         if (response.ok) {
             avatarImage.src = dataURL;
-            app.messageSuccess('Успех', 'Аватар успешно изменён');
+            app.messages.success('Успех', 'Аватар успешно изменён');
         }
     });
 }

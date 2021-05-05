@@ -97,7 +97,7 @@ export async function handler(element, app) {
 
         switch (response.status) {
         case 200:
-            app.messageSuccess('Успех!', 'Пароль изменён');
+            app.messages.success('Успех!', 'Пароль изменён');
             await app.goto('/user');
             break;
         case 400:
@@ -106,10 +106,10 @@ export async function handler(element, app) {
             oldPasswordErrorText.innerHTML = 'Введён неверный пароль!';
             break;
         case 404:
-            app.messageError('Непредвиденная ошибка!', 'Пользователь не найден');
+            app.messages.error('Непредвиденная ошибка!', 'Пользователь не найден');
             break;
         default:
-            app.messageError(`Ошибка ${response.status}!`, 'Произошла непредвиденная ошибка!');
+            app.messages.error(`Ошибка ${response.status}!`, 'Произошла непредвиденная ошибка!');
         }
     });
 }

@@ -137,7 +137,7 @@ export async function handler(element, app) {
     const foldersGetter = new paginatedGetter(app.apiUrl + '/email/folders', 'since', -1, 'amount', foldersByRequest, 'id');
     foldersGetter.onErrorHandler = (response) => {
         if (response.status !== 418) { // Empty response from SW (offline mode)
-            app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список папок!');
+            app.messages.error(`Ошибка ${response.status}`, 'Не удалось получить список папок!');
         }
     }
 
@@ -257,7 +257,7 @@ export async function handler(element, app) {
         dialoguesListing.networkGetter = new paginatedGetter(app.apiUrl + '/email/dialogues', 'since', -1, 'amount', dialoguesByRequest, 'id');
         dialoguesListing.networkGetter.onErrorHandler = (response) => {
             if (response.status !== 418) { // Empty response from SW (offline mode)
-                app.messageError(`Ошибка ${response.status}`, 'Не удалось получить список диалогов!');
+                app.messages.error(`Ошибка ${response.status}`, 'Не удалось получить список диалогов!');
             }
         }
 
@@ -871,7 +871,7 @@ export async function handler(element, app) {
      */
     async function sendMessage() {
         if (!navigator.onLine) {
-            app.messageError(`Нет соединения`, `Без интернета отправить письмо не получится`);
+            app.messages.error(`Нет соединения`, `Без интернета отправить письмо не получится`);
             return;
         }
         // check inputs
@@ -890,7 +890,7 @@ export async function handler(element, app) {
         });
         const responseData = await response.json();
         if (!response.ok) {
-            app.messageError(`Ошибка ${response.status}`, `Не удалось отправить письмо: ${data.message}`);
+            app.messages.error(`Ошибка ${response.status}`, `Не удалось отправить письмо: ${data.message}`);
         }
 
         currentTitle = response.ok ? responseData.subject : currentTitle;
@@ -953,10 +953,10 @@ export async function handler(element, app) {
         });
         const responseData = await response.json();
         if (!response.ok) {
-            app.messageError(`Ошибка ${response.status}`, `Не удалось отправить письмо: ${responseData.message}`);
+            app.messages.error(`Ошибка ${response.status}`, `Не удалось отправить письмо: ${responseData.message}`);
             return;
         }
-        app.messageSuccess(`Диалог перемещён`, ``);
+        app.messages.success(`Диалог перемещён`, ``);
     }
 
     async function createNewFolder(title) {
@@ -965,10 +965,10 @@ export async function handler(element, app) {
         });
         const responseData = await response.json();
         if (!response.ok) {
-            app.messageError(`Ошибка ${response.status}`, `Не удалось создать папку: ${responseData.message}`);
+            app.messages.error(`Ошибка ${response.status}`, `Не удалось создать папку: ${responseData.message}`);
             return;
         }
-        app.messageSuccess(`Папка создана`, `С именем: ${title}`);
+        app.messages.success(`Папка создана`, `С именем: ${title}`);
         return responseData.id;
     }
 

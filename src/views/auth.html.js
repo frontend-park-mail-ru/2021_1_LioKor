@@ -70,7 +70,7 @@ export async function handler(element, app) {
 
         const response = await app.apiPost('/user/auth', { username, password });
         if (response.ok) {
-            app.message('Здравствуйте!', 'Вы успешно вошли в систему');
+            app.messages.success('Здравствуйте!', 'Вы успешно вошли в систему');
             const response = await app.apiGet('/user');
             if (response.ok) {
                 const { username, avatarUrl } = await response.json();
@@ -78,7 +78,7 @@ export async function handler(element, app) {
                 await app.goto('/');
                 return;
             }
-            app.messageError(`Ошибка ${response.status}`, 'Не удалось получить данные пользователя!');
+            app.messages.error(`Ошибка ${response.status}`, 'Не удалось получить данные пользователя!');
         } else {
             switch (response.status) {
             case 401:
@@ -88,7 +88,7 @@ export async function handler(element, app) {
                 passwordErrorText.innerText = 'Неправильный логин или пароль';
                 break;
             default:
-                app.messageError(`Ошибка ${response.status}!`, 'Произошла непредвиденная ошибка!');
+                app.messages.error(`Ошибка ${response.status}!`, 'Произошла непредвиденная ошибка!');
             }
         }
     });

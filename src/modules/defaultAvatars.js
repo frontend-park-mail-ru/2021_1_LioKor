@@ -2,7 +2,12 @@ export default function convertAvatarUrlToDefault(elem, defaultAvatar) {
     if (elem.avatarUrl) {
         return;
     }
-    const tail = elem.username.split('@')[1];
+    const splitted = elem.username.split('@');
+    if (splitted.length < 2) {
+        return;
+    }
+
+    const tail = splitted[1];
     switch (tail) { // get address after '@'
         case 'mail.ru':
             elem.avatarUrl = '/images/mail.png';

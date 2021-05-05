@@ -1,11 +1,10 @@
 import './styles/page.styl';
 import './styles/formControls.styl';
-import './styles/popupMessages.styl';
 import './styles/profile.styl';
 import './styles/messages.styl';
 
 import { registerSW } from './modules/sw-installer.js';
-import App from './modules/app.js';
+import App from './app';
 
 /**
  * Main function (entry point) of a frontend

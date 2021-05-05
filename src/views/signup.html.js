@@ -124,7 +124,7 @@ export function handler(element, app) {
 
         switch (response.status) {
         case 200:
-            app.messageSuccess('Ура!', `Аккаунт ${username} успешно создан!`);
+            app.messages.success('Ура!', `Аккаунт ${username} успешно создан!`);
             app.updateStorage(username);
             await app.goto('/');
             break;
@@ -137,7 +137,7 @@ export function handler(element, app) {
             usernameErrorText.innerHTML = 'Логин уже занят';
             break;
         default:
-            app.messageError(`Ошибка ${response.status}!`, 'Произошла непредвиденная ошибка!');
+            app.messages.error(`Ошибка ${response.status}!`, 'Произошла непредвиденная ошибка!');
         }
     });
 }

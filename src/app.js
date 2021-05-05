@@ -1,15 +1,16 @@
 import Handlebars from 'handlebars/dist/cjs/handlebars';
 
-import * as renderer from './renderer.js';
+import * as renderer from './modules/renderer';
 
-import { request } from './requests';
+import { request } from './modules/requests';
+import PopupMessages from './modules/popupMessages';
 
-import * as auth from '../views/auth.html.js';
-import * as user from '../views/profile.html.js';
-import * as signup from '../views/signup.html.js';
-import * as changePassword from '../views/change_password.html.js';
-import * as messages from '../views/messages.html.js';
-import * as view404 from '../views/404.html.js';
+import * as auth from './views/auth.html.js';
+import * as user from './views/profile.html.js';
+import * as signup from './views/signup.html.js';
+import * as changePassword from './views/change_password.html.js';
+import * as messages from './views/messages.html.js';
+import * as view404 from './views/404.html.js';
 
 const DEFAULT_AVATAR_URL = '/images/default-avatar.jpg';
 
@@ -25,18 +26,7 @@ export default class App {
         this.element = elId;
         this.defaultAvatarUrl = DEFAULT_AVATAR_URL;
 
-        this.messagesEl = null;
-        this.messageTemplate = null;
-        this.messageLastId = 1;
-        if (messagesElId) {
-            const messageHTML = `
-            <div class="popup-message {{ cls }}" id="{{ id }}">
-                <div class="title"><strong>{{ title }}</strong></div>
-                <div class="message">{{ message }}</div>
-            </div>`;
-            this.messagesEl = document.getElementById(messagesElId);
-            this.messageTemplate = Handlebars.compile(messageHTML);
-        }
+        this.messages = new PopupMessages(document.getElementById(messagesElId));
 
         window.addEventListener('popstate', (ev) => {
             this.goto(location.pathname, false);
@@ -110,42 +100,6 @@ export default class App {
 
     apiDelete(path, data = {}) {
         return this.apiRequest('DELETE', path, data);
-    }
-
-    message(title, message = '', success = true) {
-        const dissapearAfterMs = 3000;
-        const transitionTimeMs = 500;
-
-        if (!this.messagesEl) {
-            return;
-        }
-
-        const id = `popupMessage${this.messageLastId++}`;
-        const cls = (success) ? 'success' : 'error';
-        const messageRendered = this.messageTemplate({
-            id,
-            cls,
-            title,
-            message
-        });
-        this.messagesEl.innerHTML = messageRendered + this.messagesEl.innerHTML;
-
-        setTimeout(() => {
-            const messageEl = document.getElementById(id);
-            messageEl.style.transitionDuration = `${transitionTimeMs}ms`;
-            messageEl.style.opacity = '0';
-            setTimeout(() => {
-                messageEl.remove();
-            }, transitionTimeMs);
-        }, dissapearAfterMs);
-    }
-
-    messageSuccess(title, message = '') {
-        this.message(title, message);
-    }
-
-    messageError(title, message = '') {
-        this.message(title, message, false);
     }
 
     getHandler(path) {
