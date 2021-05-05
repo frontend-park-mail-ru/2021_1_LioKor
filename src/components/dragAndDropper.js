@@ -63,7 +63,7 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
 
         document.addEventListener('mousemove', onMouseMove);
 
-        elem.onmouseup = () => {
+        elem.onmouseup = (event) => {
             document.removeEventListener('mousemove', onMouseMove);
             elem.onmouseup = null;
             if (!canMove) {
