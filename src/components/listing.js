@@ -29,7 +29,7 @@ export class Listing {
     }
 
     findById(id) {
-        return this.elements.find(elem => elem.id === id);
+        return this.elements.find(elem => elem.id === String(id));
     }
 
     findBy(fieldName, value) {
@@ -46,16 +46,16 @@ export class Listing {
 
     setScrollHandlers(scrollTopHandler, scrollBottomHandler, scrollTopOffset = 0, scrollBottomOffset = 0) {
         let isMutexBlocked = false;
-        this.scrollHandler = (event) => {
+        this.scrollHandler = async (event) => {
             if (isMutexBlocked || !this.scrollActive) {
                 return;
             }
             isMutexBlocked = true;
             if (this.block.scrollTop <= scrollTopOffset && scrollTopHandler) {
-                scrollTopHandler(event);
+                await scrollTopHandler(event);
             }
             if (this.block.scrollTop + this.block.clientHeight >= this.block.scrollHeight - scrollBottomOffset && scrollBottomHandler) {
-                scrollBottomHandler(event);
+                await scrollBottomHandler(event);
             }
             isMutexBlocked = false;
         };
@@ -63,8 +63,8 @@ export class Listing {
         this.block.addEventListener('scroll', this.scrollHandler);
     }
 
-    scroll() {
-        this.scrollHandler();
+    async scroll() {
+        await this.scrollHandler();
     }
 
     setClickElementHandler(handler) {
@@ -177,10 +177,10 @@ export class Listing {
         this.activeElem = null;
     }
 
-    setActive(id) {
+    async setActive(id) {
         this.setActiveNoHandlers(id);
         if (this.onActiveHandler) {
-            this.onActiveHandler(this.activeElem);
+            await this.onActiveHandler(this.activeElem);
         }
     }
 
