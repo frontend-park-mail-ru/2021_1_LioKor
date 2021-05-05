@@ -990,7 +990,7 @@ export async function handler(element, app) {
             app.messages.error(`Ошибка ${response.status}`, `Не удалось добавить в папку: ${responseData.message}`);
             return;
         }
-        app.messages.success(`Диалог перемещён`, `Диалог ${dialoguesListing.findById(dialogue).username} в папку ${foldersListing.findById(folder).title}`);
+        app.messages.success(`Диалог перемещён`, `Диалог c ${dialoguesListing.findById(dialogue).username} в папку ${foldersListing.findById(folder).name}`);
     }
 
     /**
