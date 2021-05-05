@@ -2,47 +2,47 @@ import Handlebars from 'handlebars/dist/cjs/handlebars';
 
 import '../styles/popupMessages.styl';
 
-const messageHTML = `
-<div class="popup-message {{ cls }}" id="{{ id }}">
-    <div class="title"><strong>{{ title }}</strong></div>
-    <div class="message">{{ message }}</div>
-</div>
+const messageContentHTML = `
+<div class="title"><strong>{{ title }}</strong></div>
+<div class="message">{{ message }}</div>
 `;
 
+const DEFAULT_DISSAPPEAR_AFTER_MS = 3000;
+const DEFAULT_TRANSITION_TIME_MS = 500;
 
 export default class PopupMessages {
-    constructor(el) {
-        this.el = el;
-        this.messageTemplate = Handlebars.compile(messageHTML);
-        this.lastId = 1;
+    constructor(dissappearAfterMs = DEFAULT_DISSAPPEAR_AFTER_MS, transitionTimeMs = DEFAULT_TRANSITION_TIME_MS) {
+        this.el = document.createElement('div');
+        this.el.classList.add('popup-messages');
+        document.body.appendChild(this.el);
+
+        this.messageContentTemplate = Handlebars.compile(messageContentHTML);
+
+        this.dissappearAfterMs = dissappearAfterMs;
+        this.transitionTimeMs = transitionTimeMs;
+    }
+
+    __createMessageEl(title, message, success) {
+        const cls = (success) ? 'success' : 'error';
+
+        const messageEl = document.createElement('div');
+        messageEl.classList.add('popup-message');
+        messageEl.classList.add(cls);
+        messageEl.innerHTML = this.messageContentTemplate({ title, message });
+        return messageEl;
     }
 
     __message(title, message = '', success = true) {
-        const dissapearAfterMs = 3000;
-        const transitionTimeMs = 500;
-
-        if (!this.el) {
-            return;
-        }
-
-        const id = `popupMessage${this.lastId++}`;
-        const cls = (success) ? 'success' : 'error';
-        const messageRendered = this.messageTemplate({
-            id,
-            cls,
-            title,
-            message
-        });
-        this.el.innerHTML = messageRendered + this.el.innerHTML;
+        const messageEl = this.__createMessageEl(title, message, success);
+        this.el.appendChild(messageEl);
 
         setTimeout(() => {
-            const messageEl = document.getElementById(id);
-            messageEl.style.transitionDuration = `${transitionTimeMs}ms`;
+            messageEl.style.transitionDuration = `${this.transitionTimeMs}ms`;
             messageEl.style.opacity = '0';
             setTimeout(() => {
                 messageEl.remove();
-            }, transitionTimeMs);
-        }, dissapearAfterMs);
+            }, this.transitionTimeMs);
+        }, this.dissappearAfterMs);
     }
 
     success(title, message = '') {

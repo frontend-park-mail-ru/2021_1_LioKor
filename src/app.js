@@ -26,7 +26,7 @@ export default class App {
         this.element = elId;
         this.defaultAvatarUrl = DEFAULT_AVATAR_URL;
 
-        this.messages = new PopupMessages(document.getElementById(messagesElId));
+        this.messages = new PopupMessages();
 
         window.addEventListener('popstate', (ev) => {
             this.goto(location.pathname, false);

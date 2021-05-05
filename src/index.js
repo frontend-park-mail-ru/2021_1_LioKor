@@ -18,7 +18,7 @@ async function main() {
     if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.')) {
         apiUrl = `${origin}/api`;
     }
-    const app = new App('LioKor', apiUrl, 'app', 'popupMessages');
+    const app = new App('LioKor', apiUrl, 'app');
 
     const response = await app.apiGet('/user');
     if (response.ok) {
