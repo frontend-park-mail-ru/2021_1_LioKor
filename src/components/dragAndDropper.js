@@ -1,4 +1,4 @@
-const moveOffset = 5; // pixels (for desktops)
+const moveOffset = 10; // pixels (for desktops)
 const mobileWaitBeforeDragging = 500; // milliseconds (for mobiles)
 
 let currentMoveEvent;
@@ -14,6 +14,9 @@ let shiftX, shiftY;
 export default function setDraggable(elem, enterDroppableHandler, leaveDroppableHandler, mouseUpHandler, droppableClass) {
     // --- For desktops
     elem.onmousedown = (event) => {
+        if (event.button !== 0) {
+            return;
+        }
         let currentDroppable;
         shiftX = event.clientX - elem.getBoundingClientRect().left;
         shiftY = event.clientY - elem.getBoundingClientRect().top;
@@ -23,6 +26,7 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
 
         startFakeMoving();
         document.onmousemove = (event) => {
+            currentMoveEvent = event;
             event.preventDefault(); // отключаем выделение текста при перетаскивании
             if (-moveOffset > event.pageX - initialX || event.pageX - initialX > moveOffset || -moveOffset > event.pageY - initialY || event.pageY - initialY > moveOffset) {
                 if (!canMove) {
@@ -81,8 +85,8 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
     elem.ontouchstart = (event) => {
         let currentDroppable;
         event = event.changedTouches[0];
-        const shiftX = event.clientX - elem.getBoundingClientRect().left;
-        const shiftY = event.clientY - elem.getBoundingClientRect().top;
+        shiftX = event.clientX - elem.getBoundingClientRect().left;
+        shiftY = event.clientY - elem.getBoundingClientRect().top;
 
         let movedWhileWait = false;
         document.ontouchmove = (event) => {
@@ -94,11 +98,14 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
                 document.ontouchmove = null;
                 return;
             }
-            prepareForDragging(elem);
+            prepareForDragging(elem, true, event.pageX);
             moveTo(elem, event);
 
+            startFakeMoving();
             document.ontouchmove = (event) => {
-                event.preventDefault(); // отключаем прокрутку блока и выделение текста при перетаскивании
+                console.log("MOVE");
+                currentMoveEvent = event;
+                event.preventDefault(); // отключаем прокрутку блока при перетаскивании
                 event = event.changedTouches[0];
 
                 moveTo(elem, event);
@@ -132,6 +139,7 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
             document.ontouchend = null;
             document.ontouchcancel = null;
             event = event.changedTouches[0];
+            stopFakeMoving();
 
             elem.removeAttribute('style');
             if (currentDroppable) {
@@ -170,8 +178,10 @@ function isOnDroppable(x, y, droppableClass) {
 /**
  * Подготавливает элемент, который будем таскать
  * @param elem
+ * @param isMobile
+ * @param cursorX
  */
-function prepareForDragging(elem) {
+function prepareForDragging(elem, isMobile = false, cursorX = null) {
     // чтоб не распидорасило на полстраницы
     elem.style.width = elem.clientWidth + 'px';
     elem.style.height = elem.clientHeight + 'px';
@@ -183,6 +193,17 @@ function prepareForDragging(elem) {
     elem.style.cursor = 'grabbing';
     elem.remove();
     document.body.append(elem);
+
+    if (isMobile) {
+        elem.style.width = elem.clientWidth / 2 + 'px';
+        shiftX -= cursorX - elem.clientWidth / 4;
+        elem.style.transformOrigin = `${shiftX}px ${shiftY}px`;
+        sideModifier = 1 + Math.abs((0.5 - shiftX / elem.clientWidth * 2) * constSide);
+        if (shiftX > elem.clientWidth / 4) {
+            sideModifier = 1 / sideModifier;
+        }
+        return;
+    }
 
     sideModifier = 1 + Math.abs((0.5 - shiftX / elem.clientWidth) * constSide);
     if (shiftX > elem.clientWidth / 2) {
@@ -200,7 +221,6 @@ let sideModifier;
  * @param event
  */
 function moveTo(elem, event) {
-    currentMoveEvent = event;
     if (!lastPageX) {lastPageX = event.pageX;}
     if (!lastPageY) {lastPageY = event.pageY;}
 
