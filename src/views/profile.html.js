@@ -110,7 +110,7 @@ export async function handler(element, app) {
             return;
         }
 
-        const response = await app.apiPut(`/user/${username}`, { fullname, avatarUrl, reserveEmail });
+        const response = await app.apiPut(`/user/${username}`, { fullname, reserveEmail });
         if (!response.ok) {
             app.messages.error(`Ошибка ${response.status}!`, 'Не удалось изменить данные!');
             return;
@@ -142,7 +142,7 @@ export async function handler(element, app) {
         const fullname = formData.get('fullname').trim();
         const reserveEmail = formData.get('reserveEmail').trim();
 
-        const response = await app.apiPut(`/user/${username}`, { fullname, avatarUrl, reserveEmail });
+        const response = await app.apiPut(`/user/${username}/avatar`, { avatarUrl });
         if (response.ok) {
             avatarImage.src = dataURL;
             app.messages.success('Успех', 'Аватар успешно изменён');
