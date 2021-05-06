@@ -322,7 +322,7 @@ export async function handler(element, app) {
                         const messageBlockElem = newElem(
                             messageBlockInnerHTMLTemplate({
                                 side: isYour ? 'your' : 'not-your',
-                                avatar: app.storage.avatar,
+                                avatar: isYour ? app.storage.avatar : foldersListing.activeElem.dialoguesListing.activeElem.avatar,
                                 time: messageBlock.time,
                                 isStated: isYour,
                                 isDelivered: (messageBlock.status === 1),
@@ -331,7 +331,7 @@ export async function handler(element, app) {
                             }),
                             'div', messageBlock.id, 'message-block-full', isYour ? 'right-block' : 'left-block');
                         messageBlockElem.sender = messageBlock.sender;
-                        messageBlockElem.title = messageBlock.title;
+                        messageBlockElem.theme = messageBlock.theme;
                         messageBlockElem.status = messageBlock.status;
                         dialogue.messagesListing.unshift(messageBlockElem);
                     });
@@ -356,7 +356,7 @@ export async function handler(element, app) {
                         const messageBlockElem = newElem(
                             messageBlockInnerHTMLTemplate({
                                 side: isYour ? 'your' : 'not-your',
-                                avatar: app.storage.avatar,
+                                avatar: isYour ? app.storage.avatar : foldersListing.activeElem.dialoguesListing.activeElem.avatar,
                                 time: messageBlock.time,
                                 isStated: isYour,
                                 isDelivered: (messageBlock.status === 1),
@@ -365,7 +365,7 @@ export async function handler(element, app) {
                             }),
                             'div', messageBlock.id, 'message-block-full', isYour ? 'right-block' : 'left-block');
                         messageBlockElem.sender = messageBlock.sender;
-                        messageBlockElem.title = messageBlock.title;
+                        messageBlockElem.theme = messageBlock.theme;
                         messageBlockElem.status = messageBlock.status;
                         dialogue.messagesListing.unshift(messageBlockElem);
                     });
@@ -419,16 +419,16 @@ export async function handler(element, app) {
             const messageBlock = dialogue.messagesListing.getLast();
             if (messageBlock) {
                 if (messageBlock.sender !== app.storage.username + '@liokor.ru') {
-                    if (messageBlock.title.substr(0, 3).toLowerCase() === 're:') {
-                        const { num, theme } = messageBlock.title.substr(3).split(']');
+                    if (messageBlock.theme.substr(0, 3).toLowerCase() === 're:') {
+                        const { num, theme } = messageBlock.theme.substr(3).split(']');
                         themeInput.value = 'Re[' + (Number(num) + 1) + ']: ' + theme;
-                    } else if (messageBlock.title.substr(0, 3).toLowerCase() === 're[') {
-                        themeInput.value = messageBlock.title;
+                    } else if (messageBlock.theme.substr(0, 3).toLowerCase() === 're[') {
+                        themeInput.value = messageBlock.theme;
                     } else {
-                        themeInput.value = 'Re: ' + messageBlock.title;
+                        themeInput.value = 'Re: ' + messageBlock.theme;
                     }
                 } else {
-                    themeInput.value = messageBlock.title;
+                    themeInput.value = messageBlock.theme;
                 }
             }
 
@@ -457,7 +457,7 @@ export async function handler(element, app) {
                 const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body, newMessages: dialogue.new}),
                     'li', dialogue.id, 'listing-button', 'droppable');
                 elem.username = dialogue.username;
-                elem.time = dialogue.time;
+                elem.avatar = dialogue.avatarUrl;
                 dialoguesListing.push(elem);
                 setDialogueDraggable(elem);
             });
@@ -503,7 +503,7 @@ export async function handler(element, app) {
                     const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body, newMessages: dialogue.new}),
                         'li', dialogue.id, 'listing-button', 'droppable');
                     elem.username = dialogue.username;
-                    elem.time = dialogue.time;
+                    elem.avatar = dialogue.avatarUrl;
                     dialoguesListing.push(elem);
                     setDialogueDraggable(elem);
                 });
@@ -575,7 +575,7 @@ export async function handler(element, app) {
             const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body, newMessages: dialogue.new }),
                 'li', dialogue.id, 'listing-button', 'droppable');
             elem.username = dialogue.username;
-            elem.time = dialogue.time;
+            elem.avatar = dialogue.avatarUrl;
             dialoguesListing.push(elem);
             setDialogueDraggable(elem);
         });
@@ -695,7 +695,7 @@ export async function handler(element, app) {
                 });
                 const elem = newElem(dialogueInnerHTML, 'li', dialogue.id, 'listing-button', 'droppable');
                 elem.username = dialogue.username;
-                elem.time = dialogue.time;
+                elem.avatar = dialogue.avatarUrl;
                 dialoguesListing.push(elem);
                 setDialogueDraggable(elem);
             });
@@ -776,6 +776,7 @@ export async function handler(element, app) {
             const elem = newElem(dialogueInnerHTMLTemplate({ avatar: tmpAvatarContainer.avatarUrl, time: new ParsedDate().getYesterdayFormatString(), title: findText, body: '', newMessages: 0 }),
                 'li', '-' + createdDialogues, 'listing-button', 'droppable');
             elem.username = findText;
+            elem.avatar = tmpAvatarContainer.avatarUrl;
             setDialogueDraggable(elem);
 
             dialoguesListing.unshift(elem);
@@ -893,7 +894,7 @@ export async function handler(element, app) {
 
         let previousElem = messages[messages.length - 1];
         messages.slice(0, -1).reverse().forEach((elem, id, object) => {
-            if (previousElem.sender === elem.sender && previousElem.title === elem.title && (elem.time - previousElem.time <= 1000 * 60 * 10)) { // 1000ms * 60(seconds in minute) * 5(minutes)
+            if (previousElem.sender === elem.sender && previousElem.theme === elem.theme && (elem.time - previousElem.time <= 1000 * 60 * 10)) { // 1000ms * 60(seconds in minute) * 5(minutes)
                 messages[object.length - id].body.push(elem.body[0]);
                 messages.splice(object.length - id - 1, 1);
             }
@@ -957,7 +958,7 @@ export async function handler(element, app) {
         // add message HTML-block
         const nowStatus = response.ok ? 1 : 0;
         const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
-        if (lastMessage && nowStatus === lastMessage.status && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
+        if (lastMessage && nowStatus === lastMessage.status && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.theme === currentTitle) {
             lastMessage.firstElementChild.innerHTML += `<div id="${lastMessage.id}" class="message-body">${message}</div>`;
         } else {
             // add block to messages list
@@ -971,7 +972,7 @@ export async function handler(element, app) {
                 body: [message]
             }),
             'div', lastMessage ? lastMessage.id + 1 : 0, 'message-block-full', 'right-block');
-            elem.title = currentTitle;
+            elem.theme = currentTitle;
             elem.sender = `${app.storage.username}@liokor.ru`;
             elem.status = nowStatus;
             dialoguesListing.activeElem.messagesListing.push(elem);
