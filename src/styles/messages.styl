@@ -16,6 +16,8 @@ dialogue-color-active = #6b5c13
 dialogue-color-selected = #218633
 dialogue-color-active-selected = #7b7115
 
+dialogue-status-background-color = #5a8be0
+
 folder-color = #6c3b12AA
 folder-color-active = #9a471d
 folder-color-selected = #874b1c
@@ -48,6 +50,7 @@ middle-large = 15px
 large = 20px
 extra-large = 30px
 
+small-font-size = 14px
 font-size = 16px
 big-font-size = 18px
 
@@ -290,6 +293,15 @@ width-border = 1px
   padding-left (middle-avatar-size + small)
 .dialogue-text.centered
   margin-top ((dialogue-preview-height - 2 * middle - big-font-size) / 2)
+.dialogue-status
+  padding 0 extra-small
+  border-radius (big-font-size / 2 + 1)
+  background-color dialogue-status-background-color
+  font-size big-font-size
+  color color1
+.status-read
+  .dialogue-status
+    display none
 .dialogue-body
   overflow hidden
   white-space nowrap
@@ -452,7 +464,7 @@ width-border = 1px
 
 .find-input
   width "calc(100% - %s)" % (middle * 2)
-  font-size 14px
+  font-size small-font-size
   margin-bottom extra-small
   margin-right middle
   margin-left extra-small
@@ -501,7 +513,7 @@ width-border = 1px
   transform rotate(0)
 
 .theme-input
-  font-size 14px
+  font-size small-font-size
   margin-bottom extra-small
   background #FFFFFF00
   border none

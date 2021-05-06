@@ -169,7 +169,12 @@ export async function handler(element, app) {
 
     const dialogueInnerHTMLTemplate = Handlebars.compile(`
         <img src={{ avatar }} alt="avatar" class="middle-avatar">
-        <div class="floatright text-4">{{ time }}</div>
+        <div class="floatright text-4">
+            <div>{{ time }}</div>
+            {{#if newMessages}}
+                <div class="dialogue-status floatright">{{ newMessages }}</div>
+            {{/if}}
+        </div>
         <div class="dialogue-text">
             <div class="text-1">{{ title }}</div>
             <div class="dialogue-body text-2">{{ body }}</div>
@@ -385,6 +390,9 @@ export async function handler(element, app) {
             }
             dialogue.messagesListing.scrollActive = true;
 
+            // clear unread messages status
+            dialogue.classList.add('status-read');
+
             // For mobile version. Go to messages column, hide dialogues
             dialoguesColumn.classList.remove('mobile-fullwidth');
             messagesColumn.classList.add('mobile-fullwidth');
@@ -446,7 +454,7 @@ export async function handler(element, app) {
             newDialogues.forEach((dialogue) => {
                 dialogue.time = new ParsedDate(dialogue.time).getYesterdayFormatString();
                 convertAvatarUrlToDefault(dialogue, app.defaultAvatarUrl);
-                const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body }),
+                const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body, newMessages: dialogue.new}),
                     'li', dialogue.id, 'listing-button', 'droppable');
                 elem.username = dialogue.username;
                 elem.time = dialogue.time;
@@ -492,7 +500,7 @@ export async function handler(element, app) {
                 gottenDialogues.forEach((dialogue) => {
                     dialogue.time = new ParsedDate(dialogue.time).getYesterdayFormatString();
                     convertAvatarUrlToDefault(dialogue, app.defaultAvatarUrl);
-                    const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body }),
+                    const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body, newMessages: dialogue.new}),
                         'li', dialogue.id, 'listing-button', 'droppable');
                     elem.username = dialogue.username;
                     elem.time = dialogue.time;
@@ -564,7 +572,7 @@ export async function handler(element, app) {
         gottenDialogues.forEach((dialogue) => {
             dialogue.time = new ParsedDate(dialogue.time).getYesterdayFormatString();
             convertAvatarUrlToDefault(dialogue, app.defaultAvatarUrl);
-            const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body }),
+            const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body, newMessages: dialogue.new }),
                 'li', dialogue.id, 'listing-button', 'droppable');
             elem.username = dialogue.username;
             elem.time = dialogue.time;
@@ -682,7 +690,8 @@ export async function handler(element, app) {
                     avatar: dialogue.avatarUrl,
                     time: dialogue.time,
                     title: dialogue.username,
-                    body: dialogue.body
+                    body: dialogue.body,
+                    newMessages: dialogue.new
                 });
                 const elem = newElem(dialogueInnerHTML, 'li', dialogue.id, 'listing-button', 'droppable');
                 elem.username = dialogue.username;
@@ -756,6 +765,7 @@ export async function handler(element, app) {
                 return;
             }
 
+            await foldersListing.setActive('0'); // switch to main folder
             findInput.value = '';
             findInput.dispatchEvent(new Event('input'));
             themeInput.focus();
@@ -763,7 +773,7 @@ export async function handler(element, app) {
             createdDialogues += 1;
             const tmpAvatarContainer = {username: findText};
             convertAvatarUrlToDefault(tmpAvatarContainer, app.defaultAvatarUrl);
-            const elem = newElem(dialogueInnerHTMLTemplate({ avatar: tmpAvatarContainer.avatarUrl, time: new ParsedDate().getYesterdayFormatString(), title: findText, body: '' }),
+            const elem = newElem(dialogueInnerHTMLTemplate({ avatar: tmpAvatarContainer.avatarUrl, time: new ParsedDate().getYesterdayFormatString(), title: findText, body: '', newMessages: 0 }),
                 'li', '-' + createdDialogues, 'listing-button', 'droppable');
             elem.username = findText;
             setDialogueDraggable(elem);
