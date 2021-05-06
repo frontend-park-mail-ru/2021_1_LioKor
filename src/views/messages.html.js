@@ -457,6 +457,7 @@ export async function handler(element, app) {
                 const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body, newMessages: dialogue.new}),
                     'li', dialogue.id, 'listing-button', 'droppable');
                 elem.username = dialogue.username;
+                elem.time = dialogue.time;
                 elem.avatar = dialogue.avatarUrl;
                 dialoguesListing.push(elem);
                 setDialogueDraggable(elem);
@@ -503,6 +504,7 @@ export async function handler(element, app) {
                     const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body, newMessages: dialogue.new}),
                         'li', dialogue.id, 'listing-button', 'droppable');
                     elem.username = dialogue.username;
+                    elem.time = dialogue.time;
                     elem.avatar = dialogue.avatarUrl;
                     dialoguesListing.push(elem);
                     setDialogueDraggable(elem);
@@ -575,6 +577,7 @@ export async function handler(element, app) {
             const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body, newMessages: dialogue.new }),
                 'li', dialogue.id, 'listing-button', 'droppable');
             elem.username = dialogue.username;
+            elem.time = dialogue.time;
             elem.avatar = dialogue.avatarUrl;
             dialoguesListing.push(elem);
             setDialogueDraggable(elem);
@@ -695,6 +698,7 @@ export async function handler(element, app) {
                 });
                 const elem = newElem(dialogueInnerHTML, 'li', dialogue.id, 'listing-button', 'droppable');
                 elem.username = dialogue.username;
+                elem.time = dialogue.time;
                 elem.avatar = dialogue.avatarUrl;
                 dialoguesListing.push(elem);
                 setDialogueDraggable(elem);
@@ -773,9 +777,11 @@ export async function handler(element, app) {
             createdDialogues += 1;
             const tmpAvatarContainer = {username: findText};
             convertAvatarUrlToDefault(tmpAvatarContainer, app.defaultAvatarUrl);
-            const elem = newElem(dialogueInnerHTMLTemplate({ avatar: tmpAvatarContainer.avatarUrl, time: new ParsedDate().getYesterdayFormatString(), title: findText, body: '', newMessages: 0 }),
+            const nowTime = new ParsedDate().getYesterdayFormatString();
+            const elem = newElem(dialogueInnerHTMLTemplate({ avatar: tmpAvatarContainer.avatarUrl, time: nowTime, title: findText, body: '', newMessages: 0 }),
                 'li', '-' + createdDialogues, 'listing-button', 'droppable');
             elem.username = findText;
+            elem.time = nowTime;
             elem.avatar = tmpAvatarContainer.avatarUrl;
             setDialogueDraggable(elem);
 
