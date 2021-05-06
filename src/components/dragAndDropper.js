@@ -10,7 +10,6 @@ const mobileWaitBeforeDragging = 500;
 export default function setDraggable(elem, enterDroppableHandler, leaveDroppableHandler, mouseUpHandler) {
     // --- For computers
     elem.onmousedown = (event) => {
-        console.log("DOWN");
         let currentDroppable;
         const shiftX = event.clientX - elem.getBoundingClientRect().left;
         const shiftY = event.clientY - elem.getBoundingClientRect().top;
@@ -19,7 +18,6 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
         let canMove = false;
 
         document.onmousemove = (event) => {
-            console.log("MOVE");
             event.preventDefault(); // отключаем выделение текста при перетаскивании
             if (-moveOffset > event.pageX - initialX || event.pageX - initialX > moveOffset || -moveOffset > event.pageY - initialY || event.pageY - initialY > moveOffset) {
                 if (!canMove) {
@@ -67,10 +65,8 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
         };
 
         document.onmouseup = (event) => {
-            console.log("UP");
-            document.onpointermove = null;
-            document.onpointerup = null;
-            document.onpointercancel = null;
+            document.onmousemove = null;
+            document.onmouseup = null;
             if (!canMove) {
                 return;
             }
@@ -88,7 +84,6 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
 
     // --- For mobiles
     elem.ontouchstart = (event) => {
-        console.log("DOWN");
         let currentDroppable;
         event = event.changedTouches[0];
         const shiftX = event.clientX - elem.getBoundingClientRect().left;
@@ -120,7 +115,6 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
             elem.style.top = event.pageY - shiftY + 'px';
 
             document.ontouchmove = (event) => {
-                console.log("MOVE");
                 event.preventDefault(); // отключаем прокрутку блока и выделение текста при перетаскивании
                 event = event.changedTouches[0];
 
@@ -153,7 +147,6 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
 
         document.ontouchend = document.ontouchcancel = (event) => {
             movedWhileWait = true;
-            console.log("UP");
             document.ontouchmove = null;
             document.ontouchend = null;
             document.ontouchcancel = null;
@@ -180,7 +173,11 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
  * @param y
  */
 function isOnDroppable(x, y) {
-    const closestDraggable = document.elementFromPoint(x, y).closest('.droppable');
+    const underElem = document.elementFromPoint(x, y);
+    if (!underElem) {
+        return false;
+    }
+    const closestDraggable = underElem.closest('.droppable');
     if (!closestDraggable) {
         return false;
     }
