@@ -419,10 +419,10 @@ export async function handler(element, app) {
             const messageBlock = dialogue.messagesListing.getLast();
             if (messageBlock) {
                 if (messageBlock.sender !== app.storage.username + '@liokor.ru') {
-                    if (messageBlock.title.substr(0, 3).toLowerCase() === 're:') {
-                        const { num, theme } = messageBlock.title.substr(3).split(']');
-                        themeInput.value = 'Re[' + (Number(num) + 1) + ']: ' + theme;
-                    } else if (messageBlock.title.substr(0, 3).toLowerCase() === 're[') {
+                    if (messageBlock.title.substr(0, 3).toLowerCase() === 're[') {
+                        const { 0:num, 1:theme } = messageBlock.title.substr(3).split(']');
+                        themeInput.value = 'Re[' + (Number(num) + 1) + ']' + theme;
+                    } else if (messageBlock.title.substr(0, 3).toLowerCase() === 're:') {
                         themeInput.value = messageBlock.title;
                     } else {
                         themeInput.value = 'Re: ' + messageBlock.title;
@@ -457,6 +457,7 @@ export async function handler(element, app) {
                 const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body, newMessages: dialogue.new}),
                     'li', dialogue.id, 'listing-button', 'droppable');
                 elem.username = dialogue.username;
+                elem.time = dialogue.time;
                 elem.avatar = dialogue.avatarUrl;
                 dialoguesListing.push(elem);
                 setDialogueDraggable(elem);
@@ -503,6 +504,7 @@ export async function handler(element, app) {
                     const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body, newMessages: dialogue.new}),
                         'li', dialogue.id, 'listing-button', 'droppable');
                     elem.username = dialogue.username;
+                    elem.time = dialogue.time;
                     elem.avatar = dialogue.avatarUrl;
                     dialoguesListing.push(elem);
                     setDialogueDraggable(elem);
@@ -575,6 +577,7 @@ export async function handler(element, app) {
             const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body, newMessages: dialogue.new }),
                 'li', dialogue.id, 'listing-button', 'droppable');
             elem.username = dialogue.username;
+            elem.time = dialogue.time;
             elem.avatar = dialogue.avatarUrl;
             dialoguesListing.push(elem);
             setDialogueDraggable(elem);
@@ -695,6 +698,7 @@ export async function handler(element, app) {
                 });
                 const elem = newElem(dialogueInnerHTML, 'li', dialogue.id, 'listing-button', 'droppable');
                 elem.username = dialogue.username;
+                elem.time = dialogue.time;
                 elem.avatar = dialogue.avatarUrl;
                 dialoguesListing.push(elem);
                 setDialogueDraggable(elem);
@@ -773,9 +777,11 @@ export async function handler(element, app) {
             createdDialogues += 1;
             const tmpAvatarContainer = {username: findText};
             convertAvatarUrlToDefault(tmpAvatarContainer, app.defaultAvatarUrl);
-            const elem = newElem(dialogueInnerHTMLTemplate({ avatar: tmpAvatarContainer.avatarUrl, time: new ParsedDate().getYesterdayFormatString(), title: findText, body: '', newMessages: 0 }),
+            const nowTime = new ParsedDate().getYesterdayFormatString();
+            const elem = newElem(dialogueInnerHTMLTemplate({ avatar: tmpAvatarContainer.avatarUrl, time: nowTime, title: findText, body: '', newMessages: 0 }),
                 'li', '-' + createdDialogues, 'listing-button', 'droppable');
             elem.username = findText;
+            elem.time = nowTime;
             elem.avatar = tmpAvatarContainer.avatarUrl;
             setDialogueDraggable(elem);
 
