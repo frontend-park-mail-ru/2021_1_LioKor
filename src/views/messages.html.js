@@ -331,7 +331,7 @@ export async function handler(element, app) {
                             }),
                             'div', messageBlock.id, 'message-block-full', isYour ? 'right-block' : 'left-block');
                         messageBlockElem.sender = messageBlock.sender;
-                        messageBlockElem.theme = messageBlock.theme;
+                        messageBlockElem.title = messageBlock.title;
                         messageBlockElem.status = messageBlock.status;
                         dialogue.messagesListing.unshift(messageBlockElem);
                     });
@@ -365,7 +365,7 @@ export async function handler(element, app) {
                             }),
                             'div', messageBlock.id, 'message-block-full', isYour ? 'right-block' : 'left-block');
                         messageBlockElem.sender = messageBlock.sender;
-                        messageBlockElem.theme = messageBlock.theme;
+                        messageBlockElem.title = messageBlock.title;
                         messageBlockElem.status = messageBlock.status;
                         dialogue.messagesListing.unshift(messageBlockElem);
                     });
@@ -419,16 +419,16 @@ export async function handler(element, app) {
             const messageBlock = dialogue.messagesListing.getLast();
             if (messageBlock) {
                 if (messageBlock.sender !== app.storage.username + '@liokor.ru') {
-                    if (messageBlock.theme.substr(0, 3).toLowerCase() === 're:') {
-                        const { num, theme } = messageBlock.theme.substr(3).split(']');
+                    if (messageBlock.title.substr(0, 3).toLowerCase() === 're:') {
+                        const { num, theme } = messageBlock.title.substr(3).split(']');
                         themeInput.value = 'Re[' + (Number(num) + 1) + ']: ' + theme;
-                    } else if (messageBlock.theme.substr(0, 3).toLowerCase() === 're[') {
-                        themeInput.value = messageBlock.theme;
+                    } else if (messageBlock.title.substr(0, 3).toLowerCase() === 're[') {
+                        themeInput.value = messageBlock.title;
                     } else {
-                        themeInput.value = 'Re: ' + messageBlock.theme;
+                        themeInput.value = 'Re: ' + messageBlock.title;
                     }
                 } else {
-                    themeInput.value = messageBlock.theme;
+                    themeInput.value = messageBlock.title;
                 }
             }
 
@@ -533,8 +533,8 @@ export async function handler(element, app) {
         const currentPath = new URL(window.location.href);
         if (folder.id === '0') {
             currentPath.searchParams.delete('folder');
-            currentPath.searchParams.delete('folder');
         } else {
+            currentPath.searchParams.delete('dialogue');
             currentPath.searchParams.set('folder', folder.id);
         }
         history.pushState(null, null, currentPath.toString());
@@ -894,7 +894,7 @@ export async function handler(element, app) {
 
         let previousElem = messages[messages.length - 1];
         messages.slice(0, -1).reverse().forEach((elem, id, object) => {
-            if (previousElem.sender === elem.sender && previousElem.theme === elem.theme && (elem.time - previousElem.time <= 1000 * 60 * 10)) { // 1000ms * 60(seconds in minute) * 5(minutes)
+            if (previousElem.sender === elem.sender && previousElem.title === elem.title && (elem.time - previousElem.time <= 1000 * 60 * 10)) { // 1000ms * 60(seconds in minute) * 5(minutes)
                 messages[object.length - id].body.push(elem.body[0]);
                 messages.splice(object.length - id - 1, 1);
             }
@@ -958,7 +958,7 @@ export async function handler(element, app) {
         // add message HTML-block
         const nowStatus = response.ok ? 1 : 0;
         const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
-        if (lastMessage && nowStatus === lastMessage.status && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.theme === currentTitle) {
+        if (lastMessage && nowStatus === lastMessage.status && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
             lastMessage.firstElementChild.innerHTML += `<div id="${lastMessage.id}" class="message-body">${message}</div>`;
         } else {
             // add block to messages list
@@ -972,7 +972,7 @@ export async function handler(element, app) {
                 body: [message]
             }),
             'div', lastMessage ? lastMessage.id + 1 : 0, 'message-block-full', 'right-block');
-            elem.theme = currentTitle;
+            elem.title = currentTitle;
             elem.sender = `${app.storage.username}@liokor.ru`;
             elem.status = nowStatus;
             dialoguesListing.activeElem.messagesListing.push(elem);
