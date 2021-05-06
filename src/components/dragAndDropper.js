@@ -1,6 +1,10 @@
 const moveOffset = 5; // pixels (for desktops)
 const mobileWaitBeforeDragging = 500; // milliseconds (for mobiles)
 
+let currentMoveEvent;
+let lastPageX, lastPageY;
+let currentRotation = 0;
+let shiftX, shiftY;
 /**
  * @param elem
  * @param enterDroppableHandler
@@ -11,12 +15,13 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
     // --- For desktops
     elem.onmousedown = (event) => {
         let currentDroppable;
-        const shiftX = event.clientX - elem.getBoundingClientRect().left;
-        const shiftY = event.clientY - elem.getBoundingClientRect().top;
+        shiftX = event.clientX - elem.getBoundingClientRect().left;
+        shiftY = event.clientY - elem.getBoundingClientRect().top;
         const initialX = event.clientX;
         const initialY = event.clientY;
         let canMove = false;
 
+        startFakeMoving();
         document.onmousemove = (event) => {
             event.preventDefault(); // отключаем выделение текста при перетаскивании
             if (-moveOffset > event.pageX - initialX || event.pageX - initialX > moveOffset || -moveOffset > event.pageY - initialY || event.pageY - initialY > moveOffset) {
@@ -29,7 +34,7 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
                 return;
             }
 
-            moveTo(elem, event, shiftX, shiftY);
+            moveTo(elem, event);
             const elemBelow = getUnderElem(elem, event);
             if (!elemBelow) {
                 return;
@@ -51,8 +56,12 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
         };
 
         document.onmouseup = (event) => {
+            lastPageX = lastPageY = null;
+            currentRotation = 0;
+            currentMoveEvent = null;
             document.onmousemove = null;
             document.onmouseup = null;
+            stopFakeMoving();
             if (!canMove) {
                 return;
             }
@@ -86,13 +95,13 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
                 return;
             }
             prepareForDragging(elem);
-            moveTo(elem, event, shiftX, shiftY);
+            moveTo(elem, event);
 
             document.ontouchmove = (event) => {
                 event.preventDefault(); // отключаем прокрутку блока и выделение текста при перетаскивании
                 event = event.changedTouches[0];
 
-                moveTo(elem, event, shiftX, shiftY);
+                moveTo(elem, event);
                 const elemBelow = getUnderElem(elem, event);
                 if (!elemBelow) {
                     return;
@@ -115,6 +124,9 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
         }, mobileWaitBeforeDragging);
 
         document.ontouchend = document.ontouchcancel = (event) => {
+            lastPageX = lastPageY = null;
+            currentRotation = 0;
+            currentMoveEvent = null;
             movedWhileWait = true;
             document.ontouchmove = null;
             document.ontouchend = null;
@@ -166,21 +178,45 @@ function prepareForDragging(elem) {
     // абсолютные координаты + поверх всего + небольшой поворот
     elem.style.position = 'absolute';
     elem.style.zIndex = '10000';
-    elem.style.transform = 'rotate(8deg)';
+    elem.style.transform = `rotate(0deg)`;
+    elem.style.transformOrigin = `${shiftX}px ${shiftY}px`;
+    elem.style.cursor = 'grabbing';
     elem.remove();
     document.body.append(elem);
+
+    sideModifier = 1 + Math.abs((0.5 - shiftX / elem.clientWidth) * constSide);
+    if (shiftX > elem.clientWidth / 2) {
+        sideModifier = 1 / sideModifier;
+    }
 }
 
+const constG = 2;
+const constAcceleration = 0.3;
+const constSide = 1 * 2;
+let sideModifier;
 /**
  * Сдвигает элемент на координаты
  * @param elem
  * @param event
- * @param shiftX
- * @param shiftY
  */
-function moveTo(elem, event, shiftX, shiftY) {
+function moveTo(elem, event) {
+    currentMoveEvent = event;
+    if (!lastPageX) {lastPageX = event.pageX;}
+    if (!lastPageY) {lastPageY = event.pageY;}
+
+    currentRotation = currentRotation / 180 * Math.PI;
+    const accelerationG = -constG * Math.sin(currentRotation)
+    const accelerationMove = ((event.pageX - lastPageX > 0) ? sideModifier : 1 / sideModifier) * Math.cos(currentRotation) * (event.pageX - lastPageX) * constAcceleration;
+    currentRotation = currentRotation / Math.PI * 180;
+
+    currentRotation += accelerationG + accelerationMove;
+
     elem.style.left = event.pageX - shiftX + 'px';
     elem.style.top = event.pageY - shiftY + 'px';
+    elem.style.transform = `rotate(${currentRotation}deg)`;
+
+    lastPageX = event.pageX;
+    lastPageY = event.pageY;
 }
 
 /**
@@ -190,7 +226,20 @@ function moveTo(elem, event, shiftX, shiftY) {
  */
 function getUnderElem(elem, event) {
     elem.style.display = 'none';
-    const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
+    const elemBelow = document.elementFromPoint(event.pageX, event.pageY);
     elem.style.display = 'block';
     return elemBelow;
+}
+
+function fakeMove() {
+    if (!currentMoveEvent) {
+        return;
+    }
+    document.dispatchEvent(currentMoveEvent);
+}
+function startFakeMoving() {
+    setInterval(fakeMove, 25);
+}
+function stopFakeMoving() {
+    clearInterval(fakeMove);
 }
