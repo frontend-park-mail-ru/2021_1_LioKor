@@ -1,5 +1,5 @@
-const moveOffset = 5;
-const mobileWaitBeforeDragging = 500;
+const moveOffset = 5; // pixels (for desktops)
+const mobileWaitBeforeDragging = 500; // milliseconds (for mobiles)
 
 /**
  * @param elem
@@ -7,8 +7,8 @@ const mobileWaitBeforeDragging = 500;
  * @param leaveDroppableHandler
  * @param mouseUpHandler
  */
-export default function setDraggable(elem, enterDroppableHandler, leaveDroppableHandler, mouseUpHandler) {
-    // --- For computers
+export default function setDraggable(elem, enterDroppableHandler, leaveDroppableHandler, mouseUpHandler, droppableClass) {
+    // --- For desktops
     elem.onmousedown = (event) => {
         let currentDroppable;
         const shiftX = event.clientX - elem.getBoundingClientRect().left;
@@ -22,34 +22,20 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
             if (-moveOffset > event.pageX - initialX || event.pageX - initialX > moveOffset || -moveOffset > event.pageY - initialY || event.pageY - initialY > moveOffset) {
                 if (!canMove) {
                     canMove = true;
-                    // Подготавливаем элемент, который будем таскать
-                    // чтоб не распидорасило на полстраницы
-                    elem.style.width = elem.clientWidth + 'px';
-                    elem.style.height = elem.clientHeight + 'px';
-                    // абсолютные координаты + поверх всего + небольшой поворот
-                    elem.style.position = 'absolute';
-                    elem.style.zIndex = '10000';
-                    elem.style.transform = 'rotate(8deg)';
-                    elem.remove();
-                    document.body.append(elem);
+                    prepareForDragging(elem);
                 }
             }
             if (!canMove) {
                 return;
             }
 
-            // сдвигаем элемент
-            elem.style.left = event.pageX - shiftX + 'px';
-            elem.style.top = event.pageY - shiftY + 'px';
+            moveTo(elem, event, shiftX, shiftY);
+            const elemBelow = getUnderElem(elem, event);
+            if (!elemBelow) {
+                return;
+            }
 
-            // получаем элемент под ним
-            elem.style.display = 'none';
-            const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
-            elem.style.display = 'block';
-
-            if (!elemBelow) return;
-
-            const droppableBelow = elemBelow.closest('.droppable');
+            const droppableBelow = elemBelow.closest('.' + droppableClass);
 
             if (currentDroppable !== droppableBelow) {
                 if (currentDroppable) { // null если мы были не над droppable до этого события
@@ -77,7 +63,7 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
             }
 
             if (mouseUpHandler) {
-                mouseUpHandler(elem, currentDroppable, isOnDroppable(event.clientX, event.clientY));
+                mouseUpHandler(elem, currentDroppable, isOnDroppable(event.clientX, event.clientY, droppableClass));
             }
         };
     };
@@ -99,37 +85,20 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
                 document.ontouchmove = null;
                 return;
             }
-            // Подготавливаем элемент, который будем таскать
-            // чтоб не распидорасило на полстраницы
-            elem.style.width = elem.clientWidth + 'px';
-            elem.style.height = elem.clientHeight + 'px';
-            // абсолютные координаты + поверх всего + небольшой поворот
-            elem.style.position = 'absolute';
-            elem.style.zIndex = '10000';
-            elem.style.transform = 'rotate(8deg)';
-            elem.remove();
-            document.body.append(elem);
-
-            // сдвигаем элемент
-            elem.style.left = event.pageX - shiftX + 'px';
-            elem.style.top = event.pageY - shiftY + 'px';
+            prepareForDragging(elem);
+            moveTo(elem, event, shiftX, shiftY);
 
             document.ontouchmove = (event) => {
                 event.preventDefault(); // отключаем прокрутку блока и выделение текста при перетаскивании
                 event = event.changedTouches[0];
 
-                // сдвигаем элемент
-                elem.style.left = event.pageX - shiftX + 'px';
-                elem.style.top = event.pageY - shiftY + 'px';
+                moveTo(elem, event, shiftX, shiftY);
+                const elemBelow = getUnderElem(elem, event);
+                if (!elemBelow) {
+                    return;
+                }
 
-                // получаем элемент под ним
-                elem.style.display = 'none';
-                const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
-                elem.style.display = 'block';
-
-                if (!elemBelow) return;
-
-                const droppableBelow = elemBelow.closest('.droppable');
+                const droppableBelow = elemBelow.closest('.' + droppableClass);
 
                 if (currentDroppable !== droppableBelow) {
                     if (currentDroppable) { // null если мы были не над droppable до этого события
@@ -158,7 +127,7 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
             }
 
             if (mouseUpHandler) {
-                mouseUpHandler(elem, currentDroppable, isOnDroppable(event.clientX, event.clientY));
+                mouseUpHandler(elem, currentDroppable, isOnDroppable(event.clientX, event.clientY, droppableClass));
             }
         };
     };
@@ -169,17 +138,59 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
 }
 
 /**
+ * Определяет, находится ли курсор над элементом, на который можно перетаскивать
  * @param x
  * @param y
+ * @param droppableClass
  */
-function isOnDroppable(x, y) {
+function isOnDroppable(x, y, droppableClass) {
     const underElem = document.elementFromPoint(x, y);
     if (!underElem) {
         return false;
     }
-    const closestDraggable = underElem.closest('.droppable');
+    const closestDraggable = underElem.closest('.' + droppableClass);
     if (!closestDraggable) {
         return false;
     }
     return true;
+}
+
+/**
+ * Подготавливает элемент, который будем таскать
+ * @param elem
+ */
+function prepareForDragging(elem) {
+    // чтоб не распидорасило на полстраницы
+    elem.style.width = elem.clientWidth + 'px';
+    elem.style.height = elem.clientHeight + 'px';
+    // абсолютные координаты + поверх всего + небольшой поворот
+    elem.style.position = 'absolute';
+    elem.style.zIndex = '10000';
+    elem.style.transform = 'rotate(8deg)';
+    elem.remove();
+    document.body.append(elem);
+}
+
+/**
+ * Сдвигает элемент на координаты
+ * @param elem
+ * @param event
+ * @param shiftX
+ * @param shiftY
+ */
+function moveTo(elem, event, shiftX, shiftY) {
+    elem.style.left = event.pageX - shiftX + 'px';
+    elem.style.top = event.pageY - shiftY + 'px';
+}
+
+/**
+ * Выдаёт элемент под текущим пложением мышки
+ * @param elem
+ * @param event
+ */
+function getUnderElem(elem, event) {
+    elem.style.display = 'none';
+    const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
+    elem.style.display = 'block';
+    return elemBelow;
 }
