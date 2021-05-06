@@ -16,6 +16,7 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
         let canMove = false;
 
         const onMouseMove = (event) => {
+            event.preventDefault(); // to disable text selection
             if (-moveOffset > event.pageX - initialX || event.pageX - initialX > moveOffset || -moveOffset > event.pageY - initialY || event.pageY - initialY > moveOffset) {
                 if (!canMove) {
                     canMove = true;
@@ -67,7 +68,6 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
             document.removeEventListener('mousemove', onMouseMove);
             elem.onmouseup = null;
             if (!canMove) {
-                elem.dispatchEvent(new Event('click'));
                 return;
             }
 
