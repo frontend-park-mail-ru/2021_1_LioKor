@@ -419,10 +419,10 @@ export async function handler(element, app) {
             const messageBlock = dialogue.messagesListing.getLast();
             if (messageBlock) {
                 if (messageBlock.sender !== app.storage.username + '@liokor.ru') {
-                    if (messageBlock.title.substr(0, 3).toLowerCase() === 're:') {
-                        const { num, theme } = messageBlock.title.substr(3).split(']');
-                        themeInput.value = 'Re[' + (Number(num) + 1) + ']: ' + theme;
-                    } else if (messageBlock.title.substr(0, 3).toLowerCase() === 're[') {
+                    if (messageBlock.title.substr(0, 3).toLowerCase() === 're[') {
+                        const { 0:num, 1:theme } = messageBlock.title.substr(3).split(']');
+                        themeInput.value = 'Re[' + (Number(num) + 1) + ']' + theme;
+                    } else if (messageBlock.title.substr(0, 3).toLowerCase() === 're:') {
                         themeInput.value = messageBlock.title;
                     } else {
                         themeInput.value = 'Re: ' + messageBlock.title;
