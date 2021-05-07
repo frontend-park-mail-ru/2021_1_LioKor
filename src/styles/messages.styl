@@ -275,14 +275,22 @@ width-border = 1px
 .listing-button.folder.active.selected
   background-color folder-color-active-selected
 
-.listing-button.folder
-  div
-    svg
-      opacity 0
-.listing-button.folder:hover
-  div
-    svg
-      opacity 1
+.dialogue-meta
+  position relative
+  white-space nowrap
+
+.listing-button
+  .show-on-hover
+    transition opacity ease 0.2s
+    opacity 0
+  .hide-on-hover
+    transition opacity ease 0.2s
+    opacity 1
+.listing-button:hover
+  .show-on-hover
+    opacity 1
+  .hide-on-hover
+    opacity 0
 
 .dialogues-listing-divider
   width 100%
@@ -426,6 +434,11 @@ width-border = 1px
 .pos-relative
   position relative
   overflow hidden
+
+.absolute-top-right
+  position absolute
+  top 0
+  right 0
 
 .inside-input
   position absolute

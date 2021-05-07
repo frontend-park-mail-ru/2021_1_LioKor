@@ -168,8 +168,9 @@ export async function handler(element, app) {
 
     const dialogueInnerHTMLTemplate = Handlebars.compile(`
         <img src={{ avatar }} alt="avatar" class="middle-avatar">
-        <div class="floatright text-4">
-            <div class="floatright">{{ time }}</div>
+        <div class="floatright text-4 dialogue-meta">
+            <div class="hide-on-hover absolute-top-right">{{ time }}</div>
+            <svg class="svg-button transparent show-on-hover absolute-top-right" id="delete-dialogue" xmlns="http://www.w3.org/2000/svg" height="22" width="22"><g transform="translate(0, -2)"><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z"/></g></svg>
             {{#if newMessages}}
                 <div class="dialogue-status floatright">{{ newMessages }}</div>
             {{/if}}
@@ -181,7 +182,7 @@ export async function handler(element, app) {
 
     const folderInnerHTMLTemplate = Handlebars.compile(`
         <svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.05) translate(150,110)"><path d="M448.916,118.259h-162.05c-6.578,0-13.003-2.701-17.44-7.292l-50.563-53.264c-12.154-12.115-28.783-18.443-45.625-18.346    H63.084C28.301,39.356,0,67.657,0,102.439v307.123c0,34.783,28.301,63.084,63.084,63.084h386.064h0.058    c34.764-0.154,62.949-28.59,62.794-63.277V181.342C512,146.559,483.699,118.259,448.916,118.259z M473.417,409.447    c0.058,13.504-10.88,24.558-24.307,24.616H63.084c-13.504,0-24.5-10.996-24.5-24.5V102.439c0-13.504,10.996-24.5,24.5-24.52    H173.74c0.212,0,0.424,0,0.637,0c6.443,0,12.694,2.566,16.899,6.733l50.293,53.013c11.806,12.192,28.32,19.176,45.297,19.176    h162.05c13.504,0,24.5,10.996,24.5,24.5V409.447z"/></g></svg>
-        <div class="centered flex-filler">
+        <div class="centered flex-filler show-on-hover">
             <input class="theme-input folder fullwidth" disabled placeholder="Название папки" value={{ title }}>
             <!--div class="dialogue-body text-2">Диалогов: {{ dialoguesCount }}</div-->
         </div>
@@ -1023,6 +1024,26 @@ export async function handler(element, app) {
         elem.time = dialogue.time;
         elem.avatar = dialogue.avatarUrl;
         setDialogueDraggable(elem);
+
+        elem.querySelector('#delete-dialogue').addEventListener('click', async (event) => {
+            event.stopPropagation();
+            if (window.confirm(`Удаляем диалог с ${dialogue.username}?`)) {
+                const response = await app.apiDelete('/email/dialogue', {
+                    id: dialogue.id
+                });
+                const responseData = await response.json();
+                if (!response.ok) {
+                    app.messages.error(`Ошибка ${response.status}`, `Не удалось удалить диалог ${dialogue.username}: ${responseData.message}`);
+                    return;
+                }
+                app.messages.success('Диалог удалён', `С ${dialogue.username}`);
+
+                // clear and delete dialogue
+                dialoguesListing.findById(dialogue.id).messagesListing.clear();
+                dialoguesListing.delete(dialogue.id);
+            }
+        });
+
         if (addToTop) {
             dialoguesListing.unshift(elem);
             return;
@@ -1045,6 +1066,7 @@ export async function handler(element, app) {
 
         // delete folder button
         elem.querySelector('#delete-folder').addEventListener('click', async (event) => {
+            event.stopPropagation();
             if (window.confirm(`Удаляем папку ${folder.name}?`)) {
                 const response = await app.apiDelete('/email/folder', {
                     id: folder.id
