@@ -235,13 +235,7 @@ export async function handler(element, app) {
 
     const gottenFolders = await foldersGetter.getNextPage();
     gottenFolders.forEach((folder) => {
-        const folderInnerHTML = folderInnerHTMLTemplate({
-            title: folder.name,
-            dialoguesCount: 0
-        });
-        const elem = newElem(folderInnerHTML, 'div', folder.id, 'listing-button', 'folder');
-        elem.name = folder.name;
-        foldersListing.push(elem);
+        newFolder(folder);
     });
     if (isLostConnection) {
         foldersListing.plugBottomState = plugStates.offline;
@@ -302,6 +296,7 @@ export async function handler(element, app) {
                 dialogue.messagesListing.setScrollHandlers(async (event) => {
                     // Get messages
                     const newMessages = await dialogue.messagesListing.networkGetter.getNextPage();
+
                     // set messages plug
                     if (isLostConnection) {
                         dialogue.messagesListing.plugTopState = plugStates.offline;
@@ -317,23 +312,7 @@ export async function handler(element, app) {
                     convertMessagesToBlocks(newMessages);
 
                     newMessages.forEach((messageBlock) => {
-                        const isYour = messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase();
-                        messageBlock.time = new ParsedDate(messageBlock.time).getYesterdayFormatString();
-                        const messageBlockElem = newElem(
-                            messageBlockInnerHTMLTemplate({
-                                side: isYour ? 'your' : 'not-your',
-                                avatar: isYour ? app.storage.avatar : foldersListing.activeElem.dialoguesListing.activeElem.avatar,
-                                time: messageBlock.time,
-                                isStated: isYour,
-                                isDelivered: (messageBlock.status === 1),
-                                title: messageBlock.title,
-                                body: messageBlock.body
-                            }),
-                            'div', messageBlock.id, 'message-block-full', isYour ? 'right-block' : 'left-block');
-                        messageBlockElem.sender = messageBlock.sender;
-                        messageBlockElem.title = messageBlock.title;
-                        messageBlockElem.status = messageBlock.status;
-                        dialogue.messagesListing.unshift(messageBlockElem);
+                        newMessage(messageBlock, dialogue.messagesListing, true);
                     });
 
                     dialogue.messagesListing.redraw();
@@ -351,23 +330,7 @@ export async function handler(element, app) {
                     convertMessagesToBlocks(newMessages);
 
                     newMessages.forEach((messageBlock) => {
-                        const isYour = messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase();
-                        messageBlock.time = new ParsedDate(messageBlock.time).getYesterdayFormatString();
-                        const messageBlockElem = newElem(
-                            messageBlockInnerHTMLTemplate({
-                                side: isYour ? 'your' : 'not-your',
-                                avatar: isYour ? app.storage.avatar : foldersListing.activeElem.dialoguesListing.activeElem.avatar,
-                                time: messageBlock.time,
-                                isStated: isYour,
-                                isDelivered: (messageBlock.status === 1),
-                                title: messageBlock.title,
-                                body: messageBlock.body
-                            }),
-                            'div', messageBlock.id, 'message-block-full', isYour ? 'right-block' : 'left-block');
-                        messageBlockElem.sender = messageBlock.sender;
-                        messageBlockElem.title = messageBlock.title;
-                        messageBlockElem.status = messageBlock.status;
-                        dialogue.messagesListing.unshift(messageBlockElem);
+                        newMessage(messageBlock, dialogue.messagesListing, true);
                     });
 
                     dialogue.messagesListing.plugTopState = plugStates.loading;
@@ -449,27 +412,7 @@ export async function handler(element, app) {
 
         // create dialogues scroll event-listener to upload new dialogues
         /* dialoguesListing.setScrollHandlers(null, async (event) => {
-            const newDialogues = await dialoguesListing.networkGetter.getNextPage();
-
-            newDialogues.forEach((dialogue) => {
-                dialogue.time = new ParsedDate(dialogue.time).getYesterdayFormatString();
-                convertAvatarUrlToDefault(dialogue, app.defaultAvatarUrl);
-                const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body, newMessages: dialogue.new}),
-                    'li', dialogue.id, 'listing-button');
-                elem.username = dialogue.username;
-                elem.time = dialogue.time;
-                elem.avatar = dialogue.avatarUrl;
-                dialoguesListing.push(elem);
-                setDialogueDraggable(elem);
-            });
-
-            dialoguesListing.plugBottomState = plugStates.loading;
-            if (isLostConnection) {
-                dialoguesListing.plugBottomState = plugStates.offline;
-            } else if (newDialogues.length < dialoguesByRequest) {
-                dialoguesListing.plugBottomState = plugStates.end;
-            }
-            dialoguesListing.redraw();
+            await getAndDrawNewDialogues();
         }, 0, dialoguesScrollLoadOffset); */
 
         // create Event-listener on dialogue element to activate it
@@ -497,26 +440,7 @@ export async function handler(element, app) {
 
             // get folder dialogues
             do {
-                const gottenDialogues = await dialoguesListing.networkGetter.getNextPage(['folder', folder.id]);
-                gottenDialogues.forEach((dialogue) => {
-                    dialogue.time = new ParsedDate(dialogue.time).getYesterdayFormatString();
-                    convertAvatarUrlToDefault(dialogue, app.defaultAvatarUrl);
-                    const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body, newMessages: dialogue.new}),
-                        'li', dialogue.id, 'listing-button');
-                    elem.username = dialogue.username;
-                    elem.time = dialogue.time;
-                    elem.avatar = dialogue.avatarUrl;
-                    dialoguesListing.push(elem);
-                    setDialogueDraggable(elem);
-                });
-
-                dialoguesListing.plugBottomState = plugStates.loading;
-                if (isLostConnection) {
-                    dialoguesListing.plugBottomState = plugStates.offline;
-                } else if (gottenDialogues.length < dialoguesByRequest) {
-                    dialoguesListing.plugBottomState = plugStates.end;
-                }
-                dialoguesListing.redraw(); // to get elements height. Before drawing it equals 0
+                await getAndDrawNewDialogues();
             } while (dialoguesListing.getElementsHeight() < dialoguesListing.block.clientHeight && dialoguesListing.plugBottomState === plugStates.loading);
         }
         dialoguesListing.scrollActive = false;
@@ -570,26 +494,7 @@ export async function handler(element, app) {
 
     // --- Get dialogues
     do {
-        const gottenDialogues = await dialoguesListing.networkGetter.getNextPage();
-        gottenDialogues.forEach((dialogue) => {
-            dialogue.time = new ParsedDate(dialogue.time).getYesterdayFormatString();
-            convertAvatarUrlToDefault(dialogue, app.defaultAvatarUrl);
-            const elem = newElem(dialogueInnerHTMLTemplate({ avatar: dialogue.avatarUrl, time: dialogue.time, title: dialogue.username, body: dialogue.body, newMessages: dialogue.new }),
-                'li', dialogue.id, 'listing-button');
-            elem.username = dialogue.username;
-            elem.time = dialogue.time;
-            elem.avatar = dialogue.avatarUrl;
-            dialoguesListing.push(elem);
-            setDialogueDraggable(elem);
-        });
-
-        dialoguesListing.plugBottomState = plugStates.loading;
-        if (isLostConnection) {
-            dialoguesListing.plugBottomState = plugStates.offline;
-        } else if (gottenDialogues.length < dialoguesByRequest) {
-            dialoguesListing.plugBottomState = plugStates.end;
-        }
-        dialoguesListing.redraw(); // to get elements height. Before drawing it equals 0
+        await getAndDrawNewDialogues();
     } while (dialoguesListing.getElementsHeight() < dialoguesListing.block.clientHeight && dialoguesListing.plugBottomState === plugStates.loading);
 
     // --- Get query-parameters
@@ -686,22 +591,7 @@ export async function handler(element, app) {
             // get found dialogues
             const gottenDialogues = await dialoguesListing.networkGetter.get(['find', findText]);
             gottenDialogues.forEach((dialogue) => {
-                dialogue.time = new ParsedDate(dialogue.time).getYesterdayFormatString();
-                convertAvatarUrlToDefault(dialogue, app.defaultAvatarUrl);
-
-                const dialogueInnerHTML = dialogueInnerHTMLTemplate({
-                    avatar: dialogue.avatarUrl,
-                    time: dialogue.time,
-                    title: dialogue.username,
-                    body: dialogue.body,
-                    newMessages: dialogue.new
-                });
-                const elem = newElem(dialogueInnerHTML, 'li', dialogue.id, 'listing-button');
-                elem.username = dialogue.username;
-                elem.time = dialogue.time;
-                elem.avatar = dialogue.avatarUrl;
-                dialoguesListing.push(elem);
-                setDialogueDraggable(elem);
+                newDialogue(dialogue);
             });
 
             foundDialogues[findText] = dialoguesListing;
@@ -775,17 +665,14 @@ export async function handler(element, app) {
             themeInput.focus();
             // Create new dialogue
             createdDialogues += 1;
-            const tmpAvatarContainer = {username: findText};
-            convertAvatarUrlToDefault(tmpAvatarContainer, app.defaultAvatarUrl);
-            const nowTime = new ParsedDate().getYesterdayFormatString();
-            const elem = newElem(dialogueInnerHTMLTemplate({ avatar: tmpAvatarContainer.avatarUrl, time: nowTime, title: findText, body: '', newMessages: 0 }),
-                'li', '-' + createdDialogues, 'listing-button');
-            elem.username = findText;
-            elem.time = nowTime;
-            elem.avatar = tmpAvatarContainer.avatarUrl;
-            setDialogueDraggable(elem);
-
-            dialoguesListing.unshift(elem);
+            newDialogue({
+                id: -createdDialogues,
+                time: new Date().toString(),
+                avatarUrl: '',
+                username: findText,
+                body: '',
+                new: 0
+            }, true);
             await dialoguesListing.setActive(-createdDialogues);
             foldersListing.undraw();
             if (foldersListing.isOpened) {
@@ -961,27 +848,19 @@ export async function handler(element, app) {
         // update dialogue preview
         dialoguesListing.activeElem.lastElementChild.lastElementChild.innerText = message;
 
-        // add message HTML-block
         const nowStatus = response.ok ? 1 : 0;
         const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
+        // add message into last HTML-block
         if (lastMessage && nowStatus === lastMessage.status && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
             lastMessage.firstElementChild.innerHTML += `<div id="${lastMessage.id}" class="message-body">${message}</div>`;
-        } else {
-            // add block to messages list
-            const elem = newElem(messageBlockInnerHTMLTemplate({
-                side: 'your',
-                avatar: app.storage.avatar,
-                time: new ParsedDate().getYesterdayFormatString(),
-                isStated: true,
-                isDelivered: response.ok,
+        } else { // add block to messages listing
+            newMessage({
+                sender: `${app.storage.username}@liokor.ru`,
+                time: new Date().toString(),
+                status: nowStatus,
                 title: currentTitle,
-                body: [message]
-            }),
-            'div', lastMessage ? lastMessage.id + 1 : 0, 'message-block-full', 'right-block');
-            elem.title = currentTitle;
-            elem.sender = `${app.storage.username}@liokor.ru`;
-            elem.status = nowStatus;
-            dialoguesListing.activeElem.messagesListing.push(elem);
+                body: message
+            }, dialoguesListing.activeElem.messagesListing, false);
         }
         dialoguesListing.activeElem.messagesListing.redraw();
         dialoguesListing.activeElem.messagesListing.scrollToBottom();
@@ -1096,10 +975,10 @@ export async function handler(element, app) {
 
                 // create folder
                 const folderId = await createNewFolder(folderName);
-                const folderElem = newElem(folderInnerHTMLTemplate({ title: folderName, dialoguesCount: 2 }),
-                    'div', folderId, 'listing-button', 'folder');
-                folderElem.name = elem.username;
-                foldersListing.push(folderElem);
+                newFolder({
+                    name: folderName,
+                    id: folderId
+                });
 
                 // put dialogues into folder
                 await addDialogueToFolder(elem.id, folderId);
@@ -1118,5 +997,101 @@ export async function handler(element, app) {
                 foldersButton.dispatchEvent(new Event('click'));
             },
         'listing-button');
+    }
+
+    /**
+     * Creates new configured dialogue
+     * @param dialogue
+     * @param addToTop
+     */
+    function newDialogue(dialogue, addToTop = false) {
+        dialogue.time = new ParsedDate(dialogue.time).getYesterdayFormatString();
+        convertAvatarUrlToDefault(dialogue, app.defaultAvatarUrl);
+
+        const dialogueInnerHTML = dialogueInnerHTMLTemplate({
+            avatar: dialogue.avatarUrl,
+            time: dialogue.time,
+            title: dialogue.username,
+            body: dialogue.body,
+            newMessages: dialogue.new
+        });
+        const elem = newElem(dialogueInnerHTML, 'li', dialogue.id, 'listing-button');
+        elem.username = dialogue.username;
+        elem.time = dialogue.time;
+        elem.avatar = dialogue.avatarUrl;
+        setDialogueDraggable(elem);
+        if (addToTop) {
+            dialoguesListing.unshift(elem);
+            return;
+        }
+        dialoguesListing.push(elem);
+    }
+
+    /**
+     * Creates new configured folder
+     * @param folder
+     * @param addToTop
+     */
+    function newFolder(folder, addToTop = false) {
+        const folderInnerHTML = folderInnerHTMLTemplate({
+            title: folder.name,
+            dialoguesCount: 0
+        });
+        const elem = newElem(folderInnerHTML, 'div', folder.id, 'listing-button', 'folder');
+        elem.name = folder.name;
+        if (addToTop) {
+            foldersListing.unshift(elem);
+            return;
+        }
+        foldersListing.push(elem);
+    }
+
+    /**
+     * Creates new configured messages block
+     * @param messageBlock
+     * @param messagesListing
+     * @param addToTop
+     */
+    function newMessage(messageBlock, messagesListing, addToTop = false) {
+        const isYour = messageBlock.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase();
+        messageBlock.time = new ParsedDate(messageBlock.time).getYesterdayFormatString();
+        const messageBlockElem = newElem(
+                messageBlockInnerHTMLTemplate({
+                    side: isYour ? 'your' : 'not-your',
+                    avatar: isYour ? app.storage.avatar : foldersListing.activeElem.dialoguesListing.activeElem.avatar,
+                    time: messageBlock.time,
+                    isStated: isYour,
+                    isDelivered: (messageBlock.status === 1),
+                    title: messageBlock.title,
+                    body: messageBlock.body
+                }),
+                'div', messageBlock.id, 'message-block-full', isYour ? 'right-block' : 'left-block');
+        messageBlockElem.sender = messageBlock.sender;
+        messageBlockElem.title = messageBlock.title;
+        messageBlockElem.status = messageBlock.status;
+        if (addToTop) {
+            messagesListing.unshift(messageBlockElem);
+            return;
+        }
+        messagesListing.push(messageBlockElem);
+    }
+
+    /**
+     * Get and draw new dialogues...
+     * @returns {Promise<void>}
+     */
+    async function getAndDrawNewDialogues() {
+        const gottenDialogues = await dialoguesListing.networkGetter.getNextPage();
+        gottenDialogues.forEach((dialogue) => {
+            newDialogue(dialogue);
+        });
+
+        dialoguesListing.plugBottomState = plugStates.loading;
+        if (isLostConnection) {
+            dialoguesListing.plugBottomState = plugStates.offline;
+        } else if (gottenDialogues.length < dialoguesByRequest) {
+            dialoguesListing.plugBottomState = plugStates.end;
+        }
+        dialoguesListing.redraw(); // to get elements height. Before drawing it equals 0
     }
 }
