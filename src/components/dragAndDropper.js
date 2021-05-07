@@ -209,12 +209,15 @@ function prepareForDragging(elem, isMobile = false, cursorX = null) {
     if (shiftX > elem.clientWidth / 2) {
         sideModifier = 1 / sideModifier;
     }
+    sideModifierVertical = (0.5 - shiftX / elem.clientWidth) * constSideVertical;
 }
 
 const constG = 2;
 const constAcceleration = 0.3;
-const constSide = 1 * 2;
+const constSide = (1) * 2;
+const constSideVertical = (0.5) * 2;
 let sideModifier;
+let sideModifierVertical;
 /**
  * Сдвигает элемент на координаты
  * @param elem
@@ -227,9 +230,10 @@ function moveTo(elem, event) {
     currentRotation = currentRotation / 180 * Math.PI;
     const accelerationG = -constG * Math.sin(currentRotation)
     const accelerationMove = ((event.pageX - lastPageX > 0) ? sideModifier : 1 / sideModifier) * Math.cos(currentRotation) * (event.pageX - lastPageX) * constAcceleration;
+    const accelerationMoveVertical = -sideModifierVertical * Math.cos(currentRotation) * (event.pageY - lastPageY);
     currentRotation = currentRotation / Math.PI * 180;
 
-    currentRotation += accelerationG + accelerationMove;
+    currentRotation += accelerationG + accelerationMove + accelerationMoveVertical;
 
     elem.style.left = event.pageX - shiftX + 'px';
     elem.style.top = event.pageY - shiftY + 'px';
