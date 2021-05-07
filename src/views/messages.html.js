@@ -63,7 +63,6 @@ const html = `
                     <input class="theme-input flex-filler" id="theme-input" placeholder="Без темы">
                 </div>
                 <div class="table-row table-columns">
-                    <!--Rewrite svg class="svg-button top-filler" id="change-theme-button" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#99A2AD"><g transform="scale(1.2)"><path d="M9.56 4.1h3.54a.9.9 0 110 1.8H9.6c-1 0-1.69 0-2.23.04-.52.05-.82.13-1.05.24a2.6 2.6 0 00-1.14 1.14c-.11.23-.2.53-.24 1.05-.04.54-.04 1.24-.04 2.23v3.8c0 1 0 1.69.04 2.23.05.52.13.82.24 1.05.25.49.65.89 1.14 1.14.23.11.53.2 1.05.24.54.04 1.24.04 2.23.04h3.8c1 0 1.69 0 2.23-.04.52-.05.82-.13 1.05-.24a2.6 2.6 0 001.14-1.14c.11-.23.2-.53.24-1.05.04-.54.04-1.24.04-2.23v-3.5a.9.9 0 111.8 0v3.54c0 .95 0 1.71-.05 2.33a4.5 4.5 0 01-.43 1.73 4.4 4.4 0 01-1.92 1.92 4.5 4.5 0 01-1.73.43c-.62.05-1.38.05-2.33.05H9.56c-.95 0-1.71 0-2.33-.05a4.5 4.5 0 01-1.73-.43 4.4 4.4 0 01-1.92-1.92 4.51 4.51 0 01-.43-1.73c-.05-.62-.05-1.38-.05-2.33v-3.88c0-.95 0-1.71.05-2.33.05-.64.16-1.2.43-1.73A4.4 4.4 0 015.5 4.58a4.51 4.51 0 011.73-.43c.62-.05 1.38-.05 2.33-.05z"/><path d="M19.12 3.33a1.1 1.1 0 111.56 1.55l-.35.35a.4.4 0 01-.57 0l-.99-.99a.4.4 0 010-.56l.35-.35zm-.6 2.57l-.42-.42c-.44-.44-.72-.42-1.13 0l-5.13 5.12c-1.95 1.96-3.19 3.89-2.76 4.32.43.43 2.37-.8 4.32-2.76l5.12-5.13c.44-.44.42-.72 0-1.13z"/></g></svg-->
                     <textarea class="message-input text-1 scrollable input-with-clear" rows="1" id="message-input" tabindex="0" placeholder="Ваше сообщение..."></textarea>
                     <!--Photo svg class="svg-button top-filler" id="attach-photo-button" xmlns="http://www.w3.org/2000/svg" height="35" width="35"><g transform="scale(1.3)" fill="none" stroke="#828a99" stroke-width="1.7"><path d="m14.134 3.65c.853 0 1.46.278 1.988.899.017.019.494.61.66.815.228.281.674.536.945.536h.41c2.419 0 3.863 1.563 3.863 4.05v5.85c0 2.241-2 4.2-4.273 4.2h-11.454c-2.267 0-4.223-1.953-4.223-4.2v-5.85c0-2.496 1.4-4.05 3.814-4.05h.409c.271 0 .717-.255.945-.536.166-.204.643-.796.66-.815.528-.621 1.135-.899 1.988-.899z"/><circle cx="12" cy="12" r="3.85"/></g></svg-->
                     <svg class="svg-button transparent top-filler input-clear" id="message-send-button" xmlns="http://www.w3.org/2000/svg" width="35" height="35"><path transform="scale(1.3)" d="m12.1 7.87v-3.47a1.32 1.32 0 0 1 2.17-1l8.94 7.6a1.32 1.32 0 0 1 .15 1.86l-.15.15-8.94 7.6a1.32 1.32 0 0 1 -2.17-1v-3.45c-4.68.11-8 1.09-9.89 2.87a1.15 1.15 0 0 1 -1.9-1.11c1.53-6.36 5.51-9.76 11.79-10.05zm1.8-2.42v4.2h-.9c-5.3 0-8.72 2.25-10.39 6.86 2.45-1.45 5.92-2.16 10.39-2.16h.9v4.2l7.71-6.55z"/></svg>
@@ -150,7 +149,7 @@ export async function handler(element, app) {
         <div class="message-block {{ side }}">
             <img src={{ avatar }} alt="avatar" class="middle-avatar">
             <div class="floatright text-4 p-m">
-                <div>{{ time }}</div>
+                <div class="floatright">{{ time }}</div>
                 <svg class="floatright svg-button message-status" pointer-events="none" xmlns="http://www.w3.org/2000/svg">
                     {{#if isStated}}
                         {{#if isDelivered}}
@@ -170,7 +169,7 @@ export async function handler(element, app) {
     const dialogueInnerHTMLTemplate = Handlebars.compile(`
         <img src={{ avatar }} alt="avatar" class="middle-avatar">
         <div class="floatright text-4">
-            <div>{{ time }}</div>
+            <div class="floatright">{{ time }}</div>
             {{#if newMessages}}
                 <div class="dialogue-status floatright">{{ newMessages }}</div>
             {{/if}}
@@ -182,9 +181,13 @@ export async function handler(element, app) {
 
     const folderInnerHTMLTemplate = Handlebars.compile(`
         <svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.05) translate(150,110)"><path d="M448.916,118.259h-162.05c-6.578,0-13.003-2.701-17.44-7.292l-50.563-53.264c-12.154-12.115-28.783-18.443-45.625-18.346    H63.084C28.301,39.356,0,67.657,0,102.439v307.123c0,34.783,28.301,63.084,63.084,63.084h386.064h0.058    c34.764-0.154,62.949-28.59,62.794-63.277V181.342C512,146.559,483.699,118.259,448.916,118.259z M473.417,409.447    c0.058,13.504-10.88,24.558-24.307,24.616H63.084c-13.504,0-24.5-10.996-24.5-24.5V102.439c0-13.504,10.996-24.5,24.5-24.52    H173.74c0.212,0,0.424,0,0.637,0c6.443,0,12.694,2.566,16.899,6.733l50.293,53.013c11.806,12.192,28.32,19.176,45.297,19.176    h162.05c13.504,0,24.5,10.996,24.5,24.5V409.447z"/></g></svg>
-        <div class="dialogue-text centered">
-            <div class="text-1">{{ title }}</div>
+        <div class="centered flex-filler">
+            <input class="theme-input folder fullwidth" disabled placeholder="Название папки" value={{ title }}>
             <!--div class="dialogue-body text-2">Диалогов: {{ dialoguesCount }}</div-->
+        </div>
+        <div class="table-rows">
+            <svg class="svg-button" id="delete-folder" xmlns="http://www.w3.org/2000/svg" height="22" width="22"><g transform="translate(0, -2)"><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z"/></g></svg>
+            <svg class="svg-button" id="rename-folder" xmlns="http://www.w3.org/2000/svg" width="22" height="22"><path d="M9.56 4.1h3.54a.9.9 0 110 1.8H9.6c-1 0-1.69 0-2.23.04-.52.05-.82.13-1.05.24a2.6 2.6 0 00-1.14 1.14c-.11.23-.2.53-.24 1.05-.04.54-.04 1.24-.04 2.23v3.8c0 1 0 1.69.04 2.23.05.52.13.82.24 1.05.25.49.65.89 1.14 1.14.23.11.53.2 1.05.24.54.04 1.24.04 2.23.04h3.8c1 0 1.69 0 2.23-.04.52-.05.82-.13 1.05-.24a2.6 2.6 0 001.14-1.14c.11-.23.2-.53.24-1.05.04-.54.04-1.24.04-2.23v-3.5a.9.9 0 111.8 0v3.54c0 .95 0 1.71-.05 2.33a4.5 4.5 0 01-.43 1.73 4.4 4.4 0 01-1.92 1.92 4.5 4.5 0 01-1.73.43c-.62.05-1.38.05-2.33.05H9.56c-.95 0-1.71 0-2.33-.05a4.5 4.5 0 01-1.73-.43 4.4 4.4 0 01-1.92-1.92 4.51 4.51 0 01-.43-1.73c-.05-.62-.05-1.38-.05-2.33v-3.88c0-.95 0-1.71.05-2.33.05-.64.16-1.2.43-1.73A4.4 4.4 0 015.5 4.58a4.51 4.51 0 011.73-.43c.62-.05 1.38-.05 2.33-.05z"/><path d="M19.12 3.33a1.1 1.1 0 111.56 1.55l-.35.35a.4.4 0 01-.57 0l-.99-.99a.4.4 0 010-.56l.35-.35zm-.6 2.57l-.42-.42c-.44-.44-.72-.42-1.13 0l-5.13 5.12c-1.95 1.96-3.19 3.89-2.76 4.32.43.43 2.37-.8 4.32-2.76l5.12-5.13c.44-.44.42-.72 0-1.13z"/></svg>
         </div>`);
 
     const dividerHTMLTemplate = Handlebars.compile(`
@@ -1037,8 +1040,67 @@ export async function handler(element, app) {
             title: folder.name,
             dialoguesCount: 0
         });
-        const elem = newElem(folderInnerHTML, 'div', folder.id, 'listing-button', 'folder');
+        const elem = newElem(folderInnerHTML, 'div', folder.id, 'listing-button', 'folder', 'table-columns');
         elem.name = folder.name;
+
+        // delete folder button
+        elem.querySelector('#delete-folder').addEventListener('click', async (event) => {
+            if (window.confirm(`Удаляем папку ${folder.name}?`)) {
+                const response = await app.apiDelete('/email/folder', {
+                    id: folder.id
+                });
+                const responseData = await response.json();
+                if (!response.ok) {
+                    app.messages.error(`Ошибка ${response.status}`, `Не удалось удалить папку ${folder.name}: ${responseData.message}`);
+                    return;
+                }
+                app.messages.success('Папка удалена', `С именем: ${folder.name}`);
+
+                // put all dialogues from this folder into main folder
+                foldersListing.findById(folder.id).dialoguesListing.forEach((dialogue) => {
+                    foundDialogues[''].push(dialogue);
+                });
+                // delete folder
+                foldersListing.delete(folder.id);
+            }
+        });
+
+        const inputElem = elem.querySelector('input');
+        inputElem.onclick = (event) => {
+            event.stopPropagation();
+        }
+        // rename folder button
+        elem.querySelector('#rename-folder').addEventListener('click', (event) => {
+            event.stopPropagation();
+            inputElem.removeAttribute('disabled');
+            inputElem.focus();
+            inputElem.onkeydown = (event) => {
+                if (event.keyCode !== 13 && event.keyCode !== 27) { // enter or escape
+                    return;
+                }
+                inputElem.blur();
+            }
+
+            inputElem.onblur = async (event) => {
+                inputElem.onblur = null;
+                inputElem.setAttribute('disabled', '');
+                const response = await app.apiPut('/email/folder', {
+                    id: folder.id,
+                    name: inputElem.value
+                });
+                const responseData = await response.json();
+                if (!response.ok) {
+                    app.messages.error(`Ошибка ${response.status}`, `Не удалось переименовать папку ${folder.name}: ${responseData.message}`);
+                    inputElem.value = folder.name;
+                    return;
+                }
+                app.messages.success('Папка переименована', `Было: ${folder.name} стало: ${inputElem.value}`);
+
+                // put all dialogues from this folder into main folder
+                foldersListing.findById(folder.id).name = inputElem.value;
+            }
+        });
+
         if (addToTop) {
             foldersListing.unshift(elem);
             return;

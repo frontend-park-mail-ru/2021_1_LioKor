@@ -23,6 +23,8 @@ folder-color-active = #9a471d
 folder-color-selected = #874b1c
 folder-color-active-selected = #a8511f
 
+folder-input-bg = #4c2e16
+
 dialogues-divider-height = 5px
 
 bg-color-1 = #60606099
@@ -241,7 +243,6 @@ width-border = 1px
 // --- Listing button:
 .listing-button
   touch-action none
-  display block
   min-height dialogue-preview-height
   max-height dialogue-preview-height
   overflow hidden
@@ -273,6 +274,15 @@ width-border = 1px
   background-color folder-color-selected
 .listing-button.folder.active.selected
   background-color folder-color-active-selected
+
+.listing-button.folder
+  div
+    svg
+      opacity 0
+.listing-button.folder:hover
+  div
+    svg
+      opacity 1
 
 .dialogues-listing-divider
   width 100%
@@ -520,6 +530,7 @@ width-border = 1px
   outline none
   transition all ease 0.2s
   color color2
+  text-overflow ellipsis
 .theme-input:focus
   background bg-color-2
   color color3
@@ -528,6 +539,16 @@ width-border = 1px
   color color4
 .theme-input:focus::placeholder
   color color3
+
+.theme-input.folder
+  font-size font-size
+  color color1
+  margin-bottom 0
+  padding small
+  border-radius extra-small
+.theme-input.folder:focus
+  background folder-input-bg
+  color color1
 
 .p-xs
   padding extra-small
