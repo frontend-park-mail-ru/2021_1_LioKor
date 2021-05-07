@@ -103,7 +103,6 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
 
             startFakeMoving();
             document.ontouchmove = (event) => {
-                console.log("MOVE");
                 currentMoveEvent = event;
                 event.preventDefault(); // отключаем прокрутку блока при перетаскивании
                 event = event.changedTouches[0];
@@ -202,7 +201,6 @@ function prepareForDragging(elem, isMobile = false, cursorX = null) {
         if (shiftX > elem.clientWidth / 4) {
             sideModifier = 1 / sideModifier;
         }
-        return;
     }
 
     sideModifier = 1 + Math.abs((0.5 - shiftX / elem.clientWidth) * constSide);
@@ -212,10 +210,10 @@ function prepareForDragging(elem, isMobile = false, cursorX = null) {
     sideModifierVertical = (0.5 - shiftX / elem.clientWidth) * constSideVertical;
 }
 
-const constG = 2;
-const constAcceleration = 0.3;
+const constG = 4;
+const constAcceleration = 0.2;
 const constSide = (1) * 2;
-const constSideVertical = (0.5) * 2;
+const constSideVertical = (0.3) * 2;
 let sideModifier;
 let sideModifierVertical;
 /**

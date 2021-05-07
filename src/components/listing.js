@@ -100,7 +100,7 @@ export class Listing {
     }
 
     delete(id) {
-        const index = this.elements.findIndex(elem => elem.id === id);
+        const index = this.elements.findIndex(elem => elem.id === String(id));
         this.removeAllListeners(this.elements[index]);
         this.elements[index].remove();
         this.elements.splice(index, 1);

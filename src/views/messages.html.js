@@ -182,13 +182,13 @@ export async function handler(element, app) {
 
     const folderInnerHTMLTemplate = Handlebars.compile(`
         <svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.05) translate(150,110)"><path d="M448.916,118.259h-162.05c-6.578,0-13.003-2.701-17.44-7.292l-50.563-53.264c-12.154-12.115-28.783-18.443-45.625-18.346    H63.084C28.301,39.356,0,67.657,0,102.439v307.123c0,34.783,28.301,63.084,63.084,63.084h386.064h0.058    c34.764-0.154,62.949-28.59,62.794-63.277V181.342C512,146.559,483.699,118.259,448.916,118.259z M473.417,409.447    c0.058,13.504-10.88,24.558-24.307,24.616H63.084c-13.504,0-24.5-10.996-24.5-24.5V102.439c0-13.504,10.996-24.5,24.5-24.52    H173.74c0.212,0,0.424,0,0.637,0c6.443,0,12.694,2.566,16.899,6.733l50.293,53.013c11.806,12.192,28.32,19.176,45.297,19.176    h162.05c13.504,0,24.5,10.996,24.5,24.5V409.447z"/></g></svg>
-        <div class="centered flex-filler show-on-hover">
-            <input class="theme-input folder fullwidth" disabled placeholder="Название папки" value={{ title }}>
+        <div class="centered flex-filler">
+            <input class="theme-input folder fullwidth" disabled placeholder="Название папки" value="{{ title }}">
             <!--div class="dialogue-body text-2">Диалогов: {{ dialoguesCount }}</div-->
         </div>
-        <div class="table-rows">
+        <div class="table-rows show-on-hover">
             <svg class="svg-button" id="delete-folder" xmlns="http://www.w3.org/2000/svg" height="22" width="22"><g transform="translate(0, -2)"><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z"/></g></svg>
-            <svg class="svg-button" id="rename-folder" xmlns="http://www.w3.org/2000/svg" width="22" height="22"><path d="M9.56 4.1h3.54a.9.9 0 110 1.8H9.6c-1 0-1.69 0-2.23.04-.52.05-.82.13-1.05.24a2.6 2.6 0 00-1.14 1.14c-.11.23-.2.53-.24 1.05-.04.54-.04 1.24-.04 2.23v3.8c0 1 0 1.69.04 2.23.05.52.13.82.24 1.05.25.49.65.89 1.14 1.14.23.11.53.2 1.05.24.54.04 1.24.04 2.23.04h3.8c1 0 1.69 0 2.23-.04.52-.05.82-.13 1.05-.24a2.6 2.6 0 001.14-1.14c.11-.23.2-.53.24-1.05.04-.54.04-1.24.04-2.23v-3.5a.9.9 0 111.8 0v3.54c0 .95 0 1.71-.05 2.33a4.5 4.5 0 01-.43 1.73 4.4 4.4 0 01-1.92 1.92 4.5 4.5 0 01-1.73.43c-.62.05-1.38.05-2.33.05H9.56c-.95 0-1.71 0-2.33-.05a4.5 4.5 0 01-1.73-.43 4.4 4.4 0 01-1.92-1.92 4.51 4.51 0 01-.43-1.73c-.05-.62-.05-1.38-.05-2.33v-3.88c0-.95 0-1.71.05-2.33.05-.64.16-1.2.43-1.73A4.4 4.4 0 015.5 4.58a4.51 4.51 0 011.73-.43c.62-.05 1.38-.05 2.33-.05z"/><path d="M19.12 3.33a1.1 1.1 0 111.56 1.55l-.35.35a.4.4 0 01-.57 0l-.99-.99a.4.4 0 010-.56l.35-.35zm-.6 2.57l-.42-.42c-.44-.44-.72-.42-1.13 0l-5.13 5.12c-1.95 1.96-3.19 3.89-2.76 4.32.43.43 2.37-.8 4.32-2.76l5.12-5.13c.44-.44.42-.72 0-1.13z"/></svg>
+            <svg class="svg-button" id="rename-folder" xmlns="http://www.w3.org/2000/svg" width="22" height="26"><path d="M9.56 4.1h3.54a.9.9 0 110 1.8H9.6c-1 0-1.69 0-2.23.04-.52.05-.82.13-1.05.24a2.6 2.6 0 00-1.14 1.14c-.11.23-.2.53-.24 1.05-.04.54-.04 1.24-.04 2.23v3.8c0 1 0 1.69.04 2.23.05.52.13.82.24 1.05.25.49.65.89 1.14 1.14.23.11.53.2 1.05.24.54.04 1.24.04 2.23.04h3.8c1 0 1.69 0 2.23-.04.52-.05.82-.13 1.05-.24a2.6 2.6 0 001.14-1.14c.11-.23.2-.53.24-1.05.04-.54.04-1.24.04-2.23v-3.5a.9.9 0 111.8 0v3.54c0 .95 0 1.71-.05 2.33a4.5 4.5 0 01-.43 1.73 4.4 4.4 0 01-1.92 1.92 4.5 4.5 0 01-1.73.43c-.62.05-1.38.05-2.33.05H9.56c-.95 0-1.71 0-2.33-.05a4.5 4.5 0 01-1.73-.43 4.4 4.4 0 01-1.92-1.92 4.51 4.51 0 01-.43-1.73c-.05-.62-.05-1.38-.05-2.33v-3.88c0-.95 0-1.71.05-2.33.05-.64.16-1.2.43-1.73A4.4 4.4 0 015.5 4.58a4.51 4.51 0 011.73-.43c.62-.05 1.38-.05 2.33-.05z"/><path d="M19.12 3.33a1.1 1.1 0 111.56 1.55l-.35.35a.4.4 0 01-.57 0l-.99-.99a.4.4 0 010-.56l.35-.35zm-.6 2.57l-.42-.42c-.44-.44-.72-.42-1.13 0l-5.13 5.12c-1.95 1.96-3.19 3.89-2.76 4.32.43.43 2.37-.8 4.32-2.76l5.12-5.13c.44-.44.42-.72 0-1.13z"/></svg>
         </div>`);
 
     const dividerHTMLTemplate = Handlebars.compile(`
@@ -451,11 +451,7 @@ export async function handler(element, app) {
         dialoguesListing = folder.dialoguesListing;
         dialoguesListing.scrollActive = true;
         dialoguesListing.plugTopState = 'folder-' + folder.id;
-        foldersListing.undraw();
-        if (foldersListing.isOpened) {
-            foldersListing.draw();
-        }
-        dialoguesListing.draw();
+        redrawListings();
 
         foldersListing.scrollToTop();
 
@@ -678,11 +674,7 @@ export async function handler(element, app) {
                 new: 0
             }, true);
             await dialoguesListing.setActive(-createdDialogues);
-            foldersListing.undraw();
-            if (foldersListing.isOpened) {
-                foldersListing.draw()
-            }
-            dialoguesListing.draw();
+            redrawListings();
             dialoguesListing.scrollToTop();
         }
     });
@@ -933,22 +925,14 @@ export async function handler(element, app) {
                 // drop dialogue on folder => add dialogue to folder
                 if (!underElem) {
                     elem.remove();
-                    foldersListing.undraw();
-                    if (foldersListing.isOpened) {
-                        foldersListing.draw();
-                    }
-                    dialoguesListing.draw();
+                    redrawListings();
                     return;
                 }
                 if (underElem.classList.contains('folder')) {
                     const folderDialogues = foldersListing.findById(underElem.id).dialoguesListing;
                     if (!isInside || folderDialogues === dialoguesListing) {
                         elem.remove();
-                        foldersListing.undraw();
-                        if (foldersListing.isOpened) {
-                            foldersListing.draw();
-                        }
-                        dialoguesListing.draw();
+                        redrawListings();
                         return;
                     }
                     await addDialogueToFolder(elem.id, underElem.id);
@@ -967,13 +951,9 @@ export async function handler(element, app) {
                     folderName = window.prompt(`Вы собираетесь создать новую папку из двух диалогов.
 Как она будет называться?`);
                 }
-                if (!folderName) {
+                if (!folderName && folderName !== '') {
                     elem.remove();
-                    foldersListing.undraw();
-                    if (foldersListing.isOpened) {
-                        foldersListing.draw();
-                    }
-                    dialoguesListing.draw();
+                    redrawListings();
                     return;
                 }
 
@@ -1039,7 +1019,10 @@ export async function handler(element, app) {
                 app.messages.success('Диалог удалён', `С ${dialogue.username}`);
 
                 // clear and delete dialogue
-                dialoguesListing.findById(dialogue.id).messagesListing.clear();
+                const messageElem = dialoguesListing.findById(dialogue.id);
+                if (messageElem.messagesListing) {
+                    messageElem.messagesListing.clear();
+                }
                 dialoguesListing.delete(dialogue.id);
             }
         });
@@ -1068,6 +1051,10 @@ export async function handler(element, app) {
         elem.querySelector('#delete-folder').addEventListener('click', async (event) => {
             event.stopPropagation();
             if (window.confirm(`Удаляем папку ${folder.name}?`)) {
+                // get folder dialogues
+                const gottenDialogues = await new PaginatedGetter(app.apiUrl + '/email/dialogues?folder=' + folder.id, 'since', -1, 'amount', dialoguesByRequest, 'id').getNextPage();
+
+                // delete folder
                 const response = await app.apiDelete('/email/folder', {
                     id: folder.id
                 });
@@ -1079,9 +1066,22 @@ export async function handler(element, app) {
                 app.messages.success('Папка удалена', `С именем: ${folder.name}`);
 
                 // put all dialogues from this folder into main folder
-                foldersListing.findById(folder.id).dialoguesListing.forEach((dialogue) => {
-                    foundDialogues[''].push(dialogue);
-                });
+                const folderElem = foldersListing.findById(folder.id);
+                const prevDialoguesListing = dialoguesListing; // because newDialogue() works with global dialoguesListing
+                dialoguesListing = foundDialogues[''];
+                if (folderElem.dialoguesListing) {
+                    folderElem.dialoguesListing.forEach((dialogue) => {
+                        dialoguesListing.push(dialogue);
+                    });
+                } else {
+                    gottenDialogues.forEach((dialogue) => {
+                        newDialogue(dialogue);
+                    });
+                }
+                dialoguesListing = prevDialoguesListing;
+                if (dialoguesListing === prevDialoguesListing) {
+                    redrawListings();
+                }
                 // delete folder
                 foldersListing.delete(folder.id);
             }
@@ -1106,8 +1106,11 @@ export async function handler(element, app) {
             inputElem.onblur = async (event) => {
                 inputElem.onblur = null;
                 inputElem.setAttribute('disabled', '');
+                if (folder.name === inputElem.value) {
+                    return;
+                }
                 const response = await app.apiPut('/email/folder', {
-                    id: folder.id,
+                    folderId: folder.id,
                     name: inputElem.value
                 });
                 const responseData = await response.json();
@@ -1116,9 +1119,9 @@ export async function handler(element, app) {
                     inputElem.value = folder.name;
                     return;
                 }
-                app.messages.success('Папка переименована', `Было: ${folder.name} стало: ${inputElem.value}`);
+                app.messages.success('Папка переименована', `Было: ${folder.name} Стало: ${inputElem.value}`);
 
-                // put all dialogues from this folder into main folder
+                // rename in structure
                 foldersListing.findById(folder.id).name = inputElem.value;
             }
         });
@@ -1176,6 +1179,17 @@ export async function handler(element, app) {
         } else if (gottenDialogues.length < dialoguesByRequest) {
             dialoguesListing.plugBottomState = plugStates.end;
         }
-        dialoguesListing.redraw(); // to get elements height. Before drawing it equals 0
+        redrawListings(); // to get elements height. Before drawing it equals 0
+    }
+
+    /**
+     * Redraw foldersListing if it opened and dialoguesListing
+     */
+    function redrawListings() {
+        foldersListing.undraw();
+        if (foldersListing.isOpened) {
+            foldersListing.draw();
+        }
+        dialoguesListing.draw();
     }
 }
