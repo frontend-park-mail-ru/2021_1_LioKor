@@ -1,14 +1,17 @@
 import { request } from './requests';
 
 export default class PaginatedGetter {
-    constructor(baseURL, sinceParamName, startFrom, amountParamName, elementsByRequest, sortBy) {
+    constructor(baseURL, sinceParamName, startFrom, amountParamName, elementsByRequest, sortBy, sortDesc = false) {
         this.URL = new URL(baseURL);
         this.currentLastElement = startFrom;
         this.elementsByRequest = elementsByRequest;
         this.sinceParamName = sinceParamName;
         this.amountParamName = amountParamName;
         this.sortBy = sortBy;
-        this.URL.searchParams.set(sinceParamName, startFrom);
+        this.sortDesc = sortDesc;
+        if (startFrom) {
+            this.URL.searchParams.set(sinceParamName, startFrom);
+        }
         this.URL.searchParams.set(amountParamName, elementsByRequest);
 
         this.onErrorHandler = null;
@@ -34,7 +37,15 @@ export default class PaginatedGetter {
     async getNextPage(...query) {
         const gotten = await this.get(query);
         gotten.forEach((item) => {
-            this.currentLastElement = Math.max(this.currentLastElement, item[this.sortBy]);
+            if (this.sortDesc) {
+                if (item[this.sortBy] < this.currentLastElement || !this.currentLastElement) {
+                    this.currentLastElement = item[this.sortBy];
+                }
+            } else {
+                if (item[this.sortBy] > this.currentLastElement || !this.currentLastElement) {
+                    this.currentLastElement = item[this.sortBy];
+                }
+            }
         });
         this.URL.searchParams.set(this.sinceParamName, this.currentLastElement);
         return gotten;
