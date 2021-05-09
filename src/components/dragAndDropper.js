@@ -71,6 +71,7 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
             }
 
             elem.removeAttribute('style');
+            elem.classList.remove('ondrag');
             if (currentDroppable) {
                 leaveDroppableHandler(currentDroppable);
             }
@@ -141,6 +142,7 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
             stopFakeMoving();
 
             elem.removeAttribute('style');
+            elem.classList.remove('ondrag');
             if (currentDroppable) {
                 leaveDroppableHandler(currentDroppable);
             }
@@ -190,6 +192,7 @@ function prepareForDragging(elem, isMobile = false, cursorX = null) {
     elem.style.transform = `rotate(0deg)`;
     elem.style.transformOrigin = `${shiftX}px ${shiftY}px`;
     elem.style.cursor = 'grabbing';
+    elem.classList.add('ondrag');
     elem.remove();
     document.body.append(elem);
 

@@ -195,7 +195,7 @@ export async function handler(element, app) {
     const folderInnerHTMLTemplate = Handlebars.compile(`
         <svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.05) translate(150,110)"><path d="M448.916,118.259h-162.05c-6.578,0-13.003-2.701-17.44-7.292l-50.563-53.264c-12.154-12.115-28.783-18.443-45.625-18.346    H63.084C28.301,39.356,0,67.657,0,102.439v307.123c0,34.783,28.301,63.084,63.084,63.084h386.064h0.058    c34.764-0.154,62.949-28.59,62.794-63.277V181.342C512,146.559,483.699,118.259,448.916,118.259z M473.417,409.447    c0.058,13.504-10.88,24.558-24.307,24.616H63.084c-13.504,0-24.5-10.996-24.5-24.5V102.439c0-13.504,10.996-24.5,24.5-24.52    H173.74c0.212,0,0.424,0,0.637,0c6.443,0,12.694,2.566,16.899,6.733l50.293,53.013c11.806,12.192,28.32,19.176,45.297,19.176    h162.05c13.504,0,24.5,10.996,24.5,24.5V409.447z"/></g></svg>
         <div class="centered flex-filler">
-            <input class="theme-input folder fullwidth" disabled placeholder="Название папки" value="{{ title }}">
+            <input class="theme-input folder fullwidth" disabled placeholder="Название папки" value="{{ title }}" style="cursor: pointer">
             <!--div class="dialogue-body text-2">Диалогов: {{ dialoguesCount }}</div-->
         </div>
         <div class="table-rows show-on-hover">
@@ -1111,13 +1111,16 @@ export async function handler(element, app) {
 
         const inputElem = elem.querySelector('input');
         inputElem.onclick = (event) => {
-            event.stopPropagation();
+            if (!inputElem.hasAttribute('disabled')) {
+                event.stopPropagation();
+            }
         }
         // rename folder button
         elem.querySelector('#rename-folder').addEventListener('click', (event) => {
             event.stopPropagation();
             inputElem.removeAttribute('disabled');
             inputElem.focus();
+            inputElem.style.removeProperty('cursor');
             inputElem.onkeydown = (event) => {
                 if (event.keyCode !== 13 && event.keyCode !== 27) { // enter or escape
                     return;
@@ -1127,6 +1130,7 @@ export async function handler(element, app) {
 
             inputElem.onblur = async (event) => {
                 inputElem.onblur = null;
+                inputElem.style.setProperty('cursor', 'pointer');
                 inputElem.setAttribute('disabled', '');
                 if (folder.name === inputElem.value) {
                     return;
