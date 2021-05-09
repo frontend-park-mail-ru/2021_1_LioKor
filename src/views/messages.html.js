@@ -204,9 +204,7 @@ export async function handler(element, app) {
         </div>`);
 
     const dividerHTMLTemplate = Handlebars.compile(`
-        <div class="dialogues-listing-divider center-text" id="dialogues-listing-divider">
-            <div class="text-4">↓ {{ folder }} ↓</div>
-        </div>`);
+        <div class="text-4">↓ {{ folder }} ↓</div>`);
 
     // --- Draw some page elements
     // fill username in header
@@ -215,6 +213,13 @@ export async function handler(element, app) {
     // --- Listings create and configure
     // Create folders listing
     const foldersListing = new Listing(dialoguesListingElem);
+
+    // create "new folder" button as plugBottom
+    const newFolderButton = newElem(`<svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z"/></svg>
+            <div class="text-1 text-bigger dialogue-text centered">${mainFolderName}</div>`, 'li', '0', 'listing-button', 'folder', 'closed');
+    foldersListing.setPlugBottomState('new-folder-button', newFolderButton);
+    foldersListing.plugBottomState = 'new-folder-button';
+
     // create Event-listener on folder element to activate it
     foldersListing.setClickElementHandler(async (event) => {
         foldersListing.clearSelected();
@@ -233,7 +238,7 @@ export async function handler(element, app) {
     // --- Get folders
     // create main folder
     const elem = newElem(`<svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.065) translate(90,10)"><path d="M340.80080180740356,203.6081974435188 h-123.02250294685365 c-4.993779848098755,0 -9.871407626152038,-2.050501576423645 -13.239817657470704,-5.535822841644287 l-38.38560207653046,-40.4361036529541 c-9.226877511978149,-9.197270121574402 -21.851013281822205,-14.00125900554657 -34.63685095310211,-13.927620111465455 H47.89109272384644 C21.485096302986143,143.70789167359845 0,165.1929879765846 0,191.59822523358838 v233.156681101799 c0,26.40599642086029 21.485096302986143,47.89109272384644 47.89109272384644,47.89109272384644 h293.0858350982666 h0.04403150367736817 c26.39157230758667,-0.11691123390197757 47.78860560321808,-21.70449465751648 47.67093520545959,-48.03761134815216 V251.49853100350873 C388.69189453125,225.09253458264843 367.2067982282639,203.6081974435188 340.80080180740356,203.6081974435188 zM359.4010754556656,424.66760249188917 c0.04403150367736817,10.251748718261718 -8.259702758789063,18.643545988082884 -18.45299586009979,18.687577491760255 H47.89109272384644 c-10.251748718261718,0 -18.599514484405518,-8.3477657661438 -18.599514484405518,-18.599514484405518 V191.59822523358838 c0,-10.251748718261718 8.3477657661438,-18.599514484405518 18.599514484405518,-18.614697761535645 H131.89712842941285 c0.1609427375793457,0 0.3218854751586914,0 0.48358737659454354,0 c4.891292727470398,0 9.636825994491577,1.9480144557952879 12.82911001110077,5.111450245857239 l38.18062783527374,40.24555352497101 c8.96268848991394,9.25572573852539 21.499520416259767,14.557726112365721 34.38784520816803,14.557726112365721 h123.02250294685365 c10.251748718261718,0 18.599514484405518,8.3477657661438 18.599514484405518,18.599514484405518 V424.66760249188917 z"/><path d="M 79.72623 131.64013 C 82.73375 123.36945 87.7321 118.64883 96.77176 118.33273 C 105.81142 118.01664 183.46435 118.20887 190.12869 120.04583 C 196.79302 121.88278 238.50963 168.42677 251.30868 173.09609 C 264.10774 177.76541 389.39087 174.96474 395.48077 175.83164 C 401.57067 176.69854 410.44077 182.36042 411.03479 192.88673 C 411.62881 203.41304 413.25029 354.17958 412.89442 371.12236 C 412.53855 388.06514 399.04484 386.91183 399.12243 386.95197 C 399.20002 386.99211 398.52843 415.44312 399.20272 415.87927 C 399.87701 416.31542 440.00224 411.49112 440.71397 377.88927 C 441.4257 344.28742 440.59625 211.13798 439.96209 183.90432 C 439.32793 156.67066 421.64409 147.53851 403.11998 147.06221 C 384.59587 146.58591 275.94556 150.90709 263.1636 146.39581 C 250.38164 141.88453 208.99824 93.8881 195.98985 90.1287 C 182.98146 86.3693 97.12204 89.42811 86.57864000000001 88.4156 C 76.03523 87.40308 50.48841 106.46071 49.73653 131.27274"/></g></svg>
-            <div class="text-1 text-bigger dialogue-text centered">${mainFolderName}</div>`, 'li', '0', 'listing-button', 'folder');
+            <div class="text-1 text-bigger dialogue-text centered">${mainFolderName}</div>`, 'li', '0', 'listing-button', 'folder', 'closed');
     elem.name = mainFolderName;
     foldersListing.push(elem);
     foldersListing.setActiveNoHandlers('0');
@@ -242,9 +247,6 @@ export async function handler(element, app) {
     gottenFolders.forEach((folder) => {
         newFolder(folder);
     });
-    if (isLostConnection) {
-        foldersListing.plugBottomState = plugStates.offline;
-    }
 
     // Create dialogues listing
     const foundDialogues = {
@@ -269,7 +271,7 @@ export async function handler(element, app) {
 
         // create folders plugs for dialoguesListing
         foldersListing.forEach((folder) => {
-            dialoguesListing.setPlugTopState('folder-' + folder.id, newElem(dividerHTMLTemplate({ folder: folder.name }), 'div', '', 'dialogues-listing-divider', 'center-text'));
+            dialoguesListing.setPlugTopState('folder-' + folder.id, newElem(dividerHTMLTemplate({ folder: folder.name }), 'div', 'dialogues-listing-divider', 'dialogues-listing-divider', 'center-text'));
         });
 
         dialoguesListing.setPlugBottomState(plugStates.end, newElem(`
@@ -555,19 +557,27 @@ export async function handler(element, app) {
             foldersListing.isOpened = false;
 
             if (foldersListing.activeElem.id === '0') {
+                dialoguesListing.plugTopElem.classList.add('closed');
                 dialoguesListing.plugTopState = plugStates.none;
             }
+
             foldersListing.clearSelected();
-            dialoguesListing.redraw();
+            foldersListing.forEach((folder) => {
+                folder.classList.add('closed');
+            });
+            setTimeout(redrawListings, 300);
             return;
         }
         // open folders
         foldersIconArrow.style.transform = 'scale(0.03) rotate(180deg) translate(-950px, -880px)';
         foldersListing.isOpened = true;
         dialoguesListing.plugTopState = 'folder-' + foldersListing.activeElem.id;
-        foldersListing.redraw();
-        dialoguesListing.draw();
+        redrawListings();
         foldersListing.scrollToTop();
+        dialoguesListing.plugTopElem.classList.remove('closed');
+        foldersListing.forEach((folder) => {
+            folder.classList.remove('closed');
+        });
     });
 
     // --- Find dialogues
@@ -1060,7 +1070,7 @@ export async function handler(element, app) {
             title: folder.name,
             dialoguesCount: 0
         });
-        const elem = newElem(folderInnerHTML, 'div', folder.id, 'listing-button', 'folder', 'table-columns');
+        const elem = newElem(folderInnerHTML, 'div', folder.id, 'listing-button', 'folder', 'table-columns', 'closed');
         elem.name = folder.name;
 
         // delete folder button
@@ -1113,7 +1123,9 @@ export async function handler(element, app) {
         inputElem.onclick = (event) => {
             if (!inputElem.hasAttribute('disabled')) {
                 event.stopPropagation();
+                //return;
             }
+            //elem.dispatchEvent(new Event('click'));
         }
         // rename folder button
         elem.querySelector('#rename-folder').addEventListener('click', (event) => {

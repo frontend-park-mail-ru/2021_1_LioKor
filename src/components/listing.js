@@ -22,8 +22,10 @@ export class Listing {
 
         this.plugTopState = plugStates.none;
         this.plugsTop = [];
+        this.plugTopElem = null;
         this.plugBottomState = plugStates.none;
         this.plugsBottom = [];
+        this.plugBottomElem = null;
 
         this.scrollActive = true;
     }
@@ -138,7 +140,8 @@ export class Listing {
 
     draw() {
         if (this.plugTopState !== plugStates.none) { // top plug
-            this.block.appendChild(this.plugsTop[this.plugTopState]);
+            this.plugTopElem = this.plugsTop[this.plugTopState];
+            this.block.appendChild(this.plugTopElem);
         }
 
         if (this.elements.length === 0 && this.placeholder) { // body
@@ -150,7 +153,8 @@ export class Listing {
         }
 
         if (this.plugBottomState !== plugStates.none) { // bottom plug
-            this.block.appendChild(this.plugsBottom[this.plugBottomState]);
+            this.plugBottomElem = this.plugsBottom[this.plugBottomState];
+            this.block.appendChild(this.plugBottomElem);
         }
     }
 

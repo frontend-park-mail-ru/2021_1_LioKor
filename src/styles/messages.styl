@@ -25,7 +25,7 @@ folder-color-active-selected = #a8511f
 
 folder-input-bg = #4c2e16
 
-dialogues-divider-height = 5px
+dialogues-divider-height = 24px
 
 bg-color-1 = #60606099
 bg-color-2 = #393C3FCC
@@ -302,10 +302,14 @@ width-border = 1px
 
 .dialogues-listing-divider
   width 100%
-  //height dialogues-divider-height
+  height dialogues-divider-height
+  min-height dialogues-divider-height
+  max-height dialogues-divider-height
   background-color color3
   border-top 2px solid color4
   border-bottom 2px solid color4
+  overflow hidden
+  transition all 0.3s ease
 
 .empty-dialogue
   min-height dialogue-preview-height
@@ -580,6 +584,16 @@ width-border = 1px
 
 .ondrag
   box-shadow 0 0 8px color7
+
+.closed
+  max-height 0
+  min-height 0
+  height 0
+  padding-top 0
+  padding-bottom 0
+  border-bottom 0
+  border-top 0
+  transition all 0.3s ease
 
 .load-animation
   display: flex;
