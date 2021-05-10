@@ -25,6 +25,8 @@ folder-color-active-selected = #a8511f
 
 folder-input-bg = #4c2e16
 
+new-folder-button-color = #5a361a
+
 dialogues-divider-height = 24px
 
 bg-color-1 = #60606099
@@ -299,6 +301,14 @@ width-border = 1px
     opacity 1
   .hide-on-hover
     opacity 0
+
+.new-folder-button
+  background-color new-folder-button-color
+  min-height dialogue-preview-height - middle
+  max-height dialogue-preview-height - middle
+  padding extra-small
+.new-folder-button:hover
+  background-color folder-color-active-selected
 
 .dialogues-listing-divider
   width 100%
@@ -575,6 +585,8 @@ width-border = 1px
 .theme-input.folder:focus
   background folder-input-bg
   color color1
+.theme-input.folder:read-only:focus
+  background #FFFFFF00
 
 .p-xs
   padding extra-small

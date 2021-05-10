@@ -228,12 +228,6 @@ export async function handler(element, app) {
     // Create folders listing
     const foldersListing = new Listing(dialoguesListingElem);
 
-    // create "new folder" button as plugBottom
-    const newFolderButton = newElem(`<svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z"/></svg>
-            <div class="text-1 text-bigger dialogue-text centered">${mainFolderName}</div>`, 'li', '0', 'listing-button', 'folder', 'closed');
-    foldersListing.setPlugBottomState('new-folder-button', newFolderButton);
-    foldersListing.plugBottomState = 'new-folder-button';
-
     // create Event-listener on folder element to activate it
     foldersListing.setClickElementHandler(async (event) => {
         foldersListing.clearSelected();
@@ -247,6 +241,28 @@ export async function handler(element, app) {
         await foldersListing.addSelected(event.currentTarget.id);
     });
 
+    // create "new folder" button as plugBottom
+    const newFolderButton = newElem(`<svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z"/></svg>
+            <div class="text-1 dialogue-text centered">Создать папку...</div>`, 'li', '0', 'listing-button', 'folder', 'closed', 'new-folder-button');
+    foldersListing.setPlugBottomState('new-folder-button', newFolderButton);
+    foldersListing.plugBottomState = 'new-folder-button';
+    newFolderButton.addEventListener('click', async (event) => {
+        const folderName = window.prompt(`Как назовём папку?`);
+
+        // create folder
+        const folderId = await newFolderRequest(folderName);
+        if (!folderId) {
+            return;
+        }
+        newFolder({
+            name: folderName,
+            id: folderId
+        }).classList.remove('closed');
+
+        redrawListings();
+    });
+
+    // --- Draw default page
     messagesListingElem.innerHTML = defaultMessagesPageInnerHTML;
 
     // --- Get folders
@@ -588,6 +604,7 @@ export async function handler(element, app) {
             }
 
             foldersListing.clearSelected();
+            foldersListing.plugBottomElem.classList.add('closed');
             foldersListing.forEach((folder) => {
                 folder.classList.add('closed');
             });
@@ -603,6 +620,7 @@ export async function handler(element, app) {
         if (dialoguesListing.plugTopElem) {
             dialoguesListing.plugTopElem.classList.remove('closed');
         }
+        foldersListing.plugBottomElem.classList.remove('closed');
         foldersListing.forEach((folder) => {
             folder.classList.remove('closed');
         });
@@ -1037,8 +1055,7 @@ export async function handler(element, app) {
 
                 // open dialogues listing
                 if (foldersListing.isOpened) {
-                    foldersListing.redraw();
-                    dialoguesListing.draw();
+                    redrawListings();
                     return;
                 }
                 foldersButton.dispatchEvent(new Event('click'));
@@ -1119,12 +1136,14 @@ export async function handler(element, app) {
      * Creates new configured folder
      * @param folder
      * @param addToTop
+     * @param customInnerHTML
+     * @return elem HTML element
      */
-    function newFolder(folder, addToTop = false) {
-        const folderInnerHTML = folderInnerHTMLTemplate({
+    function newFolder(folder, addToTop = false, customInnerHTML = null) {
+        const folderInnerHTML = (customInnerHTML ?  customInnerHTML : folderInnerHTMLTemplate({
             title: folder.name,
             newMessages: folder.new
-        });
+        }));
         const elem = newElem(folderInnerHTML, 'div', folder.id, 'listing-button', 'folder', 'table-columns', 'closed');
         elem.name = folder.name;
         elem.statusElem = elem.querySelector('.dialogue-status');
@@ -1217,12 +1236,13 @@ export async function handler(element, app) {
                 foldersListing.findById(folder.id).name = inputElem.value;
             }
         });
-
+        console.log(elem, foldersListing);
         if (addToTop) {
             foldersListing.unshift(elem);
-            return;
+            return elem;
         }
         foldersListing.push(elem);
+        return elem;
     }
 
     /**
