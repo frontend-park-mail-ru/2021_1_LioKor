@@ -1078,6 +1078,11 @@ export async function handler(element, app) {
         dialogue.time = new ParsedDate(dialogue.time).getYesterdayFormatString();
         convertAvatarUrlToDefault(dialogue, app.defaultAvatarUrl);
 
+        // remove all HTML tags from dialogue body
+        if (dialogue.body) {
+            dialogue.body = dialogue.body.replace(/<\/?[^>]+\/?>/g, '');
+        }
+
         const dialogueInnerHTML = dialogueInnerHTMLTemplate({
             avatar: dialogue.avatarUrl,
             time: dialogue.time,
