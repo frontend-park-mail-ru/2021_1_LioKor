@@ -249,12 +249,12 @@ export async function handler(element, app) {
     foldersListing.plugBottomState = 'new-folder-button';
     newFolderButton.addEventListener('click', async (event) => {
         const folderName = window.prompt(`Как назовём папку?`);
+        if (!folderName && folderName !== '') {
+            return;
+        }
 
         // create folder
         const folderId = await newFolderRequest(folderName);
-        if (!folderId) {
-            return;
-        }
         newFolder({
             name: folderName,
             id: folderId
