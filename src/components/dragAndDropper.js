@@ -214,9 +214,9 @@ function prepareForDragging(elem, isMobile = false, cursorX = null) {
 }
 
 const constG = 4;
-const constAcceleration = 0.2;
+const constAcceleration = 0.3;
 const constSide = (1) * 2;
-const constSideVertical = (0.3) * 2;
+const constSideVertical = (0.4) * 2;
 let sideModifier;
 let sideModifierVertical;
 /**

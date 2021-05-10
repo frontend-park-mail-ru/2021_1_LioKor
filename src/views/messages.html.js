@@ -141,7 +141,7 @@ export async function handler(element, app) {
     };
 
     // --- One-element containers
-    let createdDialogues = 0;
+    let currentDialoguesListing;
     let isLostConnection = false;
 
     const defaultMessagesPageInnerHTML = `
@@ -188,7 +188,7 @@ export async function handler(element, app) {
             {{/if}}
         </div>
         <div class="dialogue-text">
-            <div class="text-1">{{ title }}</div>
+            <div class="dialogue-title text-1">{{ title }}</div>
             <div class="dialogue-body text-2">{{ body }}</div>
         </div>`);
 
@@ -254,7 +254,6 @@ export async function handler(element, app) {
     };
     let dialoguesListing = foundDialogues[''];
     foldersListing.findById('0').dialoguesListing = dialoguesListing;
-    let currentDialoguesListing;
     /**
      * Creates new configured dialoguesListing
      *
@@ -262,6 +261,7 @@ export async function handler(element, app) {
      */
     function newDialoguesListing(additionalQuery = '') {
         const dialoguesListing = new Listing(dialoguesListingElem);
+
         dialoguesListing.networkGetter = new PaginatedGetter(app.apiUrl + '/email/dialogues' + additionalQuery, 'since', '', 'amount', dialoguesByRequest, 'time', true);
         dialoguesListing.networkGetter.onErrorHandler = (response) => {
             if (response.status !== 418) { // Empty response from SW (offline mode)
@@ -286,6 +286,9 @@ export async function handler(element, app) {
             'div', '', 'center-text', 'load-animation', 'empty-dialogue'));
 
         dialoguesListing.setOnActiveHandler(async (dialogue) => {
+            const prevDialoguesListing = currentDialoguesListing;
+            currentDialoguesListing = dialoguesListing;
+
             // Create and configure new element
             if (!dialogue.messagesListing) {
                 dialogue.messagesListing = new Listing(messagesListingElem);
@@ -352,10 +355,10 @@ export async function handler(element, app) {
             }
 
             // Deactivate scroll on previous element and activate current
-            if (currentDialoguesListing && currentDialoguesListing.prevActiveElem) {
-                currentDialoguesListing.prevActiveElem.messagesListing.scrollActive = false;
-                if (currentDialoguesListing !== dialoguesListing) {
-                    currentDialoguesListing.unsetActive();
+            if (prevDialoguesListing && prevDialoguesListing.prevActiveElem) {
+                prevDialoguesListing.prevActiveElem.messagesListing.scrollActive = false;
+                if (prevDialoguesListing !== dialoguesListing) {
+                    prevDialoguesListing.unsetActive();
                 }
             }
             dialogue.messagesListing.scrollActive = true;
@@ -375,9 +378,9 @@ export async function handler(element, app) {
             dialogueTime.innerText = dialogue.time;
 
             // push old message-input and theme into localStorage
-            if (currentDialoguesListing && currentDialoguesListing.prevActiveElem) {
-                localStorage.setItem(currentDialoguesListing.prevActiveElem.username + '-theme', themeInput.value);
-                localStorage.setItem(currentDialoguesListing.prevActiveElem.username + '-message', messageInput.value);
+            if (prevDialoguesListing && prevDialoguesListing.prevActiveElem) {
+                localStorage.setItem(prevDialoguesListing.prevActiveElem.username + '-theme', themeInput.value);
+                localStorage.setItem(prevDialoguesListing.prevActiveElem.username + '-message', messageInput.value);
             }
             // get new message-input and theme from localStorage
             const theme = localStorage.getItem(dialogue.username + '-theme');
@@ -413,7 +416,6 @@ export async function handler(element, app) {
             dialogue.messagesListing.redraw();
             dialogue.messagesListing.scrollToBottom();
 
-            currentDialoguesListing = dialoguesListing;
             currentDialoguesListing.prevActiveElem = dialogue;
         });
 
@@ -557,7 +559,9 @@ export async function handler(element, app) {
             foldersListing.isOpened = false;
 
             if (foldersListing.activeElem.id === '0') {
-                dialoguesListing.plugTopElem.classList.add('closed');
+                if (dialoguesListing.plugTopElem) {
+                    dialoguesListing.plugTopElem.classList.add('closed');
+                }
                 dialoguesListing.plugTopState = plugStates.none;
             }
 
@@ -574,7 +578,9 @@ export async function handler(element, app) {
         dialoguesListing.plugTopState = 'folder-' + foldersListing.activeElem.id;
         redrawListings();
         foldersListing.scrollToTop();
-        dialoguesListing.plugTopElem.classList.remove('closed');
+        if (dialoguesListing.plugTopElem) {
+            dialoguesListing.plugTopElem.classList.remove('closed');
+        }
         foldersListing.forEach((folder) => {
             folder.classList.remove('closed');
         });
@@ -674,17 +680,21 @@ export async function handler(element, app) {
             findInput.value = '';
             findInput.dispatchEvent(new Event('input'));
             themeInput.focus();
+
+            const dialogueId = await newDialogueRequest(findText);
+            if (!dialogueId) {
+                return;
+            }
             // Create new dialogue
-            createdDialogues += 1;
             newDialogue({
-                id: -createdDialogues,
+                id: dialogueId,
                 time: new Date().toString(),
                 avatarUrl: '',
                 username: findText,
                 body: '',
                 new: 0
             }, true);
-            await dialoguesListing.setActive(-createdDialogues);
+            await dialoguesListing.setActive(dialogueId);
             redrawListings();
             dialoguesListing.scrollToTop();
         }
@@ -908,10 +918,27 @@ export async function handler(element, app) {
     }
 
     /**
+     * @param username
+     * @return id
+     */
+    async function newDialogueRequest(username) {
+        const response = await app.apiPost('/email/dialogue', {
+            username: username
+        });
+        const responseData = await response.json();
+        if (!response.ok) {
+            app.messages.error(`Ошибка ${response.status}`, `Не удалось создать диалог: ${responseData.message}`);
+            return;
+        }
+        app.messages.success('Диалог создан', `С ${username}`);
+        return responseData.id;
+    }
+
+    /**
      * @param title
      * @return id
      */
-    async function createNewFolder(title) {
+    async function newFolderRequest(title) {
         const response = await app.apiPost('/email/folder', {
             name: title
         });
@@ -969,7 +996,10 @@ export async function handler(element, app) {
                 }
 
                 // create folder
-                const folderId = await createNewFolder(folderName);
+                const folderId = await newFolderRequest(folderName);
+                if (!folderId) {
+                    return;
+                }
                 newFolder({
                     name: folderName,
                     id: folderId
@@ -1031,8 +1061,9 @@ export async function handler(element, app) {
 
                 // if we inside this dialogue => undraw it
                 const messageElem = dialoguesListing.findById(dialogue.id);
-                if (foldersListing.activeElem.dialoguesListing.activeElem === messageElem) {
-                    await foldersListing.activeElem.dialoguesListing.unsetActive();
+                if (currentDialoguesListing && currentDialoguesListing.activeElem === messageElem) {
+                    await currentDialoguesListing.unsetActive();
+                    currentDialoguesListing = null;
                     // draw default page
                     messageElem.messagesListing.block.innerHTML = defaultMessagesPageInnerHTML;
                     dialogueHeader.innerText = '';
@@ -1183,7 +1214,7 @@ export async function handler(element, app) {
         const messageBlockElem = newElem(
                 messageBlockInnerHTMLTemplate({
                     side: isYour ? 'your' : 'not-your',
-                    avatar: isYour ? app.storage.avatar : foldersListing.activeElem.dialoguesListing.activeElem.avatar,
+                    avatar: isYour ? app.storage.avatar : currentDialoguesListing.activeElem.avatar,
                     time: messageBlock.time,
                     isStated: isYour,
                     isDelivered: (messageBlock.status === 1),
