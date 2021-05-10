@@ -25,7 +25,9 @@ folder-color-active-selected = #a8511f
 
 folder-input-bg = #4c2e16
 
-dialogues-divider-height = 5px
+new-folder-button-color = #5a361a
+
+dialogues-divider-height = 24px
 
 bg-color-1 = #60606099
 bg-color-2 = #393C3FCC
@@ -300,12 +302,24 @@ width-border = 1px
   .hide-on-hover
     opacity 0
 
+.new-folder-button
+  background-color new-folder-button-color
+  min-height dialogue-preview-height - middle
+  max-height dialogue-preview-height - middle
+  padding extra-small
+.new-folder-button:hover
+  background-color folder-color-active-selected
+
 .dialogues-listing-divider
   width 100%
-  //height dialogues-divider-height
+  height dialogues-divider-height
+  min-height dialogues-divider-height
+  max-height dialogues-divider-height
   background-color color3
   border-top 2px solid color4
   border-bottom 2px solid color4
+  overflow hidden
+  transition all 0.3s ease
 
 .empty-dialogue
   min-height dialogue-preview-height
@@ -320,15 +334,16 @@ width-border = 1px
 .dialogue-text.centered
   margin-top ((dialogue-preview-height - 2 * middle - big-font-size) / 2)
 .dialogue-status
+  margin-top (dialogue-preview-height - middle * 2 - big-font-size - 3)
   padding 0 extra-small
   border-radius (big-font-size / 2 + 1)
   background-color dialogue-status-background-color
   font-size big-font-size
   color color1
-.status-read
-  .dialogue-status
-    display none
+  margin-right 0
+  transition margin-right 0.3s ease
 .dialogue-body
+.dialogue-title
   overflow hidden
   text-overflow ellipsis
 
@@ -551,6 +566,7 @@ width-border = 1px
   transition all ease 0.2s
   color color2
   text-overflow ellipsis
+
 .theme-input:focus
   background bg-color-2
   color color3
@@ -569,6 +585,8 @@ width-border = 1px
 .theme-input.folder:focus
   background folder-input-bg
   color color1
+.theme-input.folder:read-only:focus
+  background #FFFFFF00
 
 .p-xs
   padding extra-small
@@ -576,6 +594,19 @@ width-border = 1px
   padding middle
 .p-l
   padding large
+
+.ondrag
+  box-shadow 0 0 8px color7
+
+.closed
+  max-height 0
+  min-height 0
+  height 0
+  padding-top 0
+  padding-bottom 0
+  border-bottom 0
+  border-top 0
+  transition all 0.3s ease
 
 .load-animation
   display: flex;
