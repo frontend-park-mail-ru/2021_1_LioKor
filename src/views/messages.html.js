@@ -903,7 +903,7 @@ export async function handler(element, app) {
         }
 
         currentTitle = response.ok ? responseData.subject : currentTitle;
-        message = response.ok ? new Handlebars.SafeString(responseData.body) : message;
+        message = response.ok ? new Handlebars.SafeString(responseData.body.replace(/(<\/?[^<>]+\/?>)|(&#.*;)/g, '')) : message;
 
         // clear input
         messageInput.value = '';
@@ -1080,7 +1080,7 @@ export async function handler(element, app) {
 
         // remove all HTML tags from dialogue body
         if (dialogue.body) {
-            dialogue.body = dialogue.body.replace(/<\/?[^>]+\/?>/g, '');
+            dialogue.body = dialogue.body.replace(/(<\/?[^<>]+\/?>)|(&#.*;)/g, '');
         }
 
         const dialogueInnerHTML = dialogueInnerHTMLTemplate({
