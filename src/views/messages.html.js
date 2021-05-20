@@ -7,6 +7,8 @@ import setDraggable from '../components/dragAndDropper';
 import ParsedDate from '../modules/parsedDate';
 import convertAvatarUrlToDefault from '../modules/defaultAvatars';
 
+const CL_HIGHLIGHT_DRAG_AND_DROP = 'orange';
+
 const html = `
 <div class="table-columns fullheight p-l bg-5" id="messages-page">
     <div class="table-column dialogues-column table-rows bg-transparent mobile-fullwidth" id="dialogues-column">
@@ -184,12 +186,12 @@ export async function handler(element, app) {
         <div class="floatright text-4 dialogue-meta">
             <div class="hide-on-hover absolute-top-right">{{ time }}</div>
             <svg class="svg-button transparent show-on-hover absolute-top-right" id="delete-dialogue" xmlns="http://www.w3.org/2000/svg" height="22" width="22"><g transform="translate(0, -2)"><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z"/></g></svg>
-            
+
                 <div class="dialogue-status floatright" style="display:
                     {{#if newMessages}}
                         block
                     {{else}}
-                        none 
+                        none
                     {{/if}}
                 ">{{ newMessages }}</div>
         </div>
@@ -209,7 +211,7 @@ export async function handler(element, app) {
                 {{#if newMessages}}
                     block
                 {{else}}
-                    none 
+                    none
                 {{/if}}
             ">{{ newMessages }}</div>
             <div class="table-rows show-on-hover absolute-top-right">
@@ -1003,7 +1005,7 @@ export async function handler(element, app) {
     function setDialogueDraggable(elem) {
         // Create and configure dragAndDropper on dialoguesListing elements
         setDraggable(elem,
-            (elem) => { elem.style.background = 'pink'; },
+            (elem) => { elem.style.background = CL_HIGHLIGHT_DRAG_AND_DROP; },
             (elem) => { elem.style.background = ''; },
             async (elem, underElem, isInside) => {
                 // drop dialogue on folder => add dialogue to folder
