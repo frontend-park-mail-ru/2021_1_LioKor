@@ -10,6 +10,7 @@ let shiftX, shiftY;
  * @param enterDroppableHandler
  * @param leaveDroppableHandler
  * @param mouseUpHandler
+ * @param droppableClass
  */
 export default function setDraggable(elem, enterDroppableHandler, leaveDroppableHandler, mouseUpHandler, droppableClass) {
     // --- For desktops
@@ -92,7 +93,7 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
         let movedWhileWait = false;
         document.ontouchmove = (event) => {
             movedWhileWait = true;
-        }
+        };
 
         setTimeout(() => {
             if (movedWhileWait) {
@@ -127,7 +128,7 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
                         enterDroppableHandler(currentDroppable);
                     }
                 }
-            }
+            };
         }, mobileWaitBeforeDragging);
 
         document.ontouchend = document.ontouchcancel = (event) => {
@@ -160,6 +161,7 @@ export default function setDraggable(elem, enterDroppableHandler, leaveDroppable
 
 /**
  * Определяет, находится ли курсор над элементом, на который можно перетаскивать
+ *
  * @param x
  * @param y
  * @param droppableClass
@@ -178,6 +180,7 @@ function isOnDroppable(x, y, droppableClass) {
 
 /**
  * Подготавливает элемент, который будем таскать
+ *
  * @param elem
  * @param isMobile
  * @param cursorX
@@ -189,7 +192,7 @@ function prepareForDragging(elem, isMobile = false, cursorX = null) {
     // абсолютные координаты + поверх всего + небольшой поворот
     elem.style.position = 'absolute';
     elem.style.zIndex = '10000';
-    elem.style.transform = `rotate(0deg)`;
+    elem.style.transform = 'rotate(0deg)';
     elem.style.transformOrigin = `${shiftX}px ${shiftY}px`;
     elem.style.cursor = 'grabbing';
     elem.classList.add('ondrag');
@@ -221,15 +224,16 @@ let sideModifier;
 let sideModifierVertical;
 /**
  * Сдвигает элемент на координаты
+ *
  * @param elem
  * @param event
  */
 function moveTo(elem, event) {
-    if (!lastPageX) {lastPageX = event.pageX;}
-    if (!lastPageY) {lastPageY = event.pageY;}
+    if (!lastPageX) { lastPageX = event.pageX; }
+    if (!lastPageY) { lastPageY = event.pageY; }
 
     currentRotation = currentRotation / 180 * Math.PI;
-    const accelerationG = -constG * Math.sin(currentRotation)
+    const accelerationG = -constG * Math.sin(currentRotation);
     const accelerationMove = ((event.pageX - lastPageX > 0) ? sideModifier : 1 / sideModifier) * Math.cos(currentRotation) * (event.pageX - lastPageX) * constAcceleration;
     const accelerationMoveVertical = -sideModifierVertical * Math.cos(currentRotation) * (event.pageY - lastPageY);
     currentRotation = currentRotation / Math.PI * 180;
@@ -246,6 +250,7 @@ function moveTo(elem, event) {
 
 /**
  * Выдаёт элемент под текущим пложением мышки
+ *
  * @param elem
  * @param event
  */
@@ -256,15 +261,24 @@ function getUnderElem(elem, event) {
     return elemBelow;
 }
 
+/**
+ *
+ */
 function fakeMove() {
     if (!currentMoveEvent) {
         return;
     }
     document.dispatchEvent(currentMoveEvent);
 }
+/**
+ *
+ */
 function startFakeMoving() {
     setInterval(fakeMove, 25);
 }
+/**
+ *
+ */
 function stopFakeMoving() {
     clearInterval(fakeMove);
 }

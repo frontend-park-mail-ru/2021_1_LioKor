@@ -95,7 +95,6 @@ export async function handler(element, app) {
         reserveEmailErrorText.innerHTML = '';
 
         const formData = new FormData(editProfileForm);
-        const avatarUrl = formData.get('avatarDataURL');
         const fullname = formData.get('fullname').trim();
         const reserveEmail = formData.get('reserveEmail').trim();
 
@@ -115,7 +114,6 @@ export async function handler(element, app) {
             app.messages.error(`Ошибка ${response.status}!`, 'Не удалось изменить данные!');
             return;
         }
-        app.storage.avatar = avatarUrl;
         app.messages.success('Успех!', 'Данные успешно изменены!');
     });
 
@@ -139,11 +137,10 @@ export async function handler(element, app) {
 
         const formData = new FormData(editProfileForm);
         const avatarUrl = formData.get('avatarDataURL');
-        const fullname = formData.get('fullname').trim();
-        const reserveEmail = formData.get('reserveEmail').trim();
 
         const response = await app.apiPut(`/user/${username}/avatar`, { avatarUrl });
         if (response.ok) {
+            app.storage.avatar = avatarUrl;
             avatarImage.src = dataURL;
             app.messages.success('Успех', 'Аватар успешно изменён');
         }
