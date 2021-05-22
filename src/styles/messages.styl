@@ -1,3 +1,5 @@
+@require "constants.styl"
+
 color1 = #F5F5F5
 color2 = #CCC
 color3 = #AAA
@@ -128,7 +130,7 @@ width-border = 1px
 .fullwidth
   width 100%
 .fullheight
-  height 100%
+  height "calc(100vh - %s)" % logo-height
 
 .floatright
   float right
@@ -737,6 +739,8 @@ width-border = 1px
 
   .mobile-fullwidth
     width 100%
+  .fullheight
+    height 100vh
 
   .mobile-only
     display block
@@ -771,5 +775,3 @@ width-border = 1px
 
   #app
     height 100%
-
-
