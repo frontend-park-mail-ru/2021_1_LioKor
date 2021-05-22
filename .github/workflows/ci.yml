@@ -1,0 +1,14 @@
+name: CI
+on: [push]
+jobs:
+  elslint_and_build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Install modules
+        run: yarn
+      - name: Run ESLint
+        run: yarn lint
+      - name: Build
+        run: yarn dist
