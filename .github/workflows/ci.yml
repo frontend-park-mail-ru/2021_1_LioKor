@@ -1,7 +1,7 @@
 name: CI
 on: [push]
 jobs:
-  CI:
+  elslint_and_build:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
