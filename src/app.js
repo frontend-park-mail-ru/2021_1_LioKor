@@ -2,6 +2,7 @@ import * as renderer from './modules/renderer';
 
 import { request } from './modules/requests';
 import PopupMessages from './modules/popupMessages';
+import Modal from './modules/modal';
 
 import * as auth from './views/auth.html.js';
 import * as user from './views/profile.html.js';
@@ -25,6 +26,7 @@ export default class App {
         this.defaultAvatarUrl = DEFAULT_AVATAR_URL;
 
         this.messages = new PopupMessages();
+        this.modal = new Modal();
 
         window.addEventListener('popstate', () => {
             this.goto(location.pathname, false);

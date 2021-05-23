@@ -1,3 +1,4 @@
+import './styles/global.styl';
 import './styles/page.styl';
 import './styles/formControls.styl';
 import './styles/profile.styl';

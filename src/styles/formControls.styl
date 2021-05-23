@@ -12,6 +12,8 @@ form-top-margin = 8px
 border-width = 1px
 border-radius = 3px
 big-border-radius = 7px
+back-btn-size = 40px
+close-btn-size = 25px
 
 linkButton
     text-decoration none
@@ -78,8 +80,9 @@ textarea.form-control
         color #CCC
         left form-padding-left
         top 10px
-        width 40px
-        height 40px
+        width back-btn-size
+        height back-btn-size
+        transition 0.2s ease color
     .back-btn:hover
         color orange
 
@@ -91,7 +94,7 @@ textarea.form-control
             font-weight bold
         .secondary
             margin-top form-button-margin
-            font-size 0.95rem
+            font-size 1rem
             color textColor2
     .form
         padding-top 5px
@@ -111,6 +114,7 @@ textarea.form-control
 
     input,
     button
+        margin auto
         width 100%
     .muted
         margin-top form-top-margin
