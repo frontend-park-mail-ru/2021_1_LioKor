@@ -1,0 +1,33 @@
+close-btn-size = 25px
+
+.modal-background
+    position fixed
+
+    top 0
+    width 100%
+    height 100vh
+    z-index 10
+
+    background-color #202020AA
+
+    .modal
+        margin-top 200px
+
+        .close-btn
+            position absolute
+            color #CCC
+            right 20px
+            top 10px
+            width close-btn-size
+            height close-btn-size
+            transition 0.2s ease color
+        .close-btn:hover
+            color orange
+
+        .form-content
+            margin-top 40px
+        .title
+            margin-bottom 15px
+            .primary
+                font-size 1.2rem
+                font-weight normal

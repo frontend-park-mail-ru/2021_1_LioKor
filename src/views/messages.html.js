@@ -250,8 +250,8 @@ export async function handler(element, app) {
     foldersListing.setPlugBottomState('new-folder-button', newFolderButton);
     foldersListing.plugBottomState = 'new-folder-button';
     newFolderButton.addEventListener('click', async (event) => {
-        const folderName = window.prompt('Как назовём папку?');
-        if (!folderName && folderName !== '') {
+        const folderName = await app.modal.prompt('Как назовём папку?');
+        if (!folderName) {
             return;
         }
 
@@ -1035,10 +1035,10 @@ export async function handler(element, app) {
                 let folderName;
                 if (isInside) {
                     // Ask user for name of folder
-                    folderName = window.prompt(`Вы собираетесь создать новую папку из двух диалогов.
+                    folderName = await app.modal.prompt(`Вы собираетесь создать новую папку из двух диалогов.
 Как она будет называться?`);
                 }
-                if (!folderName && folderName !== '') {
+                if (!folderName) {
                     elem.remove();
                     redrawListings();
                     return;
@@ -1104,7 +1104,7 @@ export async function handler(element, app) {
 
         elem.querySelector('#delete-dialogue').addEventListener('click', async (event) => {
             event.stopPropagation();
-            if (window.confirm(`Удаляем диалог с ${dialogue.username}?`)) {
+            if (await app.modal.confirm(`Удаляем диалог с ${dialogue.username}?`)) {
                 const response = await app.apiDelete('/email/dialogue', {
                     id: dialogue.id
                 });
@@ -1176,7 +1176,7 @@ export async function handler(element, app) {
         // delete folder button
         elem.querySelector('#delete-folder').addEventListener('click', async (event) => {
             event.stopPropagation();
-            if (window.confirm(`Удаляем папку ${folder.name}?`)) {
+            if (await app.modal.confirm(`Удаляем папку ${folder.name}?`)) {
                 // get folder dialogues
                 const gottenDialogues = await new PaginatedGetter(app.apiUrl + '/email/dialogues?folder=' + folder.id, 'since', '', 'amount', dialoguesByRequest, 'time', true).getNextPage();
 
