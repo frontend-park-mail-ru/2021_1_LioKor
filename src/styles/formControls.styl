@@ -4,7 +4,8 @@ formBgColor = #404346
 
 form-button-padding = 10px
 form-button-margin = 10px
-form-padding = 10px
+form-padding-left = 20px
+form-padding-top = 30px
 form-margin = 100px
 form-width = 460px
 form-top-margin = 8px
@@ -62,7 +63,7 @@ textarea.form-control
 
 .standalone-form
     box-shadow 0 0 border-radius clFormShadow
-    padding form-padding*2 form-padding*3
+    padding form-padding-left form-padding-top
 
     max-width form-width
     margin form-margin auto
@@ -70,6 +71,17 @@ textarea.form-control
     overflow hidden
 
     background-color formBgColor
+
+    position relative
+    .back-btn
+        position absolute
+        color #CCC
+        left form-padding-left
+        top 10px
+        width 40px
+        height 40px
+    .back-btn:hover
+        color orange
 
     .title
         text-align center
