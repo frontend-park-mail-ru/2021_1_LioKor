@@ -11,7 +11,7 @@ export default {
     input: 'src/index.js',
     output: {
         sourcemap: true,
-        file: 'build/bundle.js',
+        file: 'dist/bundle.js',
         format: 'cjs',
         assetFileNames: 'assets/[name][extname]'
     },
@@ -33,9 +33,9 @@ export default {
         // uglify(),
         copy({
             targets: [
-                { src: 'src/images/*', dest: 'build/images' },
-                { src: 'src/index.html', dest: 'build/' },
-                { src: 'src/sw.js', dest: 'build/' }
+                { src: 'src/images/*', dest: 'dist/images' },
+                { src: 'src/index.html', dest: 'dist/' },
+                { src: 'src/sw.js', dest: 'dist/' }
             ]
         })
     ]
