@@ -59,11 +59,6 @@ const html = `
  * @param {object} app object of a main App class
  */
 export async function handler(element, app) {
-    let test = await app.modal.prompt('Волчара228?');
-    alert(test);
-    test = await app.modal.confirm('Вы волк?');
-    alert(test);
-
     document.title = `${app.name} | Профиль`;
 
     const response = await app.apiGet('/user');
