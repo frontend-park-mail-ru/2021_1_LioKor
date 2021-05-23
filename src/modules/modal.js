@@ -44,7 +44,7 @@ export default class Modal {
             modal.classList.add('modal');
             modal.innerHTML = this.modalTemplate({
                 prompt: prompt,
-                question: question,
+                question: question
             });
             background.appendChild(modal);
 
@@ -55,7 +55,7 @@ export default class Modal {
                 background.remove();
                 resolve((input) ? input.value : true);
                 submitBtn.removeEventListener('click', submitClick);
-            }
+            };
             submitBtn.addEventListener('click', submitClick);
 
             const closeBtns = modal.querySelectorAll('.close');
@@ -63,7 +63,7 @@ export default class Modal {
                 background.remove();
                 resolve(false);
                 ev.target.removeEventListener('click', closeClick);
-            }
+            };
             for (const btn of closeBtns) {
                 btn.addEventListener('click', closeClick);
             }
