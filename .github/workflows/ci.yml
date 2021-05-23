@@ -17,6 +17,6 @@ jobs:
         env:
             SSH_PRIVATE_KEY: ${{ secrets.DEPLOYER_SSH_PRIVATE }}
             SOURCE: dist/
-            REMOTE_HOST:
+            REMOTE_HOST: 89.208.197.127
             REMOTE_USER: deployer
             TARGET: /home/deployer/dist/
