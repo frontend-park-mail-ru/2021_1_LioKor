@@ -1,0 +1,779 @@
+@require "constants.styl"
+
+color1 = #F5F5F5
+color2 = #CCC
+color3 = #AAA
+color4 = #888
+color5 = #585858
+color6 = #333
+color7 = #222
+color7-C = #222C
+color7-8 = #2228
+color7-4 = #2224
+
+loading-color = #84adff
+
+dialogue-color = #185d25AA
+dialogue-color-active = #6b5c13
+dialogue-color-selected = #218633
+dialogue-color-active-selected = #7b7115
+
+dialogue-status-background-color = #5a8be0
+
+folder-color = #6c3b12AA
+folder-color-active = #9a471d
+folder-color-selected = #874b1c
+folder-color-active-selected = #a8511f
+
+folder-input-bg = #4c2e16
+
+new-folder-button-color = #5a361a
+
+dialogues-divider-height = 24px
+
+bg-color-1 = #60606099
+bg-color-2 = #393C3FCC
+bg-color-3 = #3b3f4799
+bg-color-4 = #393939
+bg-color-5 = #4b5b4bAA
+
+bg-info = #2a2b2bEE
+
+scroll-bg-color = #00000000
+scroll-thumb-color = #80808080
+scroll-thumb-color-hover = #707070
+
+message-bg-1 = #3f444c
+message-bg-2 = #3f4a3f
+
+input-bg-color = bg-color-4
+input-bg-color-focus = #3C3C3C
+
+extra-small = 5px
+small = 7px
+middle = 10px
+middle-large = 15px
+large = 20px
+extra-large = 30px
+
+small-font-size = 14px
+font-size = 16px
+big-font-size = 18px
+
+message-status-size = 20px
+
+small-avatar-size = 30px
+middle-avatar-size = 40px
+large-avatar-size = 50px
+
+mobile-profile-button-size = 35px
+
+dialogue-preview-height = 62px
+
+dialogues-column-width = 30%
+messages-column-width = 100% - dialogues-column-width
+
+height-header = dialogue-preview-height
+
+width-border = 1px
+
+.large-avatar
+.middle-avatar
+.small-avatar
+  border-radius 50%
+  overflow hidden
+
+.large-avatar
+  width large-avatar-size
+  height large-avatar-size
+.middle-avatar
+  width middle-avatar-size
+  height middle-avatar-size
+.small-avatar
+  width small-avatar-size
+  height small-avatar-size
+/*
+.pad-xs
+  padding extra-small
+.pad-s
+  padding small
+.pad-m
+  padding middle
+.pad-l
+  padding large
+.pad-xl
+  padding extra-large
+*/
+
+
+.bg-transparent
+  background bg-color-2
+
+.text-1
+.text-2
+.text-3
+.text-4
+  font-size font-size
+
+.text-1
+  color color1
+.text-2
+  color color2
+.text-3
+  color color3
+.text-4
+  color color4
+
+.text-bigger
+  font-size big-font-size
+
+.fullwidth
+  width 100%
+.fullheight
+  height 100%
+#messages-page.fullheight
+  height "calc(100vh - %s)" % logo-height
+
+.floatright
+  float right
+.floatleft
+  float left
+
+.center-text
+  text-align center
+.centered
+  margin auto
+.centered-vertical
+  margin-top auto
+  margin-bottom auto
+.top-filler
+  margin-top auto
+.right-filler
+  margin-rigth auto
+.bottom-filler
+  margin-bottom auto
+.left-filler
+  margin-left auto
+
+
+// --- Table:
+.table-columns
+  overflow hidden
+  display flex
+  flex-direction row
+.table-columns.reversed
+  flex-direction row-reverse
+.table-rows
+  overflow hidden
+  display flex
+  flex-direction column
+.table-rows.reversed
+  flex-direction column-reverse
+
+.table-column
+  height 100%
+  padding middle 0 middle 0
+.table-row
+  width 100%
+  padding 0 middle 0 middle
+
+
+.scrollable
+  overflow-y auto
+
+  --scrollbarBg: scroll-bg-color
+  --scrollbarThumb: scroll-thumb-color
+  --scrollbarWidth: 6px;
+  --scrollbarBorder: 1px solid var(--scrollbarBg);
+  --scrollbarBorderRadius: calc(var(--scrollbarWidth) / 2);
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbarThumb) var(--scrollbarBg);
+
+.scrollable:hover
+  --scrollbarThumb: scroll-thumb-color-hover
+
+.scrollable::-webkit-scrollbar
+  width: var(--scrollbarWidth);
+.scrollable::-webkit-scrollbar-track
+  background: var(--scrollbarBg);
+  border-radius: var(--scrollbarBorderRadius);
+.scrollable::-webkit-scrollbar-thumb
+  background-color: var(--scrollbarThumb);
+  border-radius: var(--scrollbarBorderRadius);
+  border: var(--scrollbarBorder);
+
+// extend table:
+.dialogues-column
+  width dialogues-column-width
+  border-right width-border solid color3
+  padding 0
+.messages-column
+  width messages-column-width
+  padding 0
+
+.dialogues-listing
+  overflow-x hidden
+  list-style-type none
+  margin 0
+  padding 0
+  scrollbar-color scroll-thumb-color dialogue-color
+  border-bottom 1px solid color3
+.dialogues-listing::-webkit-scrollbar
+  background dialogue-color
+
+.header
+  padding middle
+  background bg-color-1
+  color color1
+  box-shadow 0 4px 10px color7-8
+  z-index 2
+  height height-header
+.header-title
+  background none
+  border-radius (small-avatar-size / 2)
+  padding-left 0
+  padding-right 0
+  margin-right 5px
+.header-title:hover
+    svg
+      opacity 1
+.body
+  color color2
+  z-index 0
+.footer
+  padding middle
+  color color2
+  background bg-color-1
+  border-top width-border solid color3
+  display none
+
+.tool-dialogue
+  padding middle
+  box-shadow 0 5px 10px color7-C
+  min-height dialogue-preview-height
+
+// --- Listing button:
+.listing-button
+  touch-action none
+  min-height dialogue-preview-height
+  max-height dialogue-preview-height
+  overflow hidden
+  padding middle
+  //border-top 1px solid color3
+  border-bottom 1px solid color3
+  background-color dialogue-color
+  cursor pointer
+  transition all ease 0.3s
+  white-space nowrap
+  img
+    float left
+.listing-button.active
+  //border-top 1px solid color1
+  border-bottom 1px solid color1
+  background-color dialogue-color-active
+.listing-button.selected
+  border-bottom 1px solid color2
+  background-color dialogue-color-selected
+  transition none
+.listing-button.active.selected
+  border-bottom 1px solid color1
+  background-color dialogue-color-active-selected
+
+.listing-button.folder
+  background-color folder-color
+.listing-button.folder.active
+  background-color folder-color-active
+.listing-button.folder.selected
+  background-color folder-color-selected
+.listing-button.folder.active.selected
+  background-color folder-color-active-selected
+
+.dialogue-meta
+  position relative
+  white-space nowrap
+
+.listing-button
+  .show-on-hover
+    transition opacity ease 0.2s
+    opacity 0
+  .hide-on-hover
+    transition opacity ease 0.2s
+    opacity 1
+.listing-button:hover
+  .show-on-hover
+    opacity 1
+  .hide-on-hover
+    opacity 0
+
+.new-folder-button
+  background-color new-folder-button-color
+  min-height dialogue-preview-height - middle
+  max-height dialogue-preview-height - middle
+  padding-top extra-small
+  padding-bottom extra-small
+.new-folder-button:hover
+  background-color folder-color-selected
+
+.folder-title
+  padding small
+
+.dialogues-listing-divider
+  width 100%
+  height dialogues-divider-height
+  min-height dialogues-divider-height
+  max-height dialogues-divider-height
+  background-color color3
+  border-top 2px solid color4
+  border-bottom 2px solid color4
+  overflow hidden
+  transition all 0.3s ease
+
+.empty-dialogue
+  min-height dialogue-preview-height
+  overflow hidden
+  padding small
+  //border-top 1px solid color3
+  //border-bottom 1px solid color3
+  background-color bg-color-5
+
+.dialogue-text
+  padding-left (middle-avatar-size + small)
+.dialogue-text.centered
+  margin-top ((dialogue-preview-height - 2 * middle - big-font-size) / 2)
+.dialogue-status
+  margin-top (dialogue-preview-height - middle * 2 - big-font-size - 3)
+  padding 0 extra-small
+  border-radius (big-font-size / 2 + 1)
+  background-color dialogue-status-background-color
+  font-size big-font-size
+  color color1
+  margin-right 0
+  transition margin-right 0.3s ease
+.dialogue-body
+.dialogue-title
+  overflow hidden
+  text-overflow ellipsis
+
+/*
+.end-gradient::after
+  content: '';
+  right: 0; top: 0;
+  width: 40px;
+  height: 100%;
+  background: linear-gradient(to right, #FFF00000 0%, #F0C000 100%);
+*/
+
+// --- message-block:
+.flex-filler
+  flex 1
+
+.message-block-full
+  margin extra-small
+
+.left-block
+  text-align left
+  margin-right 15%
+.right-block
+  text-align left
+  margin-left 15%
+
+.message-block
+  border-radius small
+  border-top-left-radius (middle-avatar-size/2)
+  img
+    float left
+.message-block.not-your
+  background message-bg-1
+.message-block.your
+  background message-bg-2
+
+.message-block-title
+  color color4
+  width "calc(100% - %s - %s)" % (middle middle-avatar-size)
+  margin-left middle-avatar-size + middle
+  padding-top ((middle-avatar-size - 14px)/2)
+  padding-bottom ((middle-avatar-size - 14px)/2)
+
+
+.message-body
+  color color2
+  padding extra-small
+  margin-left middle
+  word-wrap break-word
+
+.message-status
+  width message-status-size
+  height message-status-size
+
+.messages-footer
+  svg
+    margin-left small
+    margin-right small
+
+.message-input
+  padding middle
+  background input-bg-color
+  color color2
+  border-radius extra-small
+  outline none
+  flex 1
+  font 400 15px Arial
+
+  border-width width-border
+  border-style inset
+
+  word-wrap break-word
+  outline: 0;
+  min-height: 30px;
+  resize: none;
+  max-height: 200px;
+  overflow-y: hidden;
+  line-height: 17px;
+
+  transition all ease 0.2s
+.message-input:focus
+  background input-bg-color-focus
+  border-color color3
+
+.message-input::placeholder
+  color color3
+  transition color ease 0.4s
+.message-input:focus::placeholder
+  color color5
+
+.connection-info
+  z-index 1
+  position absolute
+  top -40px // to 0
+  opacity 0 // to 1
+  visibility hidden // to visible
+  width 100%
+  background bg-info
+  border-bottom-left-radius small
+  border-bottom-right-radius small
+  box-shadow 0 5px 5px color7-4, inset 0 5px 5px color7-4
+  padding extra-small
+  transition all cubic-bezier(.38,1.1,.52,1.02) 0.4s
+  cursor pointer
+  svg
+    width 25px
+    height 20px
+    pointer-events none
+
+.pos-relative
+  position relative
+  overflow hidden
+
+.absolute-top-right
+  position absolute
+  top 0
+  right 0
+
+.inside-input
+  position absolute
+  right 20px
+  top 10px
+
+.svg-button
+  cursor pointer
+  overflow hidden
+  opacity 0.7
+  transition all 0.15s ease-out
+  fill #F5F5F5
+  fill-rule evenodd
+  clip-rule evenodd
+.svg-button.transparent
+  fill #969dab
+.svg-button:hover
+  opacity 1
+  transform scale(1.1)
+
+.plus-button
+  cursor pointer
+  overflow hidden
+  width 60px
+  height 60px
+  opacity 0.8
+  transition all 0.1s ease
+  fill #F5F5F5
+  fill-rule evenodd
+  clip-rule evenodd
+.plus-button:hover
+  opacity 1
+
+/*
+.add-button
+  margin-right small
+  overflow hidden
+.add-button > *
+  display block
+  vertical-align top
+  background plus-bg-color
+  transition all 0.3s ease-out
+.add-button.switched > *
+  transform translateY(-40px)
+*/
+
+.find-input
+  width "calc(100% - %s)" % (middle * 2)
+  font-size small-font-size
+  margin-bottom extra-small
+  margin-right middle
+  margin-left extra-small
+  background #FFFFFF00
+  border none
+  outline none
+  overflow hidden
+  text-overflow ellipsis
+  transition all ease 0.2s
+  color color2
+
+.find-input:focus
+  padding middle
+  background bg-color-4
+  color color2
+  border-radius extra-small
+  border-width width-border
+  border-style inset
+  margin-left middle
+
+.find-input::placeholder
+  color color4
+.find-input:focus::placeholder
+  color color3
+
+.folders-button
+  min-width 40px
+  opacity 1
+  transition all 0.2s ease
+.find-input:focus ~ .folders-button
+  min-width 0
+  width 0
+  opacity 0
+#folder-icon-arrow
+  transition transform 0.2s ease
+  transform scale(0.03) rotate(0deg) translate(500px, 430px)
+
+.input-with-clear ~ .input-clear
+  max-width 0
+  transition all ease-out 0.4s
+  opacity 0
+  transform rotate(45deg)
+.input-with-clear:focus ~ .input-clear
+  max-width 100px
+  opacity 1
+  transform rotate(0)
+
+.theme-input
+  font-size small-font-size
+  margin-bottom extra-small
+  background #FFFFFF00
+  border none
+  outline none
+  transition all ease 0.2s
+  color color2
+  text-overflow ellipsis
+
+.theme-input:focus
+  background bg-color-2
+  color color3
+.theme-input::placeholder
+  transition all ease 0.2s
+  color color4
+.theme-input:focus::placeholder
+  color color3
+
+.theme-input.folder
+  font-size font-size
+  color color1
+  margin-bottom 0
+  padding small
+  border-radius extra-small
+.theme-input.folder:focus
+  background folder-input-bg
+  color color1
+.theme-input.folder:read-only:focus
+  background #FFFFFF00
+
+.p-xs
+  padding extra-small
+.p-m
+  padding middle
+.p-l
+  padding large
+
+.ondrag
+  box-shadow 0 0 8px color7
+
+.closed
+  max-height 0
+  min-height 0
+  height 0
+  padding-top 0
+  padding-bottom 0
+  border-bottom 0
+  border-top 0
+  transition all 0.3s ease
+
+.load-animation
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 2rem 0;
+  margin: 0 -5%;
+  overflow: hidden;
+  height: 50px;
+/**
+ * ==============================================
+ * Dot Pulse
+ * ==============================================
+ */
+.dot-pulse {
+  position: relative;
+  left: -9999px;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background-color: loading-color;
+  color: loading-color;
+  box-shadow: 9999px 0 0 -4px loading-color;
+  animation: dot-pulse 1.5s infinite linear;
+  animation-delay: .25s;
+}
+
+.dot-pulse::before, .dot-pulse::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  background-color: loading-color;
+  color: loading-color;
+}
+.dot-pulse::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+}
+.dot-pulse::after {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+}
+
+.dot-pulse::before {
+  box-shadow: 9975px 0 0 -3px loading-color;
+  animation: dot-pulse-before 1.5s infinite linear;
+  animation-delay: 0s;
+}
+
+.dot-pulse::after {
+  box-shadow: 10014px 0 0 -5px loading-color;
+  animation: dot-pulse-after 1.5s infinite linear;
+  animation-delay: .5s;
+}
+
+@keyframes dot-pulse-before {
+  0% {
+    box-shadow: 9975px 0 0 -3px loading-color;
+  }
+  30% {
+    box-shadow: 9975px 0 0 1px loading-color;
+  }
+  60%,
+  100% {
+    box-shadow: 9975px 0 0 -3px loading-color;
+  }
+}
+
+@keyframes dot-pulse {
+  0% {
+    box-shadow: 9999px 0 0 -4px loading-color;
+  }
+  30% {
+    box-shadow: 9999px 0 0 3px loading-color;
+  }
+  55%,
+  100% {
+    box-shadow: 9999px 0 0 -4px loading-color;
+  }
+}
+
+@keyframes dot-pulse-after {
+  0% {
+    box-shadow: 10014px 0 0 -5px loading-color;
+  }
+  25% {
+    box-shadow: 10014px 0 0 3px loading-color;
+  }
+  45% {
+    box-shadow: 10014px 0 0 4px loading-color;
+  }
+  60%,
+  100% {
+    box-shadow: 10014px 0 0 -5px loading-color;
+  }
+}
+/**
+* ==================================
+**/
+
+
+// For mobile version
+.mobile-only
+  display none
+.desktop-only
+  display block
+
+.dialogues-column
+.messages-column
+  transition width ease 0.2s
+
+.profile-button
+  svg
+    margin ((middle-avatar-size - small-avatar-size) / 2)
+
+@media (max-width: 800px)
+  .dialogues-column
+  .messages-column
+    width 0
+
+  .mobile-fullwidth
+    width 100%
+  .fullheight
+    height 100vh !important
+
+  .mobile-only
+    display block
+  .desktop-only
+    display none
+
+  .header-title
+    background bg-color-2
+    cursor pointer
+    padding-left middle
+    padding-right middle
+
+  .listing-button.selected
+    background-color dialogue-color
+  .listing-button.active.selected
+    background-color dialogue-color-active
+  .listing-button.folder.selected
+    background-color folder-color
+  .listing-button.folder.active.selected
+    background-color folder-color-active
+
+  .profile-button
+    svg
+      width mobile-profile-button-size
+      height mobile-profile-button-size
+      margin ((middle-avatar-size - mobile-profile-button-size) / 2)
+      g
+        transform scale(1.8)
+
+  #messages-page
+    padding 0
+
+  #app
+    height 100%

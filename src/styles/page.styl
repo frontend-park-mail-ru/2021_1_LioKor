@@ -1,0 +1,52 @@
+@require "constants.styl"
+
+*
+    box-sizing border-box
+
+#app
+    opacity 0
+    transition all 200ms ease
+    width 100%
+
+@font-face
+    font-family LioKorLogo
+    src url(../fonts/liokor_logo_font.ttf)
+
+html
+    height 100%
+    linkbutton
+        svg
+            pointer-events none // to prevent svg from overwritting linkbutton event
+body
+    margin 0
+    font-family Arial
+
+    // background-image url(../images/background.jpg)
+    // background-repeat repeat-y
+    background-color clBackground
+
+    div.main
+        overflow auto
+        height 100vh
+
+        background-color transparent
+        background-image none
+
+        header.lite
+            height logo-height
+            line-height logo-height
+            padding logo-padding
+            div.logo
+                display flex
+                margin 0 auto
+                width logo-width
+                text-align center
+                div.image
+                    img
+                        height logo-height
+                div.text
+                    padding-left logo-padding
+                    color textColor1
+                    font-family LioKorLogo
+                    font-size 2.5rem
+                    letter-spacing .4rem
