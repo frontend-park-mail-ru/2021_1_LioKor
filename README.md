@@ -21,6 +21,9 @@
 1. yarn lint
 2. yarn lint --fix
 
+### HowTo Deploy:
+1. yarn dist
+
 ### API Swagger:
 * [https://api.mail.liokor.ru/api/swagger](https://api.mail.liokor.ru/api/swagger)
 

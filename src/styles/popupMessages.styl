@@ -1,0 +1,36 @@
+@require 'constants.styl'
+
+indent = 15px
+innerPadding = 10px
+titleMargin = 5px
+
+messageWidth = 225px
+
+clBgPrimarySuccess = #28A745
+clBgSecondarySuccess = #218838
+clBgPrimaryError = #E54D42
+clBgSecondaryError = #B82E24
+
+borderRadius = 2px
+
+.popup-messages
+    position fixed
+    top indent
+    right indent
+    width messageWidth
+    z-index 1000
+    .popup-message
+        overflow-x hidden
+        margin-bottom indent
+        padding innerPadding
+        border-radius borderRadius
+        color textColor1
+        transition opacity 0.5s ease
+        .title
+            margin-bottom titleMargin
+    .popup-message
+        background-color clBgPrimarySuccess
+        border-left 5px solid clBgSecondarySuccess
+    .popup-message.error
+        background-color clBgPrimaryError
+        border-left-color clBgSecondaryError
