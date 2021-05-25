@@ -1,18 +1,12 @@
 import Handlebars from 'handlebars/dist/cjs/handlebars';
 
 import { validateEmail } from '../modules/validators';
+import { stripTags } from '../modules/utils';
 import { Listing, plugStates } from '../components/listing';
 import PaginatedGetter from '../modules/paginatedGetter';
 import setDraggable from '../components/dragAndDropper';
 import ParsedDate from '../modules/parsedDate';
 import convertAvatarUrlToDefault from '../modules/defaultAvatars';
-
-/**
- * @param s
- */
-function stripTags(s) {
-    return s.replace(/(<([^>]+)>)/gi, '');
-}
 
 const CL_HIGHLIGHT_DRAG_AND_DROP = 'orange';
 
@@ -314,7 +308,6 @@ export async function handler(element, app) {
                 } else {
                     app.messages.error(`Ошибка ${res.status}`, 'Не удалось удалить письмо!');
                 }
-                el.remove();
             }
         }
     });
