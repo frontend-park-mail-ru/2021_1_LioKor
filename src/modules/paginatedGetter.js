@@ -36,6 +36,12 @@ export default class PaginatedGetter {
 
     async getNextPage(...query) {
         const gotten = await this.get(query);
+
+        if (gotten && gotten.length > 0) {
+            this.currentLastElement = gotten[0][this.sortBy];
+        } else {
+            this.currentLastElement = 1;
+        }
         gotten.forEach((item) => {
             if (this.sortDesc) {
                 if (item[this.sortBy] < this.currentLastElement || !this.currentLastElement) {
@@ -47,6 +53,7 @@ export default class PaginatedGetter {
                 }
             }
         });
+
         this.URL.searchParams.set(this.sinceParamName, this.currentLastElement);
         return gotten;
     }

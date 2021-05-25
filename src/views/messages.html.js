@@ -7,6 +7,10 @@ import setDraggable from '../components/dragAndDropper';
 import ParsedDate from '../modules/parsedDate';
 import convertAvatarUrlToDefault from '../modules/defaultAvatars';
 
+function stripTags(s) {
+    return s.replace(/(<([^>]+)>)/gi, "");
+}
+
 const CL_HIGHLIGHT_DRAG_AND_DROP = 'orange';
 
 const html = `
@@ -99,7 +103,7 @@ export async function handler(element, app) {
     element.innerHTML = html;
 
     // --- Configs
-    const dialoguesByRequest = 15;
+    const dialoguesByRequest = 50;
     const foldersByRequest = 500;
     const messagesByRequest = 15;
 
@@ -163,17 +167,28 @@ export async function handler(element, app) {
     const messageBlockInnerHTMLTemplate = Handlebars.compile(`
         <div class="message-block {{ side }}">
             <img src={{ avatar }} alt="avatar" class="middle-avatar">
-            <div class="floatright text-4 p-m table-rows">
-                <div class="floatright">{{ time }}</div>
-                <svg class="floatright svg-button message-status left-filler" pointer-events="none" xmlns="http://www.w3.org/2000/svg">
+            <div class="message-info flex">
+                <div>{{ time }}</div>
+                <div class="status-icon">
                     {{#if isStated}}
                         {{#if isDelivered}}
-                            <g transform="scale(0.05)"><path d="M192.485,0C86.173,0,0,86.173,0,192.485S86.173,384.97,192.485,384.97c106.3,0,192.485-86.185,192.485-192.485    C384.97,86.173,298.785,0,192.485,0z M192.485,360.909c-93.018,0-168.424-75.406-168.424-168.424S99.467,24.061,192.485,24.061    s168.424,75.406,168.424,168.424S285.503,360.909,192.485,360.909z"/><path d="M280.306,125.031L156.538,247.692l-51.502-50.479c-4.74-4.704-12.439-4.704-17.179,0c-4.752,4.704-4.752,12.319,0,17.011    l60.139,58.936c4.932,4.343,12.307,4.824,17.179,0l132.321-131.118c4.74-4.692,4.74-12.319,0-17.011    C292.745,120.339,285.058,120.339,280.306,125.031z"/></g>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                            </svg>
                         {{else}}
-                            <g transform="scale(0.04)"><path d="M505.403,406.394L295.389,58.102c-8.274-13.721-23.367-22.245-39.39-22.245c-16.023,0-31.116,8.524-39.391,22.246    L6.595,406.394c-8.551,14.182-8.804,31.95-0.661,46.37c8.145,14.42,23.491,23.378,40.051,23.378h420.028    c16.56,0,31.907-8.958,40.052-23.379C514.208,438.342,513.955,420.574,505.403,406.394z M477.039,436.372    c-2.242,3.969-6.467,6.436-11.026,6.436H45.985c-4.559,0-8.784-2.466-11.025-6.435c-2.242-3.97-2.172-8.862,0.181-12.765    L245.156,75.316c2.278-3.777,6.433-6.124,10.844-6.124c4.41,0,8.565,2.347,10.843,6.124l210.013,348.292    C479.211,427.512,479.281,432.403,477.039,436.372z"/><path d="M256.154,173.005c-12.68,0-22.576,6.804-22.576,18.866c0,36.802,4.329,89.686,4.329,126.489    c0.001,9.587,8.352,13.607,18.248,13.607c7.422,0,17.937-4.02,17.937-13.607c0-36.802,4.329-89.686,4.329-126.489    C278.421,179.81,268.216,173.005,256.154,173.005z"/><path xmlns="http://www.w3.org/2000/svg" d="M256.465,353.306c-13.607,0-23.814,10.824-23.814,23.814c0,12.68,10.206,23.814,23.814,23.814    c12.68,0,23.505-11.134,23.505-23.814C279.97,364.13,269.144,353.306,256.465,353.306z"/></g>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                            </svg>
                         {{/if}}
                     {{/if}}
-                </svg>
+                </div>
+                <div class="delete-btn" realid="{{ realId }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path d="M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z"/>
+                    </svg>
+                </div>
             </div>
             <div class="message-block-title">{{ title }}</div>
             {{#each body}}
@@ -271,6 +286,31 @@ export async function handler(element, app) {
 
     // --- Draw default page
     messagesListingElem.innerHTML = defaultMessagesPageInnerHTML;
+    messagesListingElem.addEventListener('click', async (ev) => {
+        if (ev.target.tagName === 'DIV' && ev.target.classList.contains('delete-btn')) {
+            let el = ev.target;
+            while (!el.id) {
+                el = el.parentNode;
+            }
+
+            if (await app.modal.confirm('Вы уверены, что хотите удалить сообщение?')) {
+                const id = parseInt(el.id);
+
+                const res = await app.apiDelete('/email/emails', { ids: [id] });
+                if (res.ok) {
+                    app.messages.success('Успех!', 'Письмо удалено.');
+
+                    dialoguesListing.activeElem.messagesListing.delete(parseInt(el.id));
+                    const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
+                    const lastBody = stripTags(lastMessage.querySelector(".message-body").innerHTML);
+                    dialoguesListing.activeElem.lastElementChild.lastElementChild.innerText = lastBody;
+                } else {
+                    app.messages.error(`Ошибка ${res.status}`, 'Не удалось удалить письмо!');
+                }
+                el.remove();
+            }
+        }
+    });
 
     // --- Get folders
     // create main folder
@@ -332,7 +372,7 @@ export async function handler(element, app) {
             // Create and configure new element
             if (!dialogue.messagesListing) {
                 dialogue.messagesListing = new Listing(messagesListingElem);
-                dialogue.messagesListing.networkGetter = new PaginatedGetter(app.apiUrl + '/email/emails?with=' + dialogue.username, 'since', -1, 'amount', messagesByRequest, 'id');
+                dialogue.messagesListing.networkGetter = new PaginatedGetter(app.apiUrl + '/email/emails?with=' + dialogue.username, 'since', -1, 'amount', messagesByRequest, 'id', true);
 
                 dialogue.messagesListing.setPlugTopState(plugStates.end, newElem(`<svg class="svg-button centered" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z" fill="currentColor"></path></svg>
                         <div class="text-1">Это начало истории сообщений</div>`,
@@ -359,7 +399,7 @@ export async function handler(element, app) {
                     // get height for scroll to previous place at end of function
                     const heightToBottom = dialogue.messagesListing.getElementsHeight() - dialogue.messagesListing.block.scrollTop;
 
-                    convertMessagesToBlocks(newMessages);
+                     convertMessagesToBlocks(newMessages);
 
                     newMessages.forEach((messageBlock) => {
                         newMessage(messageBlock, dialogue.messagesListing, true);
@@ -377,7 +417,7 @@ export async function handler(element, app) {
                 do {
                     const newMessages = await dialogue.messagesListing.networkGetter.getNextPage();
 
-                    convertMessagesToBlocks(newMessages);
+                     convertMessagesToBlocks(newMessages);
 
                     newMessages.forEach((messageBlock) => {
                         newMessage(messageBlock, dialogue.messagesListing, true);
@@ -851,14 +891,15 @@ export async function handler(element, app) {
             elem.body = [new Handlebars.SafeString(elem.body)];
         });
 
-        let previousElem = messages[messages.length - 1];
+        // MESSAGE GROUPING TO BLOCKS
+        /*let previousElem = messages[messages.length - 1];
         messages.slice(0, -1).reverse().forEach((elem, id, object) => {
             if (previousElem.sender === elem.sender && previousElem.title === elem.title && (elem.time - previousElem.time <= 1000 * 60 * 10)) { // 1000ms * 60(seconds in minute) * 5(minutes)
                 messages[object.length - id].body.push(elem.body[0]);
                 messages.splice(object.length - id - 1, 1);
             }
             previousElem = elem;
-        });
+        });*/
     }
 
     /**
@@ -906,28 +947,29 @@ export async function handler(element, app) {
         }
 
         currentTitle = response.ok ? responseData.subject : currentTitle;
-        message = response.ok ? new Handlebars.SafeString(responseData.body) : message;
+        message = response.ok ? responseData.body : message;
 
         // clear input
         messageInput.value = '';
 
         // update dialogue preview
-        dialoguesListing.activeElem.lastElementChild.lastElementChild.innerText = message;
+        dialoguesListing.activeElem.lastElementChild.lastElementChild.innerText = stripTags(message);
 
         const nowStatus = response.ok ? 1 : 0;
         const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
         // add message into last HTML-block
-        if (lastMessage && nowStatus === lastMessage.status && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
+        /*if (lastMessage && nowStatus === lastMessage.status && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
             lastMessage.firstElementChild.innerHTML += `<div id="${lastMessage.id}" class="message-body">${message}</div>`;
-        } else { // add block to messages listing
+        } else { // add block to messages listing*/
             newMessage({
+                id: responseData.id,
                 sender: `${app.storage.username}@liokor.ru`,
                 time: new Date().toString(),
                 status: nowStatus,
                 title: currentTitle,
                 body: [new Handlebars.SafeString(message)]
             }, dialoguesListing.activeElem.messagesListing, false);
-        }
+        // }
         dialoguesListing.activeElem.messagesListing.redraw();
         dialoguesListing.activeElem.messagesListing.scrollToBottom();
     }
@@ -1287,9 +1329,14 @@ export async function handler(element, app) {
                 isStated: isYour,
                 isDelivered: (messageBlock.status === 1),
                 title: messageBlock.title,
-                body: messageBlock.body
+                body: messageBlock.body,
             }),
-            'div', messageBlock.id, 'message-block-full', isYour ? 'right-block' : 'left-block');
+            'div',
+            messageBlock.id,
+            'message-block-full',
+            isYour ? 'right-block' : 'left-block'
+        );
+
         messageBlockElem.sender = messageBlock.sender;
         messageBlockElem.title = messageBlock.title;
         messageBlockElem.status = messageBlock.status;
