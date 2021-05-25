@@ -562,6 +562,13 @@ export async function handler(element, app) {
         history.pushState(null, null, currentPath.toString());
     });
 
+    // --- Resize event
+    window.addEventListener('resize', () => {
+        console.log(window.innerHeight);
+        // To fill window with\without address bar
+        document.querySelector('.main').style.height = `${window.innerHeight}px`;
+    });
+    window.dispatchEvent(new Event('resize'));
     // --- Lost connection events
     window.addEventListener('offline', (event) => {
         for (let i = 0; i < connectionsInfo.length; i++) {
@@ -965,7 +972,8 @@ export async function handler(element, app) {
         // add message into last HTML-block
         /* if (lastMessage && nowStatus === lastMessage.status && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
             lastMessage.firstElementChild.innerHTML += `<div id="${lastMessage.id}" class="message-body">${message}</div>`;
-        } else { // add block to messages listing */
+        } else { */
+        // add block to messages listing
         newMessage({
             id: id,
             sender: `${app.storage.username}@liokor.ru`,
