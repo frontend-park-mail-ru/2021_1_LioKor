@@ -1,3 +1,6 @@
+@require "constants.styl"
+@require "messages.fix.styl"
+
 color1 = #F5F5F5
 color2 = #CCC
 color3 = #AAA
@@ -8,6 +11,8 @@ color7 = #222
 color7-C = #222C
 color7-8 = #2228
 color7-4 = #2224
+
+svg-hover-color = orange
 
 loading-color = #84adff
 
@@ -129,6 +134,8 @@ width-border = 1px
   width 100%
 .fullheight
   height 100%
+#messages-page.fullheight
+  height "calc(100vh - %s)" % logo-height
 
 .floatright
   float right
@@ -484,6 +491,7 @@ width-border = 1px
 .svg-button:hover
   opacity 1
   transform scale(1.1)
+  fill svg-hover-color
 
 .plus-button
   cursor pointer
@@ -737,6 +745,8 @@ width-border = 1px
 
   .mobile-fullwidth
     width 100%
+  .fullheight
+    height 100vh !important
 
   .mobile-only
     display block
@@ -771,5 +781,3 @@ width-border = 1px
 
   #app
     height 100%
-
-

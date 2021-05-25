@@ -4,13 +4,16 @@ formBgColor = #404346
 
 form-button-padding = 10px
 form-button-margin = 10px
-form-padding = 10px
+form-padding-left = 20px
+form-padding-top = 30px
 form-margin = 100px
 form-width = 460px
 form-top-margin = 8px
 border-width = 1px
 border-radius = 3px
 big-border-radius = 7px
+back-btn-size = 40px
+close-btn-size = 25px
 
 linkButton
     text-decoration none
@@ -62,7 +65,7 @@ textarea.form-control
 
 .standalone-form
     box-shadow 0 0 border-radius clFormShadow
-    padding form-padding*2 form-padding*3
+    padding form-padding-left form-padding-top
 
     max-width form-width
     margin form-margin auto
@@ -70,6 +73,18 @@ textarea.form-control
     overflow hidden
 
     background-color formBgColor
+
+    position relative
+    .back-btn
+        position absolute
+        color #CCC
+        left form-padding-left
+        top 10px
+        width back-btn-size
+        height back-btn-size
+        transition 0.2s ease color
+    .back-btn:hover
+        color orange
 
     .title
         text-align center
@@ -79,7 +94,7 @@ textarea.form-control
             font-weight bold
         .secondary
             margin-top form-button-margin
-            font-size 0.95rem
+            font-size 1rem
             color textColor2
     .form
         padding-top 5px
@@ -99,6 +114,7 @@ textarea.form-control
 
     input,
     button
+        margin auto
         width 100%
     .muted
         margin-top form-top-margin

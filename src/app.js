@@ -2,6 +2,7 @@ import * as renderer from './modules/renderer';
 
 import { request } from './modules/requests';
 import PopupMessages from './modules/popupMessages';
+import Modal from './modules/modal';
 
 import * as auth from './views/auth.html.js';
 import * as user from './views/profile.html.js';
@@ -13,7 +14,7 @@ import * as view404 from './views/404.html.js';
 const DEFAULT_AVATAR_URL = '/images/default-avatar.jpg';
 
 export default class App {
-    constructor(name, apiUrl, elId, messagesElId = null) {
+    constructor(name, apiUrl, elId) {
         this.storage = {
             username: null,
             avatar: ''
@@ -25,21 +26,13 @@ export default class App {
         this.defaultAvatarUrl = DEFAULT_AVATAR_URL;
 
         this.messages = new PopupMessages();
+        this.modal = new Modal();
 
-        window.addEventListener('popstate', (ev) => {
+        window.addEventListener('popstate', () => {
             this.goto(location.pathname, false);
         });
 
-        document.body.addEventListener('click', (event) => {
-            const targetElem = event.target;
-            if (targetElem.tagName === 'LINKBUTTON') {
-                event.preventDefault();
-                const href = event.target.getAttribute('href');
-                if (href) {
-                    this.goto(href);
-                }
-            }
-        });
+        document.body.addEventListener('click', this.__bodyClick.bind(this));
 
         this.routes = [
             {
@@ -68,6 +61,17 @@ export default class App {
                 authRequired: true
             }
         ];
+    }
+
+    __bodyClick(event) {
+        const targetElem = event.target;
+        if (targetElem.tagName === 'LINKBUTTON') {
+            event.preventDefault();
+            const href = event.target.getAttribute('href');
+            if (href) {
+                this.goto(href);
+            }
+        }
     }
 
     updateStorage(username, avatarUrl = null) {
@@ -100,7 +104,7 @@ export default class App {
         return this.apiRequest('DELETE', path, data);
     }
 
-    getHandler(path) {
+    __getHandler(path) {
         for (const route of this.routes) {
             if (path.match(route.urlRegex)) {
                 return {
@@ -120,7 +124,7 @@ export default class App {
             history.pushState(null, null, path);
         }
 
-        let { handler, authRequired } = this.getHandler(path);
+        let { handler, authRequired } = this.__getHandler(path);
         if (handler === null) {
             handler = view404.handler;
             authRequired = false;

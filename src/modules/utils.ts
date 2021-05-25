@@ -1,4 +1,14 @@
 /**
+ * strips tags from string
+ *
+ * @param s string to be stripped
+ * @returns stripped string
+ */
+export function stripTags(s: string): string {
+    return s.replace(/(<([^>]+)>)/gi, '');
+}
+
+/**
  * Returns value of a cookie by its name
  *
  * @param {string} name name of a cookie
