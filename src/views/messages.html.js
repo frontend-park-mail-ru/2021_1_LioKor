@@ -304,8 +304,12 @@ export async function handler(element, app) {
                     app.messages.success('Успех!', 'Письмо удалено.');
 
                     dialoguesListing.activeElem.messagesListing.delete(parseInt(el.id));
+
+                    let lastBody = '';
                     const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
-                    const lastBody = stripTags(lastMessage.querySelector('.message-body').innerHTML);
+                    if (lastMessage) {
+                        lastBody = stripTags(lastMessage.querySelector('.message-body').innerHTML);
+                    }
                     dialoguesListing.activeElem.lastElementChild.lastElementChild.innerText = lastBody;
                 } else {
                     app.messages.error(`Ошибка ${res.status}`, 'Не удалось удалить письмо!');
