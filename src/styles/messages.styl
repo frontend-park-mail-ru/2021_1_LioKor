@@ -134,8 +134,8 @@ width-border = 1px
   width 100%
 .fullheight
   height 100%
-#messages-page.fullheight
-  height "calc(100vh - %s)" % logo-height
+#messages-page
+  height 100%
 
 .floatright
   float right
@@ -172,6 +172,8 @@ width-border = 1px
   flex-direction column
 .table-rows.reversed
   flex-direction column-reverse
+.flex-end
+  align-items flex-end
 
 .table-column
   height 100%
@@ -217,7 +219,6 @@ width-border = 1px
 
 .dialogues-listing
   overflow-x hidden
-  list-style-type none
   margin 0
   padding 0
   scrollbar-color scroll-thumb-color dialogue-color
@@ -258,7 +259,7 @@ width-border = 1px
 
 // --- Listing button:
 .listing-button
-  touch-action none
+  list-style-type none
   min-height dialogue-preview-height
   max-height dialogue-preview-height
   overflow hidden
@@ -297,6 +298,7 @@ width-border = 1px
   white-space nowrap
 
 .listing-button
+.message-block
   .show-on-hover
     transition opacity ease 0.2s
     opacity 0
@@ -304,6 +306,7 @@ width-border = 1px
     transition opacity ease 0.2s
     opacity 1
 .listing-button:hover
+.message-block:hover
   .show-on-hover
     opacity 1
   .hide-on-hover
@@ -745,8 +748,9 @@ width-border = 1px
 
   .mobile-fullwidth
     width 100%
-  .fullheight
-    height 100vh !important
+  #messages-page
+    height 100%
+    padding 0
 
   .mobile-only
     display block
@@ -776,8 +780,8 @@ width-border = 1px
       g
         transform scale(1.8)
 
-  #messages-page
-    padding 0
+  .scrollable
+    overscroll-behavior contain
 
   #app
     height 100%
