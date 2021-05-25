@@ -164,10 +164,10 @@ export async function handler(element, app) {
     const messageBlockInnerHTMLTemplate = Handlebars.compile(`
         <div class="message-block {{ side }}">
             <img src={{ avatar }} alt="avatar" class="middle-avatar">
-            <div class="message-info flex">
-                <div>{{ time }}</div>
+            <div class="message-info table-rows flex-end">
+                <div class="hide-on-hover">{{ time }}</div>
                 {{#if isStated}}
-                    <div class="status-icon">
+                    <div class="status-icon floatright">
                         {{#if isDelivered}}
                             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
                                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
@@ -181,7 +181,7 @@ export async function handler(element, app) {
                         {{/if}}
                     </div>
                 {{/if}}
-                <div class="delete-btn" realid="{{ realId }}">
+                <div class="delete-btn show-on-hover absolute-top-right" realid="{{ realId }}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
                         <path d="M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z"/>
                     </svg>
@@ -564,7 +564,6 @@ export async function handler(element, app) {
 
     // --- Resize event
     window.addEventListener('resize', () => {
-        console.log(window.innerHeight);
         // To fill window with\without address bar
         document.querySelector('.main').style.height = `${window.innerHeight}px`;
     });
