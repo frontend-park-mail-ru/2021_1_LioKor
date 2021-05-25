@@ -7,8 +7,11 @@ import setDraggable from '../components/dragAndDropper';
 import ParsedDate from '../modules/parsedDate';
 import convertAvatarUrlToDefault from '../modules/defaultAvatars';
 
+/**
+ * @param s
+ */
 function stripTags(s) {
-    return s.replace(/(<([^>]+)>)/gi, "");
+    return s.replace(/(<([^>]+)>)/gi, '');
 }
 
 const CL_HIGHLIGHT_DRAG_AND_DROP = 'orange';
@@ -302,7 +305,7 @@ export async function handler(element, app) {
 
                     dialoguesListing.activeElem.messagesListing.delete(parseInt(el.id));
                     const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
-                    const lastBody = stripTags(lastMessage.querySelector(".message-body").innerHTML);
+                    const lastBody = stripTags(lastMessage.querySelector('.message-body').innerHTML);
                     dialoguesListing.activeElem.lastElementChild.lastElementChild.innerText = lastBody;
                 } else {
                     app.messages.error(`Ошибка ${res.status}`, 'Не удалось удалить письмо!');
@@ -399,7 +402,7 @@ export async function handler(element, app) {
                     // get height for scroll to previous place at end of function
                     const heightToBottom = dialogue.messagesListing.getElementsHeight() - dialogue.messagesListing.block.scrollTop;
 
-                     convertMessagesToBlocks(newMessages);
+                    convertMessagesToBlocks(newMessages);
 
                     newMessages.forEach((messageBlock) => {
                         newMessage(messageBlock, dialogue.messagesListing, true);
@@ -417,7 +420,7 @@ export async function handler(element, app) {
                 do {
                     const newMessages = await dialogue.messagesListing.networkGetter.getNextPage();
 
-                     convertMessagesToBlocks(newMessages);
+                    convertMessagesToBlocks(newMessages);
 
                     newMessages.forEach((messageBlock) => {
                         newMessage(messageBlock, dialogue.messagesListing, true);
@@ -892,14 +895,14 @@ export async function handler(element, app) {
         });
 
         // MESSAGE GROUPING TO BLOCKS
-        /*let previousElem = messages[messages.length - 1];
+        /* let previousElem = messages[messages.length - 1];
         messages.slice(0, -1).reverse().forEach((elem, id, object) => {
             if (previousElem.sender === elem.sender && previousElem.title === elem.title && (elem.time - previousElem.time <= 1000 * 60 * 10)) { // 1000ms * 60(seconds in minute) * 5(minutes)
                 messages[object.length - id].body.push(elem.body[0]);
                 messages.splice(object.length - id - 1, 1);
             }
             previousElem = elem;
-        });*/
+        }); */
     }
 
     /**
@@ -956,19 +959,19 @@ export async function handler(element, app) {
         dialoguesListing.activeElem.lastElementChild.lastElementChild.innerText = stripTags(message);
 
         const nowStatus = response.ok ? 1 : 0;
-        const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
+        // const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
         // add message into last HTML-block
-        /*if (lastMessage && nowStatus === lastMessage.status && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
+        /* if (lastMessage && nowStatus === lastMessage.status && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
             lastMessage.firstElementChild.innerHTML += `<div id="${lastMessage.id}" class="message-body">${message}</div>`;
-        } else { // add block to messages listing*/
-            newMessage({
-                id: responseData.id,
-                sender: `${app.storage.username}@liokor.ru`,
-                time: new Date().toString(),
-                status: nowStatus,
-                title: currentTitle,
-                body: [new Handlebars.SafeString(message)]
-            }, dialoguesListing.activeElem.messagesListing, false);
+        } else { // add block to messages listing */
+        newMessage({
+            id: responseData.id,
+            sender: `${app.storage.username}@liokor.ru`,
+            time: new Date().toString(),
+            status: nowStatus,
+            title: currentTitle,
+            body: [new Handlebars.SafeString(message)]
+        }, dialoguesListing.activeElem.messagesListing, false);
         // }
         dialoguesListing.activeElem.messagesListing.redraw();
         dialoguesListing.activeElem.messagesListing.scrollToBottom();
@@ -1329,7 +1332,7 @@ export async function handler(element, app) {
                 isStated: isYour,
                 isDelivered: (messageBlock.status === 1),
                 title: messageBlock.title,
-                body: messageBlock.body,
+                body: messageBlock.body
             }),
             'div',
             messageBlock.id,
