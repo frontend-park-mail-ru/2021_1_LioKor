@@ -292,6 +292,10 @@ export async function handler(element, app) {
 
             if (await app.modal.confirm('Вы уверены, что хотите удалить сообщение?')) {
                 const id = parseInt(el.id);
+                if (!id || id <= 0) {
+                    app.messages.error('Ошибка!', 'Не удалось удалить письмо. Попробуйте обновить страницу.');
+                    return;
+                }
 
                 const res = await app.apiDelete('/email/emails', { ids: [id] });
                 if (res.ok) {
@@ -948,6 +952,7 @@ export async function handler(element, app) {
 
         currentTitle = response.ok ? responseData.subject : currentTitle;
         message = response.ok ? responseData.body : message;
+        const id = response.ok ? responseData.id : 0;
 
         // clear input
         messageInput.value = '';
@@ -962,7 +967,7 @@ export async function handler(element, app) {
             lastMessage.firstElementChild.innerHTML += `<div id="${lastMessage.id}" class="message-body">${message}</div>`;
         } else { // add block to messages listing */
         newMessage({
-            id: responseData.id,
+            id: id,
             sender: `${app.storage.username}@liokor.ru`,
             time: new Date().toString(),
             status: nowStatus,
