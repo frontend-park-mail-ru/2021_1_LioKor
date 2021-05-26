@@ -841,6 +841,9 @@ export async function handler(element, app) {
 
     // Our pretty WebSockets...
     setInterval(async () => {
+        if (!app.storage.username) {
+            return;
+        }
         // console.log("Update!");
         // get folders
         const folders = await foldersGetter.getFirstPage();
@@ -869,11 +872,14 @@ export async function handler(element, app) {
             }
 
             // add dialogue if we don't have it yet
+            const currentDialogueElem = dialoguesListing.findById(dialogue.id);
             if (isNeedToCreateNewDialogues) {
                 createdElems++;
+                if (currentDialogueElem) {
+                    dialoguesListing.delete(dialogue.id);
+                }
                 newDialogue(dialogue, true);
             } else {
-                const currentDialogueElem = dialoguesListing.findById(dialogue.id);
                 const statusElem = currentDialogueElem.querySelector('.dialogue-status');
                 const previewElem = currentDialogueElem.querySelector('.dialogue-body');
                 // update dialogue "new messages" id we have it already
