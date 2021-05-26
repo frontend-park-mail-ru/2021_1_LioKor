@@ -1,17 +1,16 @@
 import typescript from '@rollup/plugin-typescript';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-// import eslint from '@rollup/plugin-eslint';
 
 import styles from 'rollup-plugin-styles';
 import copy from 'rollup-plugin-copy';
-// import { uglify } from "rollup-plugin-uglify";
+import { terser } from 'rollup-plugin-terser';
 
 export default {
     input: 'src/index.js',
     output: {
         sourcemap: true,
-        file: 'dist/bundle.js',
+        file: 'dist/bundle.min.js',
         format: 'cjs',
         assetFileNames: 'assets/[name][extname]'
     },
@@ -26,11 +25,7 @@ export default {
         }),
         nodeResolve(),
         commonjs(),
-        /* eslint({
-            throwOnError: true,
-            exclude: 'src/styles/**'
-        }), */
-        // uglify(),
+        terser({ format: { comments: false } }),
         copy({
             targets: [
                 { src: 'src/images/*', dest: 'dist/images' },
