@@ -32,3 +32,6 @@
 
 ### Репозиторий с бэкендом
 * [2021_1_LioKor](https://github.com/go-park-mail-ru/2021_1_LioKor)
+
+### Репозиторйи с настройками nginx
+* [LioKor_Mail_nginx](https://github.com/KoroLion/LioKor_Mail_nginx)

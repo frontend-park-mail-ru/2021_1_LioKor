@@ -1,4 +1,4 @@
-import { getCookie } from './cookies';
+import { getCookie } from './utils';
 
 /**
  * Sends http request with JSON data to a specified url
