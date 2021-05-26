@@ -8,7 +8,20 @@ import setDraggable from '../components/dragAndDropper';
 import ParsedDate from '../modules/parsedDate';
 import convertAvatarUrlToDefault from '../modules/defaultAvatars';
 
+// --- Configs
 const CL_HIGHLIGHT_DRAG_AND_DROP = 'orange';
+const dialoguesByRequest = 50;
+const foldersByRequest = 500;
+const messagesByRequest = 15;
+
+const updateCycleTime = 5000; // ms
+
+const messagesScrollLoadOffset = 40; // px
+const dialoguesScrollLoadOffset = 40; // px
+
+const controlKeys = [13, 27, 37, 38, 39, 40]; // enter, escape, [arrows]
+
+const mainFolderName = 'Общая';
 
 const html = `
 <div class="table-columns fullheight p-l bg-5" id="messages-page">
@@ -98,18 +111,6 @@ export async function handler(element, app) {
 
     document.title = `${app.name} | Диалоги`;
     element.innerHTML = html;
-
-    // --- Configs
-    const dialoguesByRequest = 50;
-    const foldersByRequest = 500;
-    const messagesByRequest = 15;
-
-    const messagesScrollLoadOffset = 40;
-    const dialoguesScrollLoadOffset = 40;
-
-    const controlKeys = [13, 27, 37, 38, 39, 40]; // enter, escape, [arrows]
-
-    const mainFolderName = 'Общая';
 
     // --- HTML elements
     const dialoguesListingElem = document.getElementById('dialogues-listing');
@@ -283,6 +284,8 @@ export async function handler(element, app) {
 
     // --- Draw default page
     messagesListingElem.innerHTML = defaultMessagesPageInnerHTML;
+
+    // --- Add delete messages listener
     messagesListingElem.addEventListener('click', async (ev) => {
         const deleteBtnClicked = ev.target.tagName === 'DIV' && ev.target.classList.contains('delete-btn');
         if (!deleteBtnClicked) {
@@ -570,10 +573,11 @@ export async function handler(element, app) {
 
     // --- Resize event
     window.addEventListener('resize', () => {
-        // To fill window with\without address bar
+        // To fill window when address bar on mobiles is opened
         document.querySelector('.main').style.height = `${window.innerHeight}px`;
     });
     window.dispatchEvent(new Event('resize'));
+
     // --- Lost connection events
     window.addEventListener('offline', (event) => {
         for (let i = 0; i < connectionsInfo.length; i++) {
@@ -709,9 +713,9 @@ export async function handler(element, app) {
             dialoguesListing = foundDialogues[findText];
         }
         if (!dialoguesListing) {
-            dialoguesListing = newDialoguesListing();
+            dialoguesListing = newDialoguesListing('?find=' + findText);
             // get found dialogues
-            const gottenDialogues = await dialoguesListing.networkGetter.get(['find', findText]);
+            const gottenDialogues = await dialoguesListing.networkGetter.getNextPage();
             gottenDialogues.forEach((dialogue) => {
                 newDialogue(dialogue);
             });
@@ -840,6 +844,89 @@ export async function handler(element, app) {
             setTimeout(() => { connectionText.innerText = connectionText.innerText.substring(0, connectionText.innerText.length - 3); }, 1500);
         });
     }
+
+    // Our pretty WebSockets...
+    setInterval(async () => {
+        // console.log("Update!");
+        // get folders
+        const folders = await foldersGetter.getFirstPage();
+        // console.log("Folders:", folders);
+        folders.forEach((folder) => {
+            const statusElem = foldersListing.findById(folder.id).querySelector('.dialogue-status');
+            // update folder "new messages"
+            if (folder.new === 0) {
+                statusElem.style.display = 'none';
+            } else {
+                statusElem.style.display = 'block';
+                statusElem.innerText = folder.new;
+            }
+        });
+
+        // update dialogues in current folder
+        const lastDialogue = dialoguesListing.getFirst();
+        // get new (or not) dialogues
+        const newDialogues = await dialoguesListing.networkGetter.getFirstPage();
+        // console.log("Dialogues:", newDialogues);
+        let isNeedToCreateNewDialogues = true;
+        let createdElems = 0;
+        newDialogues.forEach((dialogue) => {
+            if (String(dialogue.id) === lastDialogue.id) {
+                isNeedToCreateNewDialogues = false;
+            }
+
+            // add dialogue if we don't have it yet
+            if (isNeedToCreateNewDialogues) {
+                createdElems++;
+                newDialogue(dialogue, true);
+            } else {
+                const currentDialogueElem = dialoguesListing.findById(dialogue.id);
+                const statusElem = currentDialogueElem.querySelector('.dialogue-status');
+                const previewElem = currentDialogueElem.querySelector('.dialogue-body');
+                // update dialogue "new messages" id we have it already
+                if (dialogue.new === 0) {
+                    statusElem.style.display = 'none';
+                } else if (dialoguesListing.activeElem && String(dialogue.id) === dialoguesListing.activeElem.id) {
+                    // update folder unread status (decrement)
+                    const newStatus = Number(foldersListing.activeElem.statusElem.innerText) - 1;
+                    foldersListing.activeElem.statusElem.innerText = newStatus;
+                    if (newStatus === 0) {
+                        foldersListing.activeElem.statusElem.style.display = 'none';
+                    }
+                    statusElem.style.display = 'none';
+                    previewElem.innerText = stripTags(dialogue.body);
+                } else {
+                    statusElem.style.display = 'block';
+                    statusElem.innerText = dialogue.new;
+                    previewElem.innerText = stripTags(dialogue.body);
+                }
+            }
+        });
+        if (createdElems > 0) {
+            dialoguesListing.redraw();
+        }
+
+        // update messages in current dialogue
+        if (!dialoguesListing.activeElem) {
+            return;
+        }
+        const messagesListing = dialoguesListing.activeElem.messagesListing;
+        // get new (or not) messages
+        const gottenMessages = await messagesListing.networkGetter.getFirstPage();
+        // console.log("Messages:", gottenMessages);
+        const lastMessage = messagesListing.getLast();
+        convertMessagesToBlocks(gottenMessages);
+        const isScrolledToBottom = messagesListingElem.scrollHeight - messagesListingElem.scrollTop === messagesListingElem.clientHeight;
+        for (createdElems = 0; (createdElems < gottenMessages.length) && (String(gottenMessages[createdElems].id) !== lastMessage.id); createdElems++) {
+            // add message if we don't have it yet
+            newMessage(gottenMessages[createdElems], messagesListing, false);
+        }
+        if (createdElems > 0) {
+            messagesListing.redraw();
+        }
+        if (isScrolledToBottom) {
+            messagesListing.scrollToBottom();
+        }
+    }, updateCycleTime);
 
     // ------ Page navigation using keys arrows + enter + escape
     /*
@@ -1144,7 +1231,7 @@ export async function handler(element, app) {
 
         // remove all HTML tags from dialogue body
         if (dialogue.body) {
-            dialogue.body = dialogue.body.replace(/<\/?[^>]+\/?>/g, '');
+            dialogue.body = stripTags(dialogue.body);
         }
 
         const dialogueInnerHTML = dialogueInnerHTMLTemplate({
