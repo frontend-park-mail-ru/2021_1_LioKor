@@ -29,10 +29,13 @@ export default {
         terser({ format: { comments: false } }),
         html({
             title: 'LioKor',
+            attributes: {
+                html: { lang: 'ru' }
+            },
             meta: [
                 { charset: 'utf-8' },
-                { viewport: 'width=device-width, initial-scale=1' },
-                { 'theme-color': '#303030' }
+                { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+                { name: 'theme-color', content: '#303030' }
             ]
         }),
         copy({

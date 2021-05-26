@@ -12,7 +12,7 @@ const baseContentHTML = `<div class="main" id="main">
     <header class="lite desktop-only">
         <div class="logo">
             <div class="image">
-                <img src="/images/liokor_logo.webp" alt="logo">
+                <img src="/images/liokor_logo.png" alt="logo">
             </div>
             <div class="text">
                 <span>MAIL</span>
