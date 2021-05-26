@@ -83,8 +83,10 @@ export class Listing {
     }
 
     removeAllListeners(element) {
-        element.removeEventListener('click', this.clickElementHandler);
-        element.removeEventListener('mousemove', this.mousemoveElementHandler);
+        if (element) {
+            element.removeEventListener('click', this.clickElementHandler);
+            element.removeEventListener('mousemove', this.mousemoveElementHandler);
+        }
     }
 
     push(element) {

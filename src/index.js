@@ -7,11 +7,30 @@ import './styles/messages.styl';
 import { registerSW } from './modules/sw-installer.js';
 import App from './app';
 
+const headContentHTML = '<link rel="icon" href="/images/favicon.ico" type="image/x-icon">';
+const baseContentHTML = `<div class="main" id="main">
+    <header class="lite desktop-only">
+        <div class="logo">
+            <div class="image">
+                <img src="/images/liokor_logo.png" alt="logo">
+            </div>
+            <div class="text">
+                <span>MAIL</span>
+            </div>
+        </div>
+    </header>
+
+    <div id="app" class="title"></div>
+</div>`;
+
 /**
  * Main function (entry point) of a frontend
  *
  */
 async function main() {
+    document.head.innerHTML += headContentHTML;
+    document.body.innerHTML = baseContentHTML + document.body.innerHTML;
+
     await registerSW();
 
     const { hostname, origin, pathname, search } = window.location;
