@@ -37,7 +37,7 @@ export default class PaginatedGetter {
     async getNextPage(...query) {
         const gotten = await this.get(query);
 
-        if (gotten && gotten.length > 0) {
+        if (gotten?.length > 0) {
             this.currentLastElement = gotten[0][this.sortBy];
         } else {
             this.currentLastElement = 1;

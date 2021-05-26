@@ -284,36 +284,42 @@ export async function handler(element, app) {
     // --- Draw default page
     messagesListingElem.innerHTML = defaultMessagesPageInnerHTML;
     messagesListingElem.addEventListener('click', async (ev) => {
-        if (ev.target.tagName === 'DIV' && ev.target.classList.contains('delete-btn')) {
-            let el = ev.target;
-            while (!el.id) {
-                el = el.parentNode;
-            }
-
-            if (await app.modal.confirm('Вы уверены, что хотите удалить сообщение?')) {
-                const id = parseInt(el.id);
-                if (!id || id <= 0) {
-                    app.messages.error('Ошибка!', 'Не удалось удалить письмо. Попробуйте обновить страницу.');
-                    return;
-                }
-
-                const res = await app.apiDelete('/email/emails', { ids: [id] });
-                if (res.ok) {
-                    app.messages.success('Успех!', 'Письмо удалено.');
-
-                    dialoguesListing.activeElem.messagesListing.delete(parseInt(el.id));
-
-                    let lastBody = '';
-                    const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
-                    if (lastMessage) {
-                        lastBody = stripTags(lastMessage.querySelector('.message-body').innerHTML);
-                    }
-                    dialoguesListing.activeElem.lastElementChild.lastElementChild.innerText = lastBody;
-                } else {
-                    app.messages.error(`Ошибка ${res.status}`, 'Не удалось удалить письмо!');
-                }
-            }
+        const deleteBtnClicked = ev.target.tagName === 'DIV' && ev.target.classList.contains('delete-btn');
+        if (!deleteBtnClicked) {
+            return;
         }
+
+        let el = ev.target;
+        while (!el.id) {
+            el = el.parentNode;
+        }
+
+        const confirm = await app.modal.confirm('Вы уверены, что хотите удалить сообщение?');
+        if (!confirm) {
+            return;
+        }
+
+        const id = parseInt(el.id);
+        if (!id || id <= 0) {
+            app.messages.error('Ошибка!', 'Не удалось удалить письмо. Попробуйте обновить страницу.');
+            return;
+        }
+
+        const res = await app.apiDelete('/email/emails', { ids: [id] });
+        if (!res.ok) {
+            app.messages.error(`Ошибка ${res.status}`, 'Не удалось удалить письмо!');
+            return;
+        }
+        app.messages.success('Успех!', 'Письмо удалено.');
+
+        dialoguesListing.activeElem.messagesListing.delete(parseInt(el.id));
+
+        let lastBody = '';
+        const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
+        if (lastMessage) {
+            lastBody = stripTags(lastMessage.querySelector('.message-body').innerHTML);
+        }
+        dialoguesListing.activeElem.lastElementChild.lastElementChild.innerText = lastBody;
     });
 
     // --- Get folders
