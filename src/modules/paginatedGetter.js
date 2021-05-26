@@ -3,6 +3,7 @@ import { request } from './requests';
 export default class PaginatedGetter {
     constructor(baseURL, sinceParamName, startFrom, amountParamName, elementsByRequest, sortBy, sortDesc = false) {
         this.URL = new URL(baseURL);
+        this.startFrom = startFrom;
         this.currentLastElement = startFrom;
         this.elementsByRequest = elementsByRequest;
         this.sinceParamName = sinceParamName;
@@ -60,6 +61,20 @@ export default class PaginatedGetter {
 
     async get(...query) {
         const res = await request('GET', this.queryToURL(query), {});
+        if (!res.ok) {
+            if (this.onErrorHandler) {
+                this.onErrorHandler(res);
+            }
+            return [];
+        }
+
+        return await res.json();
+    }
+
+    async getFirstPage(...query) {
+        this.URL.searchParams.set('since', this.startFrom);
+        const res = await request('GET', this.queryToURL(query), {});
+        this.URL.searchParams.set('since', this.currentLastElement);
         if (!res.ok) {
             if (this.onErrorHandler) {
                 this.onErrorHandler(res);
