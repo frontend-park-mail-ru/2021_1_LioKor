@@ -564,10 +564,11 @@ export async function handler(element, app) {
 
     // --- Resize event
     window.addEventListener('resize', () => {
-        // To fill window with\without address bar
+        // To fill window when address bar on mobiles is opened
         document.querySelector('.main').style.height = `${window.innerHeight}px`;
     });
     window.dispatchEvent(new Event('resize'));
+
     // --- Lost connection events
     window.addEventListener('offline', (event) => {
         for (let i = 0; i < connectionsInfo.length; i++) {
@@ -703,9 +704,9 @@ export async function handler(element, app) {
             dialoguesListing = foundDialogues[findText];
         }
         if (!dialoguesListing) {
-            dialoguesListing = newDialoguesListing();
+            dialoguesListing = newDialoguesListing('?find=' + findText);
             // get found dialogues
-            const gottenDialogues = await dialoguesListing.networkGetter.get(['find', findText]);
+            const gottenDialogues = await dialoguesListing.networkGetter.getNextPage();
             gottenDialogues.forEach((dialogue) => {
                 newDialogue(dialogue);
             });
