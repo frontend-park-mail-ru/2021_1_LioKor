@@ -1,6 +1,7 @@
 import typescript from '@rollup/plugin-typescript';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import html from '@rollup/plugin-html';
 
 import styles from 'rollup-plugin-styles';
 import copy from 'rollup-plugin-copy';
@@ -11,8 +12,8 @@ export default {
     output: {
         sourcemap: true,
         file: 'dist/bundle.min.js',
-        format: 'cjs',
-        assetFileNames: 'assets/[name][extname]'
+        format: 'es',
+        assetFileNames: 'assets/[name][hash][extname]'
     },
     plugins: [
         typescript({
@@ -20,16 +21,23 @@ export default {
             sourceMap: false // if true => would broke rollup's source map
         }),
         styles({
-            mode: ['extract', 'styles.min.css'],
+            mode: ['extract', 'styles.css'],
             minimize: true
         }),
         nodeResolve(),
         commonjs(),
         terser({ format: { comments: false } }),
+        html({
+            title: 'LioKor',
+            meta: [
+                { charset: 'utf-8' },
+                { viewport: 'width=device-width, initial-scale=1' },
+                { 'theme-color': '#303030' }
+            ]
+        }),
         copy({
             targets: [
                 { src: 'src/images/*', dest: 'dist/images' },
-                { src: 'src/index.html', dest: 'dist/' },
                 { src: 'src/sw.js', dest: 'dist/' }
             ]
         })
