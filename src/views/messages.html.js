@@ -882,13 +882,15 @@ export async function handler(element, app) {
             if (isNeedToCreateNewDialogues) {
                 createdElems++;
                 if (currentDialogueElem) {
-                    dialoguesListing.delete(dialogue.id);
+                    dialoguesListing.elements.unshift(...dialoguesListing.elements.splice(dialoguesListing.findIndexById(dialogue.id), 1));
+                } else {
+                    newDialogue(dialogue, true);
                 }
-                newDialogue(dialogue, true);
-            } else {
+            }
+            if (!isNeedToCreateNewDialogues || (isNeedToCreateNewDialogues && currentDialogueElem)) {
                 const statusElem = currentDialogueElem.querySelector('.dialogue-status');
                 const previewElem = currentDialogueElem.querySelector('.dialogue-body');
-                // update dialogue "new messages" id we have it already
+                // update dialogue "new messages" status
                 if (dialogue.new === 0) {
                     statusElem.style.display = 'none';
                 } else if (dialoguesListing.activeElem && String(dialogue.id) === dialoguesListing.activeElem.id) {
@@ -908,7 +910,7 @@ export async function handler(element, app) {
             }
         });
         if (createdElems > 0) {
-            dialoguesListing.redraw();
+            redrawListings();
         }
 
         // update messages in current dialogue
