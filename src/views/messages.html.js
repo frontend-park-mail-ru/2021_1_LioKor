@@ -1055,11 +1055,16 @@ export async function handler(element, app) {
         const responseData = await response.json();
         if (!response.ok) {
             app.messages.error(`Ошибка ${response.status}`, `Не удалось отправить письмо: ${responseData.message}`);
+            return; // critical error
+        }
+        if (responseData.status === 0) {
+            app.messages.error('Ошибка!', 'Не удалось доставить письмо!');
         }
 
-        currentTitle = response.ok ? responseData.subject : currentTitle;
-        message = response.ok ? responseData.body : message;
-        const id = response.ok ? responseData.id : 0;
+        currentTitle = responseData.subject;
+        message = responseData.body;
+        const nowStatus = responseData.status;
+        const id = responseData.id;
 
         // clear input
         messageInput.value = '';
@@ -1067,7 +1072,6 @@ export async function handler(element, app) {
         // update dialogue preview
         dialoguesListing.activeElem.lastElementChild.lastElementChild.innerText = stripTags(message);
 
-        const nowStatus = response.ok ? 1 : 0;
         // const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
         // add message into last HTML-block
         /* if (lastMessage && nowStatus === lastMessage.status && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
@@ -1085,6 +1089,11 @@ export async function handler(element, app) {
         // }
         dialoguesListing.activeElem.messagesListing.redraw();
         dialoguesListing.activeElem.messagesListing.scrollToBottom();
+
+        // to focus input after sending
+        setTimeout(() => {
+            messageInput.focus();
+        }, 0);
     }
 
     /**
