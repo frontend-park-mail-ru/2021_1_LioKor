@@ -8,7 +8,7 @@ import { registerSW } from './modules/sw-installer.js';
 import App from './app';
 
 // const API_BASE_URL = 'https://api.mail.liokor.ru';
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'https://mail.liokor.ru/api';
 
 const headContentHTML = '<link rel="icon" href="/images/favicon.ico" type="image/x-icon">';
 const baseContentHTML = `<div class="main" id="main">
