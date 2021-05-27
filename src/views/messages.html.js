@@ -1290,6 +1290,7 @@ export async function handler(element, app) {
                 // clear and delete dialogue
                 if (messageElem.messagesListing) {
                     messageElem.messagesListing.clear();
+                    messageElem.messagesListing.scrollActive = false;
                 }
                 dialoguesListing.delete(dialogue.id);
             }
