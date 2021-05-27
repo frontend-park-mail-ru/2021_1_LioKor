@@ -876,7 +876,7 @@ export async function handler(element, app) {
             if (isNeedToCreateNewDialogues) {
                 createdElems++;
                 if (currentDialogueElem) {
-                    dialoguesListing.elements.unshift(...dialoguesListing.elements.splice(dialoguesListing.findIndexById(dialogue.id),1));
+                    dialoguesListing.elements.unshift(...dialoguesListing.elements.splice(dialoguesListing.findIndexById(dialogue.id), 1));
                 } else {
                     newDialogue(dialogue, true);
                 }
