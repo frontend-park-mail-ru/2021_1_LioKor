@@ -79,7 +79,7 @@ mobile-profile-button-size = 35px
 dialogue-preview-height = 62px
 
 markdown-panel-height = 20px
-markdown-button-width = 20px
+markdown-button-width = 30px
 
 dialogues-column-width = 30%
 messages-column-width = 100% - dialogues-column-width
@@ -421,13 +421,13 @@ width-border = 1px
   height message-status-size
 
 .messages-footer
-  svg
+  #message-send-button
     margin-left small
     margin-right small
 
 .message-input
-  padding middle
-  padding-top (small + markdown-panel-height)
+  padding middle-large
+  padding-top (middle-large + markdown-panel-height)
   background input-bg-color
   color color2
   border-radius extra-small
@@ -647,7 +647,7 @@ width-border = 1px
   height: 50px;
 
 .markdown-panel
-  box-shadow 2px 2px 2px color7-8
+  box-shadow 0 2px 2px color7-8
   margin width-border
   margin-left (middle + width-border)
   border-top-left-radius extra-small
@@ -655,23 +655,31 @@ width-border = 1px
   font-size small-font-size
   height markdown-panel-height
   background markdown-panel-bg
+  svg
+    fill svg-color
+    overflow visible
+
 .markdown-button
   cursor pointer
   text-align center
   margin auto 0 auto 0
   width markdown-button-width
+  height 100%
+  padding-top 2px
+
+  transition background ease 0.2s
   background-image:
       radial-gradient(1px 45% at 0% 50%, color7, transparent),
       radial-gradient(1px 45% at 100% 50%, color7, transparent);
+  .photo
+    stroke svg-color
+    stroke-width 2px
+    fill transparent
+.markdown-button.italic
+  font-family Cursive
+  padding-top 0
 .markdown-button:hover
   background markdown-hover-panel-bg
-
-.markdown-button.photo
-  height markdown-panel-height
-  margin-left middle
-  stroke svg-color
-  stroke-width width-border
-  fill transparent
 
 .bold
   font-weight bold
@@ -679,6 +687,8 @@ width-border = 1px
   font-style italic
 .underscore
   text-decoration underline
+.strikethrough
+  text-decoration line-through
 
 /**
  * ==============================================

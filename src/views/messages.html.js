@@ -7,6 +7,7 @@ import PaginatedGetter from '../modules/paginatedGetter';
 import setDraggable from '../components/dragAndDropper';
 import ParsedDate from '../modules/parsedDate';
 import convertAvatarUrlToDefault from '../modules/defaultAvatars';
+import { getImageAsDataURL } from '@korolion/get-image-as-dataurl'
 
 // --- Configs
 const CL_HIGHLIGHT_DRAG_AND_DROP = 'orange';
@@ -83,8 +84,15 @@ const html = `
                     <div class="absolute-top-left markdown-panel table-columns">
                         <div class="markdown-button bold" id="bold-markdown">B</div>
                         <div class="markdown-button italic" id="italic-markdown">I</div>
-                        <div class="markdown-button underscore" id="underscore-markdown">U</div>
-                        <svg class="markdown-button photo" id="attach-photo-markdown" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.8)"><path d="m14.134 3.65c.853 0 1.46.278 1.988.899.017.019.494.61.66.815.228.281.674.536.945.536h.41c2.419 0 3.863 1.563 3.863 4.05v5.85c0 2.241-2 4.2-4.273 4.2h-11.454c-2.267 0-4.223-1.953-4.223-4.2v-5.85c0-2.496 1.4-4.05 3.814-4.05h.409c.271 0 .717-.255.945-.536.166-.204.643-.796.66-.815.528-.621 1.135-.899 1.988-.899z"/><circle cx="12" cy="12" r="3.85"/></g></svg>
+                        <div class="markdown-button strikethrough" id="strikethrough-markdown">S</div>
+                        <div class="markdown-button code" id="code-markdown">\`c\`</div>
+                        <div class="markdown-button header-btn" id="H1-markdown">H1</div>
+                        <div class="markdown-button header-btn" id="H2-markdown">H2</div>
+                        <div class="markdown-button header-btn" id="H3-markdown">H3</div>
+                        <div class="markdown-button" id="blockquote-markdown">\>|</div>
+                        <div class="markdown-button" id="list-markdown"><svg xmlns="http://www.w3.org/2000/svg" width="18px" height="12px"><g transform="scale(0.25) translate(8, 2)"><path d="M57.124,51.893H16.92c-1.657,0-3-1.343-3-3s1.343-3,3-3h40.203c1.657,0,3,1.343,3,3S58.781,51.893,57.124,51.893z"/><path d="M57.124,33.062H16.92c-1.657,0-3-1.343-3-3s1.343-3,3-3h40.203c1.657,0,3,1.343,3,3   C60.124,31.719,58.781,33.062,57.124,33.062z"/><path d="M57.124,14.231H16.92c-1.657,0-3-1.343-3-3s1.343-3,3-3h40.203c1.657,0,3,1.343,3,3S58.781,14.231,57.124,14.231z"/><circle cx="4.029" cy="11.463" r="4.029"/><circle cx="4.029" cy="30.062" r="4.029"/><circle cx="4.029" cy="48.661" r="4.029"/></g></svg></div>
+                        <div class="markdown-button" id="link-markdown"><svg xmlns="http://www.w3.org/2000/svg" width="18px" height="15px"><g transform="scale(0.028) translate(70, 40)"><path d="M211.26,389.24l-60.331,60.331c-25.012,25.012-65.517,25.012-90.508,0.005c-24.996-24.996-24.996-65.505-0.005-90.496     l120.683-120.683c24.991-24.992,65.5-24.992,90.491,0c8.331,8.331,21.839,8.331,30.17,0c8.331-8.331,8.331-21.839,0-30.17     c-41.654-41.654-109.177-41.654-150.831,0L30.247,328.909c-41.654,41.654-41.654,109.177,0,150.831     c41.649,41.676,109.177,41.676,150.853,0l60.331-60.331c8.331-8.331,8.331-21.839,0-30.17S219.591,380.909,211.26,389.24z"/><path d="M479.751,30.24c-41.654-41.654-109.199-41.654-150.853,0l-72.384,72.384c-8.331,8.331-8.331,21.839,0,30.17     c8.331,8.331,21.839,8.331,30.17,0l72.384-72.384c24.991-24.992,65.521-24.992,90.513,0c24.991,24.991,24.991,65.5,0,90.491     L316.845,283.638c-24.992,24.992-65.5,24.992-90.491,0c-8.331-8.331-21.839-8.331-30.17,0s-8.331,21.839,0,30.17     c41.654,41.654,109.177,41.654,150.831,0l132.736-132.736C521.405,139.418,521.405,71.894,479.751,30.24z"/></g></svg></div>
+                        <div class="markdown-button" id="photo-markdown"><svg class="photo" xmlns="http://www.w3.org/2000/svg" width="19px" height="15px"><g transform="scale(0.8) translate(0, -2)"><path d="m14.134 3.65c.853 0 1.46.278 1.988.899.017.019.494.61.66.815.228.281.674.536.945.536h.41c2.419 0 3.863 1.563 3.863 4.05v5.85c0 2.241-2 4.2-4.273 4.2h-11.454c-2.267 0-4.223-1.953-4.223-4.2v-5.85c0-2.496 1.4-4.05 3.814-4.05h.409c.271 0 .717-.255.945-.536.166-.204.643-.796.66-.815.528-.621 1.135-.899 1.988-.899z"/><circle cx="12" cy="12" r="3.85"/></g></svg></div>
                     </div>
                     <svg class="svg-button transparent top-filler input-clear" id="message-send-button" xmlns="http://www.w3.org/2000/svg" width="35" height="35"><path transform="scale(1.3)" d="m12.1 7.87v-3.47a1.32 1.32 0 0 1 2.17-1l8.94 7.6a1.32 1.32 0 0 1 .15 1.86l-.15.15-8.94 7.6a1.32 1.32 0 0 1 -2.17-1v-3.45c-4.68.11-8 1.09-9.89 2.87a1.15 1.15 0 0 1 -1.9-1.11c1.53-6.36 5.51-9.76 11.79-10.05zm1.8-2.42v4.2h-.9c-5.3 0-8.72 2.25-10.39 6.86 2.45-1.45 5.92-2.16 10.39-2.16h.9v4.2l7.71-6.55z"/></svg>
                 </div>
@@ -101,7 +109,12 @@ const html = `
 // Zoom-in
 // <svg className="svg-button middle-avatar" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.07) translate(30,30)"><path d="M506.141,477.851L361.689,333.399c65.814-80.075,61.336-198.944-13.451-273.73c-79.559-79.559-209.01-79.559-288.569,0    s-79.559,209.01,0,288.569c74.766,74.766,193.62,79.293,273.73,13.451l144.452,144.452c7.812,7.812,20.477,7.812,28.289,0    C513.953,498.328,513.953,485.663,506.141,477.851z M319.949,319.948c-63.96,63.96-168.03,63.959-231.99,0    c-63.96-63.96-63.96-168.03,0-231.99c63.958-63.957,168.028-63.962,231.99,0C383.909,151.918,383.909,255.988,319.949,319.948z"/><path xmlns="http://www.w3.org/2000/svg"d="M301.897,183.949h-77.94v-77.94c0-11.048-8.956-20.004-20.004-20.004c-11.048,0-20.004,8.956-20.004,20.004v77.94h-77.94    c-11.048,0-20.004,8.956-20.004,20.004c0,11.048,8.956,20.004,20.004,20.004h77.94v77.94c0,11.048,8.956,20.004,20.004,20.004    c11.048,0,20.004-8.956,20.004-20.004v-77.94h77.94c11.048,0,20.004-8.956,20.004-20.004    C321.901,192.905,312.945,183.949,301.897,183.949z"/></g></svg>
 // Photo
-// <svg class="svg-button top-filler" id="attach-photo-button" xmlns="http://www.w3.org/2000/svg" height="35" width="35"><g transform="scale(1.3)" fill="none" stroke="#828a99" stroke-width="1.7"><path d="m14.134 3.65c.853 0 1.46.278 1.988.899.017.019.494.61.66.815.228.281.674.536.945.536h.41c2.419 0 3.863 1.563 3.863 4.05v5.85c0 2.241-2 4.2-4.273 4.2h-11.454c-2.267 0-4.223-1.953-4.223-4.2v-5.85c0-2.496 1.4-4.05 3.814-4.05h.409c.271 0 .717-.255.945-.536.166-.204.643-.796.66-.815.528-.621 1.135-.899 1.988-.899z"/><circle cx="12" cy="12" r="3.85"/></g></svg>
+// <svg class="svg-button top-filler" id="attach-photo-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(1.3)" fill="none" stroke="#828a99" stroke-width="1.7"><path d="m14.134 3.65c.853 0 1.46.278 1.988.899.017.019.494.61.66.815.228.281.674.536.945.536h.41c2.419 0 3.863 1.563 3.863 4.05v5.85c0 2.241-2 4.2-4.273 4.2h-11.454c-2.267 0-4.223-1.953-4.223-4.2v-5.85c0-2.496 1.4-4.05 3.814-4.05h.409c.271 0 .717-.255.945-.536.166-.204.643-.796.66-.815.528-.621 1.135-.899 1.988-.899z"/><circle cx="12" cy="12" r="3.85"/></g></svg>
+// List
+// <svg class="svg-button" id="list-markdown" xmlns="http://www.w3.org/2000/svg"><g xmlns="http://www.w3.org/2000/svg"><path d="M57.124,51.893H16.92c-1.657,0-3-1.343-3-3s1.343-3,3-3h40.203c1.657,0,3,1.343,3,3S58.781,51.893,57.124,51.893z"/><path d="M57.124,33.062H16.92c-1.657,0-3-1.343-3-3s1.343-3,3-3h40.203c1.657,0,3,1.343,3,3   C60.124,31.719,58.781,33.062,57.124,33.062z"/><path d="M57.124,14.231H16.92c-1.657,0-3-1.343-3-3s1.343-3,3-3h40.203c1.657,0,3,1.343,3,3S58.781,14.231,57.124,14.231z"/><circle cx="4.029" cy="11.463" r="4.029"/><circle cx="4.029" cy="30.062" r="4.029"/><circle cx="4.029" cy="48.661" r="4.029"/></g></svg>
+// Link
+// <svg class="svg-button" id="link-markdown" xmlns="http://www.w3.org/2000/svg"><g><path d="M211.26,389.24l-60.331,60.331c-25.012,25.012-65.517,25.012-90.508,0.005c-24.996-24.996-24.996-65.505-0.005-90.496     l120.683-120.683c24.991-24.992,65.5-24.992,90.491,0c8.331,8.331,21.839,8.331,30.17,0c8.331-8.331,8.331-21.839,0-30.17     c-41.654-41.654-109.177-41.654-150.831,0L30.247,328.909c-41.654,41.654-41.654,109.177,0,150.831     c41.649,41.676,109.177,41.676,150.853,0l60.331-60.331c8.331-8.331,8.331-21.839,0-30.17S219.591,380.909,211.26,389.24z"/><path d="M479.751,30.24c-41.654-41.654-109.199-41.654-150.853,0l-72.384,72.384c-8.331,8.331-8.331,21.839,0,30.17     c8.331,8.331,21.839,8.331,30.17,0l72.384-72.384c24.991-24.992,65.521-24.992,90.513,0c24.991,24.991,24.991,65.5,0,90.491     L316.845,283.638c-24.992,24.992-65.5,24.992-90.491,0c-8.331-8.331-21.839-8.331-30.17,0s-8.331,21.839,0,30.17     c41.654,41.654,109.177,41.654,150.831,0l132.736-132.736C521.405,139.418,521.405,71.894,479.751,30.24z"/></g></svg>
+
 /**
  * Renders auth page and "activating" it's js
  *
@@ -141,6 +154,18 @@ export async function handler(element, app) {
 
     const themeInput = document.getElementById('theme-input');
     const messageInput = document.getElementById('message-input');
+
+    const boldMarkdownButton = document.getElementById('bold-markdown');
+    const italicMarkdownButton = document.getElementById('italic-markdown');
+    const strikethroughMarkdownButton = document.getElementById('strikethrough-markdown');
+    const codeMarkdownButton = document.getElementById('code-markdown');
+    const h1MarkdownButton = document.getElementById('H1-markdown');
+    const h2MarkdownButton = document.getElementById('H2-markdown');
+    const h3MarkdownButton = document.getElementById('H3-markdown');
+    const blockquoteMarkdownButton = document.getElementById('blockquote-markdown');
+    const listMarkdownButton = document.getElementById('list-markdown');
+    const linkMarkdownButton = document.getElementById('link-markdown');
+    const photoMarkdownButton = document.getElementById('photo-markdown');
 
     // --- Network getters
     const foldersGetter = new PaginatedGetter(app.apiUrl + '/email/folders', 'since', -1, 'amount', foldersByRequest, 'id');
@@ -936,6 +961,73 @@ export async function handler(element, app) {
         }
     }, updateCycleTime);
 
+    // Deny to show mini-context window on text selection
+    messageInput.addEventListener('mouseup', (event) => {
+        event.preventDefault();
+    });
+
+    // Markdown buttons
+    boldMarkdownButton.addEventListener('mousedown', (event) => {
+        encaseMessageText('**', '**');
+    });
+    italicMarkdownButton.addEventListener('mousedown', (event) => {
+        encaseMessageText(' _', '_ ');
+    });
+    strikethroughMarkdownButton.addEventListener('mousedown', (event) => {
+        encaseMessageText(' ~~', '~~ ');
+    });
+    codeMarkdownButton.addEventListener('mousedown', (event) => {
+        encaseMessageText('`', '`');
+    });
+    h1MarkdownButton.addEventListener('mousedown', (event) => {
+        encaseMessageLines('# ');
+    });
+    h2MarkdownButton.addEventListener('mousedown', (event) => {
+        encaseMessageLines('## ');
+    });
+    h3MarkdownButton.addEventListener('mousedown', (event) => {
+        encaseMessageLines('### ');
+    });
+    blockquoteMarkdownButton.addEventListener('mousedown', (event) => {
+        encaseMessageLines('> ');
+    });
+    listMarkdownButton.addEventListener('mousedown', (event) => {
+        encaseMessageLines('- ');
+    });
+    linkMarkdownButton.addEventListener('mousedown', async (event) => {
+        const link = await app.modal.prompt('Введите адрес ссылки');
+        if (!link) {
+            return;
+        }
+        const end = messageInput.selectionEnd? messageInput.selectionEnd: 0;
+        let name = await app.modal.prompt('Теперь придумайте ей замещающий текст (необязательно)');
+        if (!name) {
+            messageInput.value = messageInput.value.substr(0, end) + ' ' + link + ' ' + messageInput.value.substr(end);
+            return;
+        }
+        messageInput.value = messageInput.value.substr(0, end) + `[${name}](${link})` + messageInput.value.substr(end);
+    });
+
+    const attachedImages = [];
+    photoMarkdownButton.addEventListener('mousedown', async (event) => {
+        const dataURL = await getImageAsDataURL();
+        if (attachedImages.includes(dataURL)) {
+            return;
+        }
+        attachedImages.push(dataURL);
+
+        const end = messageInput.selectionEnd? messageInput.selectionEnd: 0;
+
+        const response = await app.apiPost(`/image`, { dataUrl: dataURL });
+        if (!response.ok) {
+            app.messages.error(`Ошибка ${response.status}!`, 'Не удалось загрузить картинку на сервер');
+            return;
+        }
+        app.messages.success('Загружено', 'Картинка загружена');
+
+        messageInput.value = messageInput.value.substr(0, end) + `![image](${link})` + messageInput.value.substr(end);
+    });
+
     // ------ Page navigation using keys arrows + enter + escape
     /*
     document.addEventListener('keydown', (event) => {
@@ -1290,7 +1382,6 @@ export async function handler(element, app) {
                 // clear and delete dialogue
                 if (messageElem.messagesListing) {
                     messageElem.messagesListing.clear();
-                    messageElem.messagesListing.scrollActive = false;
                 }
                 dialoguesListing.delete(dialogue.id);
             }
@@ -1490,5 +1581,44 @@ export async function handler(element, app) {
             foldersListing.draw();
         }
         dialoguesListing.draw();
+    }
+
+    /**
+     * Ensace text in message-input between fragments of text
+     * @param leftText - text to add on left side
+     * @param rightText - text to add on left side
+     */
+    function encaseMessageText(leftText, rightText = '') {
+        const start = messageInput.selectionStart;
+        const end = messageInput.selectionEnd;
+        if (start === end) {
+            return;
+        }
+        const selected = leftText + messageInput.value.substr(start, end - start) + rightText;
+        messageInput.value = messageInput.value.substr(0, start) + selected + messageInput.value.substr(end);
+        messageInput.focus();
+    }
+
+    /**
+     * Ensace text lines in message-input between fragments of text
+     * @param leftText - text to add on begin of line
+     * @param rightText - text to add on end of line
+     */
+    function encaseMessageLines(leftText, rightText = '') {
+        let start = messageInput.selectionStart;
+        let end = messageInput.selectionEnd;
+        start = messageInput.value.substr(0, start).lastIndexOf('\n') + 1;
+        if (start === -1) {
+            start = 0;
+        }
+        const add_to_end = messageInput.value.substr(end).indexOf('\n');
+        if (add_to_end === -1) {
+            end = messageInput.value.length;
+        } else {
+            end += add_to_end;
+        }
+        const selected = leftText + messageInput.value.substring(start, end).replaceAll(/\n/g, rightText + '\n' + leftText) + rightText;
+        messageInput.value = messageInput.value.substr(0, start) + selected + messageInput.value.substr(end);
+        messageInput.focus();
     }
 }
