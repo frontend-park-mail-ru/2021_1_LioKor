@@ -134,7 +134,7 @@ export default class App {
             return;
         }
 
-        console.log(background)
+        console.log(background);
         await renderer.render(this.element, handler, this, background, hasLogo);
     }
 }
