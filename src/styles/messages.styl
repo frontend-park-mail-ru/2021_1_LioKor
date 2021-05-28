@@ -12,6 +12,8 @@ color7-C = #222C
 color7-8 = #2228
 color7-4 = #2224
 
+svg-color = #F5F5F5
+svg-transparent-color = #969dab
 svg-hover-color = orange
 
 loading-color = #84adff
@@ -52,6 +54,9 @@ message-bg-2 = #3f4a3f
 input-bg-color = bg-color-4
 input-bg-color-focus = #3C3C3C
 
+markdown-panel-bg = color6
+markdown-hover-panel-bg = color5
+
 extra-small = 5px
 small = 7px
 middle = 10px
@@ -72,6 +77,9 @@ large-avatar-size = 50px
 mobile-profile-button-size = 35px
 
 dialogue-preview-height = 62px
+
+markdown-panel-height = 20px
+markdown-button-width = 30px
 
 dialogues-column-width = 30%
 messages-column-width = 100% - dialogues-column-width
@@ -413,12 +421,13 @@ width-border = 1px
   height message-status-size
 
 .messages-footer
-  svg
+  #message-send-button
     margin-left small
     margin-right small
 
 .message-input
-  padding middle
+  padding middle-large
+  padding-top (middle-large + markdown-panel-height)
   background input-bg-color
   color color2
   border-radius extra-small
@@ -475,6 +484,10 @@ width-border = 1px
   position absolute
   top 0
   right 0
+.absolute-top-left
+  position absolute
+  top 0
+  left 0
 
 .inside-input
   position absolute
@@ -486,11 +499,11 @@ width-border = 1px
   overflow hidden
   opacity 0.7
   transition all 0.15s ease-out
-  fill #F5F5F5
+  fill svg-color
   fill-rule evenodd
   clip-rule evenodd
 .svg-button.transparent
-  fill #969dab
+  fill svg-transparent-color
 .svg-button:hover
   opacity 1
   transform scale(1.1)
@@ -632,6 +645,51 @@ width-border = 1px
   margin: 0 -5%;
   overflow: hidden;
   height: 50px;
+
+.markdown-panel
+  box-shadow 0 2px 2px color7-8
+  margin width-border
+  margin-left (middle + width-border)
+  border-top-left-radius extra-small
+  border-bottom-right-radius extra-small
+  font-size small-font-size
+  height markdown-panel-height
+  background markdown-panel-bg
+  svg
+    fill svg-color
+    overflow visible
+
+.markdown-button
+  cursor pointer
+  text-align center
+  margin auto 0 auto 0
+  width markdown-button-width
+  height 100%
+  padding-top 2px
+
+  transition background ease 0.2s
+  background-image:
+      radial-gradient(1px 45% at 0% 50%, color7, transparent),
+      radial-gradient(1px 45% at 100% 50%, color7, transparent);
+  .photo
+    stroke svg-color
+    stroke-width 2px
+    fill transparent
+.markdown-button.italic
+  font-family Cursive
+  padding-top 0
+.markdown-button:hover
+  background markdown-hover-panel-bg
+
+.bold
+  font-weight bold
+.italic
+  font-style italic
+.underscore
+  text-decoration underline
+.strikethrough
+  text-decoration line-through
+
 /**
  * ==============================================
  * Dot Pulse
