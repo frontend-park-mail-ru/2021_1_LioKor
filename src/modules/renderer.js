@@ -1,4 +1,4 @@
-const defaultBackground = '#161923';
+const defaultBackground = '#0e2a34';
 
 /**
  * Renders page with animation
