@@ -1,6 +1,5 @@
 const defaultBackground = '#161923';
-const bodyElement = document.querySelector('body');
-const logoElement = document.querySelector('header');
+
 /**
  * Renders page with animation
  *
@@ -16,6 +15,9 @@ export function render(target, handler, app, background, hasLogo = true) {
         if (!background) {
             background = defaultBackground;
         }
+
+        const bodyElement = document.querySelector('body');
+        const logoElement = document.querySelector('header');
         bodyElement.style.background = background;
         logoElement.style.maxHeight = hasLogo ? '100px' : '0';
         const el = document.getElementById(target);

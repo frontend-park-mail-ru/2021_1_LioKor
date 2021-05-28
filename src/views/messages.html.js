@@ -562,7 +562,7 @@ export async function handler(element, app) {
 
         // create dialogues scroll event-listener to upload new dialogues
         dialoguesListing.setScrollHandlers(null, async (event) => {
-            await getAndDrawNewDialogues();
+            // await getAndDrawNewDialogues();
         }, 0, dialoguesScrollLoadOffset);
 
         // create Event-listener on dialogue element to activate it
