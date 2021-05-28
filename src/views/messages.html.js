@@ -353,7 +353,7 @@ export async function handler(element, app) {
         if (lastMessage) {
             lastBody = stripTags(lastMessage.querySelector('.message-body').innerHTML);
         }
-        dialoguesListing.activeElem.lastElementChild.lastElementChild.innerText = lastBody;
+        dialoguesListing.activeElem.lastElementChild.lastElementChild.innerHtml = lastBody;
     });
 
     // --- Get folders
@@ -1097,6 +1097,7 @@ export async function handler(element, app) {
      * @param messages to convert to blocks
      */
     function convertMessagesToBlocks(messages) {
+        // do not delete this, or all messages will be blank
         messages.forEach((elem) => {
             elem.time = new Date(elem.time);
             elem.body = [new Handlebars.SafeString(elem.body)];
@@ -1170,7 +1171,7 @@ export async function handler(element, app) {
         messageInput.value = '';
 
         // update dialogue preview
-        dialoguesListing.activeElem.lastElementChild.lastElementChild.innerText = stripTags(message);
+        dialoguesListing.activeElem.lastElementChild.lastElementChild.innerHTML = stripTags(message);
 
         // const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
         // add message into last HTML-block
@@ -1355,7 +1356,7 @@ export async function handler(element, app) {
             avatar: dialogue.avatarUrl,
             time: dialogue.time,
             title: dialogue.username,
-            body: dialogue.body,
+            body: new Handlebars.SafeString(dialogue.body),
             newMessages: dialogue.new
         });
         const elem = newElem(dialogueInnerHTML, 'li', dialogue.id, 'listing-button');
