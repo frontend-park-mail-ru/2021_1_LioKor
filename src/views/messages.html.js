@@ -1010,7 +1010,7 @@ export async function handler(element, app) {
 
     const attachedImages = [];
     photoMarkdownButton.addEventListener('mousedown', async (event) => {
-        const dataURL = await getImageAsDataURL();
+        const dataURL = await getImageAsDataURL(0);
         if (attachedImages.includes(dataURL)) {
             return;
         }
@@ -1019,13 +1019,14 @@ export async function handler(element, app) {
         const end = messageInput.selectionEnd? messageInput.selectionEnd: 0;
 
         const response = await app.apiPost(`/image`, { dataUrl: dataURL });
+        const responseData = await response.json();
         if (!response.ok) {
-            app.messages.error(`Ошибка ${response.status}!`, 'Не удалось загрузить картинку на сервер');
+            app.messages.error(`Ошибка ${response.status}!`, `Не удалось загрузить картинку на сервер: ${responseData.message}`);
             return;
         }
         app.messages.success('Загружено', 'Картинка загружена');
 
-        messageInput.value = messageInput.value.substr(0, end) + `![image](${link})` + messageInput.value.substr(end);
+        messageInput.value = messageInput.value.substr(0, end) + '![image](' + app.apiUrl + '/' + responseData.url + ')' + messageInput.value.substr(end);
     });
 
     // ------ Page navigation using keys arrows + enter + escape
