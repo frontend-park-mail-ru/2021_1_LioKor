@@ -58,7 +58,9 @@ export default class App {
             {
                 urlRegex: /^\/(\?.*)?$/,
                 handler: messages.handler,
-                authRequired: true
+                authRequired: true,
+                background: '#283655',
+                hasLogo: false
             }
         ];
     }
@@ -107,10 +109,7 @@ export default class App {
     __getHandler(path) {
         for (const route of this.routes) {
             if (path.match(route.urlRegex)) {
-                return {
-                    handler: route.handler,
-                    authRequired: route.authRequired
-                };
+                return route;
             }
         }
         return {
@@ -124,7 +123,7 @@ export default class App {
             history.pushState(null, null, path);
         }
 
-        let { handler, authRequired } = this.__getHandler(path);
+        let { handler, authRequired, background, hasLogo } = this.__getHandler(path);
         if (handler === null) {
             handler = view404.handler;
             authRequired = false;
@@ -135,6 +134,6 @@ export default class App {
             return;
         }
 
-        await renderer.render(this.element, handler, this);
+        await renderer.render(this.element, handler, this, background, hasLogo);
     }
 }
