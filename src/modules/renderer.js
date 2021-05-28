@@ -13,7 +13,6 @@ const logoElement = document.querySelector('header');
  */
 export function render(target, handler, app, background, hasLogo = true) {
     return new Promise((resolve, reject) => {
-        console.log(background, hasLogo);
         if (!background) {
             background = defaultBackground;
         }
