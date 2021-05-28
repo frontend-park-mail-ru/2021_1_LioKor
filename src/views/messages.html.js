@@ -26,7 +26,7 @@ const mainFolderName = 'Общая';
 
 const html = `
 <div class="table-columns fullheight p-l bg-5" id="messages-page">
-    <div class="table-column dialogues-column table-rows bg-transparent mobile-fullwidth" id="dialogues-column">
+    <div class="table-column dialogues-column table-rows mobile-fullwidth" id="dialogues-column">
         <div class="header tool-dialogue table-columns pos-relative">
             <img class="centered-vertical middle-avatar mobile-only" src="/images/liokor_logo.png" alt="лого">
             <div class="flex-filler table-columns reversed pos-relative">
@@ -50,15 +50,15 @@ const html = `
         </div>
     </div>
 
-    <div class="table-column table-rows messages-column bg-transparent" id="messages-column">
+    <div class="table-column table-rows messages-column" id="messages-column">
         <div class="header table-columns">
-            <div class="header-title bg-transparent table-columns" id="header-title-button">
+            <div class="header-title table-columns" id="header-title-button">
                 <svg class="svg-button small-avatar centered-vertical mobile-only" id="back-button" xmlns="http://www.w3.org/2000/svg" style="overflow: visible; transform: scale(1.2)"><g class="centered" style="transform: scale(0.8) rotate(180deg); transform-origin: center center"><path xmlns="http://www.w3.org/2000/svg" d="M21.205,5.007c-0.429-0.444-1.143-0.444-1.587,0c-0.429,0.429-0.429,1.143,0,1.571l8.047,8.047H1.111  C0.492,14.626,0,15.118,0,15.737c0,0.619,0.492,1.127,1.111,1.127h26.554l-8.047,8.032c-0.429,0.444-0.429,1.159,0,1.587  c0.444,0.444,1.159,0.444,1.587,0l9.952-9.952c0.444-0.429,0.444-1.143,0-1.571L21.205,5.007z"/></g></svg>
-                <span class="text-1 centered-vertical" style="margin-left: 5px" id="dialogue-header-title"></span>
+                <span class="text-1 centered-vertical" id="dialogue-header-title"></span>
             </div>
-            <div class="text-3 centered desktop-only" id="dialogue-header-time" style="margin-left: 10px">Выберите диалог</div>
+            <div class="text-3 centered desktop-only" id="dialogue-header-time">Выберите диалог</div>
             <div class="flex-filler"></div>
-            <span class="text-2 centered-vertical desktop-only" id="profile-link-username" style="margin-right: 5px">username@liokor.ru</span>
+            <span class="text-2 centered-vertical desktop-only" id="profile-link-username">username@liokor.ru</span>
             <linkbutton class="svg-button middle-avatar centered-vertical profile-button" href="/user" pointer-events="auto"><svg pointer-events="none" id="clear-find-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(1.5)"><path d="m3.0000001 14.5c0-3.1424487 3.08132567-4.50000038 6.9999999-4.50000038 3.9186742 0 6.9999999 1.35755168 6.9999999 4.50000038 0 1.615596-1.0761803 2.5000004-2.3000001 2.5000004h-9.39999961c-1.22381984 0-2.30000009-.8844044-2.30000009-2.5000004zm1.8 0c0 .5349234.20087263.7000004.50000009.7000004h9.39999961c.2991275 0 .5000001-.165077.5000001-.7000004 0-1.7450508-2.1675128-2.7000004-5.1999999-2.7000004-3.03248714 0-5.1999999.9549496-5.1999999 2.7000004zm9.0999999-9.5c0 2.15455627-1.7454437 3.9-3.9 3.9-2.15455627 0-3.9-1.74544373-3.9-3.9s1.74544373-3.9 3.9-3.9c2.1545563 0 3.9 1.74544373 3.9 3.9zm-1.8 0c0-1.16044373-.9395563-2.1-2.1-2.1-1.16044373 0-2.1.93955627-2.1 2.1s.93955627 2.1 2.1 2.1c1.1604437 0 2.1-.93955627 2.1-2.1z"/></g></svg></linkbutton>
         </div>
 
@@ -69,7 +69,7 @@ const html = `
                 <svg class="svg-button floatright" id="refresh-connection-button" xmlns="http://www.w3.org/2000/svg" style="transition: all ease-in-out 1s; transform: rotate(0deg)"><g transform="scale(0.04) translate(60, 0)"><path d="M112.156,97.111c72.3-65.4,180.5-66.4,253.8-6.7l-58.1,2.2c-7.5,0.3-13.3,6.5-13,14c0.3,7.3,6.3,13,13.5,13    c0.2,0,0.3,0,0.5,0l89.2-3.3c7.3-0.3,13-6.2,13-13.5v-1c0-0.2,0-0.3,0-0.5v-0.1l0,0l-3.3-88.2c-0.3-7.5-6.6-13.3-14-13    c-7.5,0.3-13.3,6.5-13,14l2.1,55.3c-36.3-29.7-81-46.9-128.8-49.3c-59.2-3-116.1,17.3-160,57.1c-60.4,54.7-86,137.9-66.8,217.1    c1.5,6.2,7,10.3,13.1,10.3c1.1,0,2.1-0.1,3.2-0.4c7.2-1.8,11.7-9.1,9.9-16.3C36.656,218.211,59.056,145.111,112.156,97.111z"/><path d="M462.456,195.511c-1.8-7.2-9.1-11.7-16.3-9.9c-7.2,1.8-11.7,9.1-9.9,16.3c16.9,69.6-5.6,142.7-58.7,190.7    c-37.3,33.7-84.1,50.3-130.7,50.3c-44.5,0-88.9-15.1-124.7-44.9l58.8-5.3c7.4-0.7,12.9-7.2,12.2-14.7s-7.2-12.9-14.7-12.2l-88.9,8    c-7.4,0.7-12.9,7.2-12.2,14.7l8,88.9c0.6,7,6.5,12.3,13.4,12.3c0.4,0,0.8,0,1.2-0.1c7.4-0.7,12.9-7.2,12.2-14.7l-4.8-54.1    c36.3,29.4,80.8,46.5,128.3,48.9c3.8,0.2,7.6,0.3,11.3,0.3c55.1,0,107.5-20.2,148.7-57.4    C456.056,357.911,481.656,274.811,462.456,195.511z"/></g></svg>
             </div>
 
-            <div class="body fullheight fullwidth table-rows scrollable" id="messages-listing">
+            <div class="fullheight fullwidth table-rows scrollable" id="messages-listing">
             </div>
         </div>
 
@@ -195,7 +195,7 @@ export async function handler(element, app) {
     // --- Handlebars templates
     const messageBlockInnerHTMLTemplate = Handlebars.compile(`
         <div class="message-block {{ side }}">
-            <img src={{ avatar }} alt="avatar" class="middle-avatar">
+            <img src={{ avatar }} alt="avatar" class="middle-avatar floatleft">
             <div class="message-info table-rows flex-end">
                 <div class="hide-on-hover">{{ time }}</div>
                 {{#if isStated}}
@@ -226,7 +226,7 @@ export async function handler(element, app) {
         </div>`);
 
     const dialogueInnerHTMLTemplate = Handlebars.compile(`
-        <img src={{ avatar }} alt="avatar" class="middle-avatar">
+        <img src={{ avatar }} alt="avatar" class="middle-avatar floatleft">
         <div class="floatright text-4 dialogue-meta">
             <div class="hide-on-hover absolute-top-right">{{ time }}</div>
             <svg class="svg-button transparent show-on-hover absolute-top-right" id="delete-dialogue" xmlns="http://www.w3.org/2000/svg" height="22" width="22"><g transform="translate(0, -2)"><path d="m12 10.5857864 4.7928932-4.79289318c.3905243-.39052429 1.0236893-.39052429 1.4142136 0s.3905243 1.02368927 0 1.41421356l-4.7928932 4.79289322 4.7928932 4.7928932c.3905243.3905243.3905243 1.0236893 0 1.4142136s-1.0236893.3905243-1.4142136 0l-4.7928932-4.7928932-4.79289322 4.7928932c-.39052429.3905243-1.02368927.3905243-1.41421356 0s-.39052429-1.0236893 0-1.4142136l4.79289318-4.7928932-4.79289318-4.79289322c-.39052429-.39052429-.39052429-1.02368927 0-1.41421356s1.02368927-.39052429 1.41421356 0z"/></g></svg>
@@ -245,7 +245,7 @@ export async function handler(element, app) {
         </div>`);
 
     const folderInnerHTMLTemplate = Handlebars.compile(`
-        <svg class="folders-button svg-button middle-avatar bg-transparent floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.05) translate(150,110)"><path d="M448.916,118.259h-162.05c-6.578,0-13.003-2.701-17.44-7.292l-50.563-53.264c-12.154-12.115-28.783-18.443-45.625-18.346    H63.084C28.301,39.356,0,67.657,0,102.439v307.123c0,34.783,28.301,63.084,63.084,63.084h386.064h0.058    c34.764-0.154,62.949-28.59,62.794-63.277V181.342C512,146.559,483.699,118.259,448.916,118.259z M473.417,409.447    c0.058,13.504-10.88,24.558-24.307,24.616H63.084c-13.504,0-24.5-10.996-24.5-24.5V102.439c0-13.504,10.996-24.5,24.5-24.52    H173.74c0.212,0,0.424,0,0.637,0c6.443,0,12.694,2.566,16.899,6.733l50.293,53.013c11.806,12.192,28.32,19.176,45.297,19.176    h162.05c13.504,0,24.5,10.996,24.5,24.5V409.447z"/></g></svg>
+        <svg class="folders-button svg-button middle-avatar floatleft" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.05) translate(150,110)"><path d="M448.916,118.259h-162.05c-6.578,0-13.003-2.701-17.44-7.292l-50.563-53.264c-12.154-12.115-28.783-18.443-45.625-18.346    H63.084C28.301,39.356,0,67.657,0,102.439v307.123c0,34.783,28.301,63.084,63.084,63.084h386.064h0.058    c34.764-0.154,62.949-28.59,62.794-63.277V181.342C512,146.559,483.699,118.259,448.916,118.259z M473.417,409.447    c0.058,13.504-10.88,24.558-24.307,24.616H63.084c-13.504,0-24.5-10.996-24.5-24.5V102.439c0-13.504,10.996-24.5,24.5-24.52    H173.74c0.212,0,0.424,0,0.637,0c6.443,0,12.694,2.566,16.899,6.733l50.293,53.013c11.806,12.192,28.32,19.176,45.297,19.176    h162.05c13.504,0,24.5,10.996,24.5,24.5V409.447z"/></g></svg>
         <div class="centered flex-filler">
             <input class="theme-input folder fullwidth" readonly placeholder="Название папки" value="{{ title }}" style="cursor: pointer">
             <!--div class="dialogue-body text-2">Диалогов: {{ dialoguesCount }}</div-->
@@ -1539,7 +1539,7 @@ export async function handler(element, app) {
             }),
             'div',
             messageBlock.id,
-            'message-block-full',
+            'message-block',
             isYour ? 'right-block' : 'left-block'
         );
 

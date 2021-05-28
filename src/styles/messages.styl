@@ -1,61 +1,20 @@
 @require "constants.styl"
 @require "messages.fix.styl"
 
-color1 = #F5F5F5
-color2 = #CCC
-color3 = #AAA
-color4 = #888
-color5 = #585858
-color6 = #333
-color7 = #222
-color7-C = #222C
-color7-8 = #2228
-color7-4 = #2224
+// --------- Base constants.
+// USES ONLY IT IN OTHER VARIABLES
+// DO NOT USE IT IN STYLES!
+textColor1 = #F5F5F5
+textColor2 = #CCC
+textColor3 = #AAA
+textColor4 = #888
+textColor5 = #555
 
-svg-color = #F5F5F5
-svg-transparent-color = #969dab
-svg-hover-color = orange
-
-loading-color = #84adff
-
-dialogue-color = #185d25AA
-dialogue-color-active = #6b5c13
-dialogue-color-selected = #218633
-dialogue-color-active-selected = #7b7115
-
-dialogue-status-background-color = #5a8be0
-
-folder-color = #6c3b12AA
-folder-color-active = #9a471d
-folder-color-selected = #874b1c
-folder-color-active-selected = #a8511f
-
-folder-input-bg = #4c2e16
-
-new-folder-button-color = #5a361a
-
-dialogues-divider-height = 24px
-
-bg-color-1 = #60606099
-bg-color-2 = #393C3FCC
-bg-color-3 = #3b3f4799
-bg-color-4 = #393939
-bg-color-5 = #4b5b4bAA
-
-bg-info = #2a2b2bEE
-
-scroll-bg-color = #00000000
-scroll-thumb-color = #80808080
-scroll-thumb-color-hover = #707070
-
-message-bg-1 = #3f444c
-message-bg-2 = #3f4a3f
-
-input-bg-color = bg-color-4
-input-bg-color-focus = #3C3C3C
-
-markdown-panel-bg = color6
-markdown-hover-panel-bg = color5
+color1 = #091A20
+color2 = #0C2129
+color3 = #314147
+color4 = #3A6D7E
+color5 = #DE932B
 
 extra-small = 5px
 small = 7px
@@ -67,24 +26,166 @@ extra-large = 30px
 small-font-size = 14px
 font-size = 16px
 big-font-size = 18px
-
-message-status-size = 20px
+// ----------
 
 small-avatar-size = 30px
 middle-avatar-size = 40px
 large-avatar-size = 50px
 
-mobile-profile-button-size = 35px
+// Scrollbars
+scroll-bg-color = transparent
+scroll-thumb-color = #80808080
+scroll-thumb-color-hover = #707070
+scrollbar-width-worded = thin
+scrollbar-width = 6px
+scrollbar-border = 1px
 
-dialogue-preview-height = 62px
+border-width = 1px
+border-color = color3
+// Dialogue column
+dialogues-column-bg-color = color2
+dialogues-border-color = border-color
+dialogues-border-left = border-width
+dialogues-column-width = 30%
+// Messages column
+messages-column-bg-color = color1
+messages-column-width = (100% - dialogues-column-width)
+
+// Headers of dialogues and messages columns
+headers-padding = middle
+headers-border-bottom = border-width
+headers-border-color = border-color
+headers-bg-color = transparent
+headers-text-color = textColor1
+headers-shadow = 0 5px 5px #00000044
+header-recipient-margin = middle
+
+// Footer of messages column
+footer-padding = middle
+footer-text-color = textColor2
+footer-border-top = border-width
+footer-border-color = border-color
+footer-bg-color = transparent
+
+// Dialogues buttons
+dialogue-button-height = 62px
+dialogue-button-padding = middle
+dialogue-border-bottom = border-width
+dialogue-border-color = border-color
+dialogue-border-left-color = color5
+
+dialogue-button-color = color2
+dialogue-border-left = 0px
+dialogue-button-color-active = color2
+dialogue-border-left-active = 5px
+dialogue-border-left-color-active = color5
+dialogue-button-color-selected = color2
+dialogue-border-left-selected = 1px
+dialogue-border-left-color-selected = color5
+dialogue-button-color-active-selected = color2
+dialogue-border-left-active-selected = 5px
+dialogue-border-left-color-active-selected = color5
+
+dialogue-text-padding-left = middle
+dialogue-title-font-size = big-font-size
+dialogue-time-font-size = font-size
+dialogue-status-font-size = big-font-size
+dialogue-between-time-and-status = 3px
+dialogue-status-padding = 0 extra-small
+dialogue-status-text-color = color1
+dialogue-status-background-color = #5a8be0
+
+// Folders buttons
+folder-button-color = transparent
+folder-button-color-active = transparent
+folder-button-color-selected = transparent
+folder-button-color-active-selected = transparent
+
+new-folder-button-color = #5a361a
+new-folder-button-height = dialogue-button-height - middle
+new-folder-button-padding = extra-small
+
+folder-title-padding = small
+
+// Divider between folders and dialogues
+dialogues-divider-height = 24px
+dialogues-divider-bg-color = color3
+dialogues-divider-border = 2px
+dialogues-divider-border-color = color4
+
+// Dialogues plugs on bottom
+empty-dialogue-height = dialogue-button-height
+empty-dialogue-padding = small
+empty-dialogue-height-bg-color = color1
+
+// Message blocks
+between-message-blocks = 10px
+message-blocks-horizontal-margin = 10px
+message-blocks-border-radius = small
+left-message-bg-color = color3
+right-message-bg-color = color4
+
+message-block-title-color = textColor1
+message-block-title-font-size = big-font-size
+message-block-between-avatar-and-title = middle-large
+
+message-body-text-color = textColor2
+message-body-text-padding = extra-small
+message-body-text-margin-left = middle-large
+
+message-status-size = 20px
+
+// Send message button
+send-message-button-horizontal-margin = small
+
+// Message input
+message-input-padding = middle-large
+message-input-bg-color = #14272e
+message-input-bg-color-focus = #1f3339
+message-input-border-color = color3
+message-input-border-color-focus = color3
+message-input-text-color = textColor2
+message-input-border-radius = extra-small
+message-input-font-size = font-size
+message-input-font-family = Arial
+message-input-border-width = border-width
+
+message-input-min-height = 30px
+message-input-max-height = 200px
+message-input-line-height = 16px
+
+message-input-placeholder-text-color = textColor4
+message-input-placeholder-text-color-focus = textColor5
+// -------
+svg-color = #F5F5F5
+svg-transparent-color = #969dab
+svg-hover-color = orange
+
+loading-color = #84adff
+
+folder-input-bg = #4c2e16
+
+
+bg-color-1 = #60606099
+bg-color-2 = #393C3FCC
+bg-color-3 = #3b3f4799
+bg-color-4 = #393939
+bg-color-5 = #4b5b4bAA
+
+bg-info = #2a2b2bEE
+
+
+
+markdown-panel-bg = color6
+markdown-hover-panel-bg = color5
+
+mobile-profile-button-size = 35px
 
 markdown-panel-height = 20px
 markdown-button-width = 30px
 
-dialogues-column-width = 30%
-messages-column-width = 100% - dialogues-column-width
 
-height-header = dialogue-preview-height
+height-header = dialogue-button-height
 
 width-border = 1px
 
@@ -116,10 +217,6 @@ width-border = 1px
   padding extra-large
 */
 
-
-.bg-transparent
-  background bg-color-2
-
 .text-1
 .text-2
 .text-3
@@ -127,13 +224,13 @@ width-border = 1px
   font-size font-size
 
 .text-1
-  color color1
+  color textColor1
 .text-2
-  color color2
+  color textColor2
 .text-3
-  color color3
+  color textColor3
 .text-4
-  color color4
+  color textColor4
 
 .text-bigger
   font-size big-font-size
@@ -185,43 +282,38 @@ width-border = 1px
 
 .table-column
   height 100%
-  padding middle 0 middle 0
+  padding 0
 .table-row
   width 100%
-  padding 0 middle 0 middle
+  padding 0
 
 
 .scrollable
   overflow-y auto
-
-  --scrollbarBg: scroll-bg-color
-  --scrollbarThumb: scroll-thumb-color
-  --scrollbarWidth: 6px;
-  --scrollbarBorder: 1px solid var(--scrollbarBg);
-  --scrollbarBorderRadius: calc(var(--scrollbarWidth) / 2);
-
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbarThumb) var(--scrollbarBg);
-
+  scrollbar-width scrollbar-width-worded
+  scrollbar-color scroll-thumb-color scroll-bg-color
 .scrollable:hover
-  --scrollbarThumb: scroll-thumb-color-hover
-
+  scrollbar-color scroll-thumb-color-hover scroll-bg-color
+.scrollable:hover::-webkit-scrollbar-thumb
+  background-color scroll-thumb-color-hover
 .scrollable::-webkit-scrollbar
-  width: var(--scrollbarWidth);
+  width scrollbar-width
 .scrollable::-webkit-scrollbar-track
-  background: var(--scrollbarBg);
-  border-radius: var(--scrollbarBorderRadius);
+  background scroll-bg-color
+  border-radius (scrollbar-width / 2)
 .scrollable::-webkit-scrollbar-thumb
-  background-color: var(--scrollbarThumb);
-  border-radius: var(--scrollbarBorderRadius);
-  border: var(--scrollbarBorder);
+  background-color scroll-thumb-color
+  border-radius (scrollbar-width / 2)
+  border scrollbar-border solid scroll-bg-color
 
 // extend table:
 .dialogues-column
+  background dialogues-column-bg-color
   width dialogues-column-width
-  border-right width-border solid color3
+  border-right dialogues-border-left solid dialogues-border-color
   padding 0
 .messages-column
+  background messages-column-bg-color
   width messages-column-width
   padding 0
 
@@ -229,77 +321,70 @@ width-border = 1px
   overflow-x hidden
   margin 0
   padding 0
-  scrollbar-color scroll-thumb-color dialogue-color
-  border-bottom 1px solid color3
+  scrollbar-color scroll-thumb-color dialogue-button-color
 .dialogues-listing::-webkit-scrollbar
-  background dialogue-color
+  background dialogue-button-color
 
-.header
-  padding middle
-  background bg-color-1
-  color color1
-  box-shadow 0 4px 10px color7-8
+.header // big columns headers
+  padding headers-padding
+  background headers-bg-color
+  color headers-text-color
+  box-shadow headers-shadow
+  border-bottom headers-border-bottom solid headers-border-color
   z-index 2
   height height-header
-.header-title
-  background none
+.header-title // decoration for mobiles
   border-radius (small-avatar-size / 2)
   padding-left 0
   padding-right 0
-  margin-right 5px
-.header-title:hover
-    svg
-      opacity 1
-.body
-  color color2
-  z-index 0
-.footer
-  padding middle
-  color color2
-  background bg-color-1
-  border-top width-border solid color3
-  display none
+  margin-left header-recipient-margin
+  margin-right header-recipient-margin
+
+.footer // messages column footer
+  padding footer-padding
+  color footer-text-color
+  background footer-bg-color
+  border-top footer-border-top solid footer-border-color
+  display none // js
 
 .tool-dialogue
-  padding middle
-  box-shadow 0 5px 10px color7-C
-  min-height dialogue-preview-height
+  padding dialogue-button-padding
+  min-height dialogue-button-height
 
 // --- Listing button:
 .listing-button
   list-style-type none
-  min-height dialogue-preview-height
-  max-height dialogue-preview-height
+  min-height dialogue-button-height
+  max-height dialogue-button-height
   overflow hidden
-  padding middle
-  //border-top 1px solid color3
-  border-bottom 1px solid color3
-  background-color dialogue-color
+  padding dialogue-button-padding
+  border-bottom dialogue-border-bottom solid dialogue-border-color
+  background-color dialogue-button-color
   cursor pointer
-  transition all ease 0.3s
   white-space nowrap
-  img
-    float left
+  border-left dialogue-border-left solid dialogue-border-left-color
+  transition background-color ease-out 0.2s
 .listing-button.active
-  //border-top 1px solid color1
-  border-bottom 1px solid color1
-  background-color dialogue-color-active
+  background-color dialogue-button-color-active
+  border-left dialogue-border-left-active solid dialogue-border-left-color-active
+  transition border-left ease 0.1s
 .listing-button.selected
-  border-bottom 1px solid color2
-  background-color dialogue-color-selected
-  transition none
+  background-color dialogue-button-color-selected
+  border-left dialogue-border-left-selected solid dialogue-border-left-color-selected
+  padding-left (dialogue-button-padding - dialogue-border-left-selected)
 .listing-button.active.selected
-  border-bottom 1px solid color1
-  background-color dialogue-color-active-selected
+  background-color dialogue-button-color-active-selected
+  border-left dialogue-border-left-active-selected solid dialogue-border-left-color-active-selected
+  padding-left (dialogue-button-padding - dialogue-border-left-active-selected + dialogue-border-left-active)
 
 .listing-button.folder
-  background-color folder-color
+  background-color folder-button-color
 .listing-button.folder.active
-  background-color folder-color-active
+  background-color folder-button-color-active
 .listing-button.folder.selected
-  background-color folder-color-selected
+  background-color folder-button-color-selected
 .listing-button.folder.active.selected
-  background-color folder-color-active-selected
+  background-color folder-button-color-active-selected
 
 .dialogue-meta
   position relative
@@ -322,68 +407,59 @@ width-border = 1px
 
 .new-folder-button
   background-color new-folder-button-color
-  min-height dialogue-preview-height - middle
-  max-height dialogue-preview-height - middle
-  padding-top extra-small
-  padding-bottom extra-small
+  min-height new-folder-button-height
+  max-height new-folder-button-height
+  padding-top new-folder-button-padding
+  padding-bottom new-folder-button-padding
 .new-folder-button:hover
-  background-color folder-color-selected
+  background-color folder-button-color-selected
 
 .folder-title
-  padding small
+  padding folder-title-padding
 
 .dialogues-listing-divider
   width 100%
   height dialogues-divider-height
   min-height dialogues-divider-height
   max-height dialogues-divider-height
-  background-color color3
-  border-top 2px solid color4
-  border-bottom 2px solid color4
+  background-color dialogues-divider-bg-color
+  border-top dialogues-divider-border solid dialogues-divider-border-color
+  border-bottom dialogues-divider-border solid dialogues-divider-border-color
   overflow hidden
   transition all 0.3s ease
 
 .empty-dialogue
-  min-height dialogue-preview-height
+  min-height empty-dialogue-height
   overflow hidden
-  padding small
-  //border-top 1px solid color3
-  //border-bottom 1px solid color3
-  background-color bg-color-5
+  padding empty-dialogue-padding
+  background-color empty-dialogue-height-bg-color
 
 .dialogue-text
-  padding-left (middle-avatar-size + small)
-.dialogue-text.centered
-  margin-top ((dialogue-preview-height - 2 * middle - big-font-size) / 2)
+  padding-left (middle-avatar-size + dialogue-text-padding-left)
 .dialogue-status
-  margin-top (dialogue-preview-height - middle * 2 - big-font-size - 3)
-  padding 0 extra-small
-  border-radius (big-font-size / 2 + 1)
+  margin-top (dialogue-time-font-size + dialogue-between-time-and-status)
+  padding dialogue-status-padding
+  border-radius (dialogue-status-font-size / 2 + 1)
   background-color dialogue-status-background-color
-  font-size big-font-size
-  color color1
-  margin-right 0
-  transition margin-right 0.3s ease
+  font-size dialogue-status-font-size
+  color dialogue-status-text-color
 .dialogue-body
 .dialogue-title
   overflow hidden
   text-overflow ellipsis
 
-/*
-.end-gradient::after
-  content: '';
-  right: 0; top: 0;
-  width: 40px;
-  height: 100%;
-  background: linear-gradient(to right, #FFF00000 0%, #F0C000 100%);
-*/
-
 // --- message-block:
 .flex-filler
   flex 1
 
-.message-block-full
-  margin extra-small
+.message-block
+  margin (between-message-blocks / 2) message-blocks-horizontal-margin
+  border-radius message-blocks-border-radius
+  border-top-left-radius (middle-avatar-size / 2)
+.message-block.not-your
+  background left-message-bg-color
+.message-block.your
+  background right-message-bg-color
 
 .left-block
   text-align left
@@ -392,28 +468,16 @@ width-border = 1px
   text-align left
   margin-left 15%
 
-.message-block
-  border-radius small
-  border-top-left-radius (middle-avatar-size/2)
-  img
-    float left
-.message-block.not-your
-  background message-bg-1
-.message-block.your
-  background message-bg-2
-
 .message-block-title
-  color color4
-  width "calc(100% - %s - %s)" % (middle middle-avatar-size)
-  margin-left middle-avatar-size + middle
-  padding-top ((middle-avatar-size - 14px)/2)
-  padding-bottom ((middle-avatar-size - 14px)/2)
-
+  color message-block-title-color
+  width "calc(100% - %s - %s)" % (message-block-between-avatar-and-title middle-avatar-size)
+  margin-left middle-avatar-size + message-block-between-avatar-and-title
+  padding ((middle-avatar-size - message-block-title-font-size) / 2) 0
 
 .message-body
-  color color2
-  padding extra-small
-  margin-left middle
+  color message-body-text-color
+  padding message-body-text-padding
+  margin-left message-body-text-margin-left
   word-wrap break-word
 
 .message-status
@@ -422,40 +486,42 @@ width-border = 1px
 
 .messages-footer
   #message-send-button
-    margin-left small
-    margin-right small
+    margin-left send-message-button-horizontal-margin
+    margin-right send-message-button-horizontal-margin
 
 .message-input
-  padding middle-large
-  padding-top (middle-large + markdown-panel-height)
-  background input-bg-color
-  color color2
-  border-radius extra-small
+  padding message-input-padding
+  padding-top (message-input-padding + markdown-panel-height)
+  background message-input-bg-color
+  color message-input-text-color
+  border-radius message-input-border-radius
   outline none
   flex 1
-  font 400 15px Arial
+  font-size message-input-font-size
+  font-family message-input-font-family
 
-  border-width width-border
+  border-width message-input-border-width
+  border-color message-input-border-color
   border-style inset
 
   word-wrap break-word
-  outline: 0;
-  min-height: 30px;
-  resize: none;
-  max-height: 200px;
-  overflow-y: hidden;
-  line-height: 17px;
+  outline 0
+  min-height message-input-min-height
+  resize none
+  max-height message-input-max-height
+  overflow-y hidden
+  line-height message-input-line-height
 
   transition all ease 0.2s
 .message-input:focus
-  background input-bg-color-focus
-  border-color color3
+  background message-input-bg-color-focus
+  border-color message-input-border-color-focus
 
 .message-input::placeholder
-  color color3
+  color message-input-placeholder-text-color
   transition color ease 0.4s
 .message-input:focus::placeholder
-  color color5
+  color message-input-placeholder-text-color-focus
 
 .connection-info
   z-index 1
