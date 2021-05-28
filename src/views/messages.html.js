@@ -15,7 +15,7 @@ const dialoguesByRequest = 50;
 const foldersByRequest = 500;
 const messagesByRequest = 15;
 
-const updateCycleTime = 5000; // ms
+// const updateCycleTime = 5000; // ms
 
 const messagesScrollLoadOffset = 40; // px
 const dialoguesScrollLoadOffset = 40; // px
@@ -28,7 +28,7 @@ const html = `
 <div class="table-columns fullheight bg-5" id="messages-page">
     <div class="table-column dialogues-column table-rows mobile-fullwidth" id="dialogues-column">
         <div class="header tool-dialogue table-columns pos-relative">
-            <img class="centered-vertical middle-avatar mobile-only" src="/images/liokor_logo.png" alt="лого">
+            <img class="centered-vertical middle-avatar mobile-only" src="/images/liokor_logo.png" alt="logo">
             <div class="flex-filler table-columns reversed pos-relative">
                 <input class="find-input input-with-clear fullheight" type="text" autocomplete="off" placeholder="Создать или найти диалог" id="find-input">
                 <svg class="folders-button svg-button middle-avatar" id="folders-button" xmlns="http://www.w3.org/2000/svg"><g><path transform="scale(0.065) translate(80,15)" d="M448.916,118.259h-162.05c-6.578,0-13.003-2.701-17.44-7.292l-50.563-53.264c-12.154-12.115-28.783-18.443-45.625-18.346    H63.084C28.301,39.356,0,67.657,0,102.439v307.123c0,34.783,28.301,63.084,63.084,63.084h386.064h0.058    c34.764-0.154,62.949-28.59,62.794-63.277V181.342C512,146.559,483.699,118.259,448.916,118.259z M473.417,409.447    c0.058,13.504-10.88,24.558-24.307,24.616H63.084c-13.504,0-24.5-10.996-24.5-24.5V102.439c0-13.504,10.996-24.5,24.5-24.52    H173.74c0.212,0,0.424,0,0.637,0c6.443,0,12.694,2.566,16.899,6.733l50.293,53.013c11.806,12.192,28.32,19.176,45.297,19.176    h162.05c13.504,0,24.5,10.996,24.5,24.5V409.447z"/><path id="folder-icon-arrow" d="M225.923,354.706c-8.098,0-16.195-3.092-22.369-9.263L9.27,151.157c-12.359-12.359-12.359-32.397,0-44.751   c12.354-12.354,32.388-12.354,44.748,0l171.905,171.915l171.906-171.909c12.359-12.354,32.391-12.354,44.744,0   c12.365,12.354,12.365,32.392,0,44.751L248.292,345.449C242.115,351.621,234.018,354.706,225.923,354.706z"/></g></svg>
@@ -114,6 +114,13 @@ const html = `
 // <svg class="svg-button" id="list-markdown" xmlns="http://www.w3.org/2000/svg"><g xmlns="http://www.w3.org/2000/svg"><path d="M57.124,51.893H16.92c-1.657,0-3-1.343-3-3s1.343-3,3-3h40.203c1.657,0,3,1.343,3,3S58.781,51.893,57.124,51.893z"/><path d="M57.124,33.062H16.92c-1.657,0-3-1.343-3-3s1.343-3,3-3h40.203c1.657,0,3,1.343,3,3   C60.124,31.719,58.781,33.062,57.124,33.062z"/><path d="M57.124,14.231H16.92c-1.657,0-3-1.343-3-3s1.343-3,3-3h40.203c1.657,0,3,1.343,3,3S58.781,14.231,57.124,14.231z"/><circle cx="4.029" cy="11.463" r="4.029"/><circle cx="4.029" cy="30.062" r="4.029"/><circle cx="4.029" cy="48.661" r="4.029"/></g></svg>
 // Link
 // <svg class="svg-button" id="link-markdown" xmlns="http://www.w3.org/2000/svg"><g><path d="M211.26,389.24l-60.331,60.331c-25.012,25.012-65.517,25.012-90.508,0.005c-24.996-24.996-24.996-65.505-0.005-90.496     l120.683-120.683c24.991-24.992,65.5-24.992,90.491,0c8.331,8.331,21.839,8.331,30.17,0c8.331-8.331,8.331-21.839,0-30.17     c-41.654-41.654-109.177-41.654-150.831,0L30.247,328.909c-41.654,41.654-41.654,109.177,0,150.831     c41.649,41.676,109.177,41.676,150.853,0l60.331-60.331c8.331-8.331,8.331-21.839,0-30.17S219.591,380.909,211.26,389.24z"/><path d="M479.751,30.24c-41.654-41.654-109.199-41.654-150.853,0l-72.384,72.384c-8.331,8.331-8.331,21.839,0,30.17     c8.331,8.331,21.839,8.331,30.17,0l72.384-72.384c24.991-24.992,65.521-24.992,90.513,0c24.991,24.991,24.991,65.5,0,90.491     L316.845,283.638c-24.992,24.992-65.5,24.992-90.491,0c-8.331-8.331-21.839-8.331-30.17,0s-8.331,21.839,0,30.17     c41.654,41.654,109.177,41.654,150.831,0l132.736-132.736C521.405,139.418,521.405,71.894,479.751,30.24z"/></g></svg>
+
+function getPreview(message) {
+    if (typeof message !== 'string') {
+        message = '';
+    }
+    return message.split('\n')[0];
+}
 
 /**
  * Renders auth page and "activating" it's js
@@ -318,36 +325,44 @@ export async function handler(element, app) {
 
     // --- Add delete messages listener
     messagesListingElem.addEventListener('click', async (ev) => {
-        if (ev.target.tagName === 'DIV' && ev.target.classList.contains('delete-message')) {
-            let el = ev.target;
-            while (!el.id) {
-                el = el.parentNode;
-            }
-
-            if (await app.modal.confirm('Вы уверены, что хотите удалить сообщение?')) {
-                const id = parseInt(el.id);
-                if (!id || id <= 0) {
-                    app.messages.error('Ошибка!', 'Не удалось удалить письмо. Попробуйте обновить страницу.');
-                    return;
-                }
-
-                const res = await app.apiDelete('/email/emails', { ids: [id] });
-                if (res.ok) {
-                    app.messages.success('Успех!', 'Письмо удалено.');
-
-                    dialoguesListing.activeElem.messagesListing.delete(parseInt(el.id));
-
-                    let lastBody = '';
-                    const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
-                    if (lastMessage) {
-                        lastBody = stripTags(lastMessage.querySelector('.message-body').innerHTML);
-                    }
-                    dialoguesListing.activeElem.lastElementChild.lastElementChild.innerText = lastBody;
-                } else {
-                    app.messages.error(`Ошибка ${res.status}`, 'Не удалось удалить письмо!');
-                }
-            }
+        const deleteBtnClicked = ev.target.tagName === 'DIV' && ev.target.classList.contains('delete-message');
+        if (!deleteBtnClicked) {
+            return;
         }
+
+        let el = ev.target;
+        while (!el.id) {
+            el = el.parentNode;
+        }
+
+        const confirm = await app.modal.confirm('Вы уверены, что хотите удалить сообщение?');
+        if (!confirm) {
+            return;
+        }
+
+        const id = parseInt(el.id);
+        if (!id || id <= 0) {
+            app.messages.error('Ошибка!', 'Не удалось удалить письмо. Попробуйте обновить страницу.');
+            return;
+        }
+
+        const res = await app.apiDelete('/email/emails', { ids: [id] });
+        if (!res.ok) {
+            app.messages.error(`Ошибка ${res.status}`, 'Не удалось удалить письмо!');
+            return;
+        }
+        app.messages.success('Успех!', 'Письмо удалено.');
+
+        dialoguesListing.activeElem.messagesListing.delete(parseInt(el.id));
+
+        let lastBody = '';
+        const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
+        if (lastMessage) {
+            lastBody = stripTags(lastMessage.querySelector('.message-body').innerHTML);
+        }
+
+        const preview = getPreview(lastBody);
+        dialoguesListing.activeElem.lastElementChild.lastElementChild.innerHTML = preview;
     });
 
     // --- Get folders
@@ -410,7 +425,8 @@ export async function handler(element, app) {
             // Create and configure new element
             if (!dialogue.messagesListing) {
                 dialogue.messagesListing = new Listing(messagesListingElem);
-                dialogue.messagesListing.networkGetter = new PaginatedGetter(app.apiUrl + '/email/emails?with=' + dialogue.username, 'since', -1, 'amount', messagesByRequest, 'id', true);
+                const email = encodeURIComponent(dialogue.username);
+                dialogue.messagesListing.networkGetter = new PaginatedGetter(`${app.apiUrl}/email/emails?with=${email}`, 'since', -1, 'amount', messagesByRequest, 'id', true);
 
                 dialogue.messagesListing.setPlugTopState(plugStates.end, newElem(`<svg class="svg-button centered" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></svg>
                         <div class="text-1">Это начало истории сообщений</div>`,
@@ -871,7 +887,7 @@ export async function handler(element, app) {
     }
 
     // Our pretty WebSockets...
-    setInterval(async () => {
+    /* setInterval(async () => {
         if (!app.storage.username) {
             return;
         }
@@ -959,7 +975,7 @@ export async function handler(element, app) {
         if (isScrolledToBottom) {
             messagesListing.scrollToBottom();
         }
-    }, updateCycleTime);
+    }, updateCycleTime); */
 
     // Deny to show mini-context window on text selection
     messageInput.addEventListener('mouseup', (event) => {
@@ -1090,6 +1106,7 @@ export async function handler(element, app) {
      * @param messages to convert to blocks
      */
     function convertMessagesToBlocks(messages) {
+        // do not delete this, or all messages will be blank
         messages.forEach((elem) => {
             elem.time = new Date(elem.time);
             elem.body = [new Handlebars.SafeString(elem.body)];
@@ -1148,19 +1165,24 @@ export async function handler(element, app) {
         const responseData = await response.json();
         if (!response.ok) {
             app.messages.error(`Ошибка ${response.status}`, `Не удалось отправить письмо: ${responseData.message}`);
+            return; // critical error
+        }
+        if (responseData.status === 0) {
+            app.messages.error('Ошибка!', 'Не удалось доставить письмо!');
         }
 
-        currentTitle = response.ok ? responseData.subject : currentTitle;
-        message = response.ok ? responseData.body : message;
-        const id = response.ok ? responseData.id : 0;
+        currentTitle = responseData.subject;
+        message = responseData.body;
+        const nowStatus = responseData.status;
+        const id = responseData.id;
 
         // clear input
         messageInput.value = '';
 
         // update dialogue preview
-        dialoguesListing.activeElem.lastElementChild.lastElementChild.innerText = stripTags(message);
+        const preview = getPreview(message);
+        dialoguesListing.activeElem.lastElementChild.lastElementChild.innerHTML = stripTags(preview);
 
-        const nowStatus = response.ok ? 1 : 0;
         // const lastMessage = dialoguesListing.activeElem.messagesListing.getLast();
         // add message into last HTML-block
         /* if (lastMessage && nowStatus === lastMessage.status && lastMessage.sender.toLowerCase() === `${app.storage.username}@liokor.ru`.toLowerCase() && lastMessage.title === currentTitle) {
@@ -1178,6 +1200,11 @@ export async function handler(element, app) {
         // }
         dialoguesListing.activeElem.messagesListing.redraw();
         dialoguesListing.activeElem.messagesListing.scrollToBottom();
+
+        // to focus input after sending
+        setTimeout(() => {
+            messageInput.focus();
+        }, 0);
     }
 
     /**
@@ -1339,7 +1366,7 @@ export async function handler(element, app) {
             avatar: dialogue.avatarUrl,
             time: dialogue.time,
             title: dialogue.username,
-            body: dialogue.body,
+            body: new Handlebars.SafeString(dialogue.body),
             newMessages: dialogue.new
         });
         const elem = newElem(dialogueInnerHTML, 'li', dialogue.id, 'listing-button');
@@ -1383,6 +1410,7 @@ export async function handler(element, app) {
                 // clear and delete dialogue
                 if (messageElem.messagesListing) {
                     messageElem.messagesListing.clear();
+                    messageElem.messagesListing.scrollActive = false;
                 }
                 dialoguesListing.delete(dialogue.id);
             }
