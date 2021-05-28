@@ -1,4 +1,4 @@
-const defaultBackground = '#0e2a34';
+const defaultBackground = 'linear-gradient(30deg, #153131 0%, #2e143c 60%, #5d4e25 100%)';
 
 /**
  * Renders page with animation
