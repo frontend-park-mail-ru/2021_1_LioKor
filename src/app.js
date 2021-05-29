@@ -59,7 +59,6 @@ export default class App {
                 urlRegex: /^\/(\?.*)?$/,
                 handler: messages.handler,
                 authRequired: true,
-                background: '#283655',
                 hasLogo: false
             }
         ];
