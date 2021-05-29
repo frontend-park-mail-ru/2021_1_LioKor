@@ -321,12 +321,14 @@ export async function handler(element, app) {
 
     // --- Add delete messages listener
     messagesListingElem.addEventListener('click', async (ev) => {
-        console.log(ev.target);
-        if (!ev.target.classList.contains('delete-message')) {
+        let el = ev.target;
+        if (el.tagName === 'path') {
+            el = el.parentNode;
+        }
+        if (!el.classList.contains('delete-message')) {
             return;
         }
 
-        let el = ev.target;
         while (!el.id) {
             el = el.parentNode;
         }
