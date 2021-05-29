@@ -21,6 +21,9 @@ page-padding = large
 //page-shadow-blur = 10px
 //page-shadow-color = colorShadow
 
+// Info
+standalone-info-text-color = textColor2
+
 // Svg buttons
 svg-buttons-opacity = 0.7
 svg-buttons-fill-color = colorIcons
@@ -49,14 +52,15 @@ messages-column-width = (100% - dialogues-column-width)
 
 // Footer of messages column
 footer-padding = middle large
-footer-text-color = textColor2
+footer-text-color = textColor3
 footer-border-top = border-width
 footer-border-color = border-color
 footer-bg-color = transparent
 
 // Dialogues buttons
-dialogue-button-height = 62px
-dialogue-button-padding = middle
+dialogue-button-height = 70px
+dialogue-button-padding = 15px
+dialogue-button-avatar-margin-left = middle
 dialogue-border-bottom = border-width
 dialogue-border-color = border-color
 dialogue-border-left-color = color5
@@ -73,14 +77,19 @@ dialogue-button-color-active-selected = color2lighter
 dialogue-border-left-active-selected = 5px
 dialogue-border-left-color-active-selected = color5
 
-dialogue-text-padding-left = middle
+dialogue-text-padding-left = 22px
 dialogue-title-font-size = big-font-size
 dialogue-time-font-size = font-size
 dialogue-status-font-size = big-font-size
 dialogue-between-time-and-status = 3px
 dialogue-status-padding = 0 extra-small
-dialogue-status-text-color = color1
-dialogue-status-background-color = color6
+dialogue-status-text-color = textColor1
+dialogue-status-background-color = color5
+
+dialogue-meta-title-text-size = big-font-size
+dialogue-meta-title-color = textColor1
+dialogue-meta-body-color = textColor3
+dialogue-meta-text-color = textColor4
 
 // Headers of dialogues and messages columns
 headers-padding = middle
@@ -89,26 +98,32 @@ headers-border-color = border-color
 headers-bg-color = transparent
 headers-text-color = textColor1
 headers-shadow = 0 5px 5px colorShadow
+headers-height = 65px
 header-recipient-margin = middle
-headers-height = dialogue-button-height
+header-time-text-color = textColor4
+header-username-text-color = textColor1
 
 // Folders buttons
 folder-button-color = transparent
 folder-button-color-active = transparent
 folder-button-color-selected = transparent
 folder-button-color-active-selected = transparent
+folder-button-text-color = textColor1
+folder-button-text-size = big-font-size
 
 new-folder-button-color = color2
+new-folder-button-text-size = font-size
 new-folder-button-height = dialogue-button-height - middle
 new-folder-button-padding = extra-small
 
-folder-title-padding = small
+folder-title-padding = small small small large
 
 // Divider between folders and dialogues
 dialogues-divider-height = 24px
 dialogues-divider-bg-color = color3
-dialogues-divider-border = 2px
+dialogues-divider-border = 1px
 dialogues-divider-border-color = color4
+dialogues-divider-text-color = textColor4
 
 // Dialogues plugs on bottom
 empty-dialogue-height = dialogue-button-height
@@ -118,21 +133,23 @@ empty-dialogue-height-bg-color = color1
 // Message blocks
 between-message-blocks = 20px
 message-blocks-horizontal-margin = 20px
+message-blocks-avatar-horizontal-margin = 10px
 message-blocks-border-radius = small
 left-message-bg-color = color3
 right-message-bg-color = color4
 
 message-block-title-color = textColor1
 message-block-title-font-size = big-font-size
-message-block-between-avatar-and-title = middle-large
+message-block-margin = 0 0 0 middle-large
+message-block-padding = middle-large 0
 
 message-body-text-color = textColor2
-message-body-text-padding = extra-small
+message-body-padding = large middle
 message-body-text-margin-left = middle-large
 
 message-info-text-color = textColor3
 message-info-status-ok-color = svg-buttons-fill-color
-message-info-status-undelivered-color = color5
+message-info-status-undelivered-color = colorUndelivered
 message-info-margin = middle
 message-block-between-time-and-status = 3px
 
@@ -142,10 +159,10 @@ send-message-button-horizontal-margin = small
 // Message input
 message-input-padding = middle-large
 message-input-bg-color = color1lighter
-message-input-bg-color-focus = color1morelighter
+message-input-bg-color-focus = color1moreLighter
 message-input-border-color = color3
 message-input-border-color-focus = color3
-message-input-text-color = textColor2
+message-input-text-color = textColor3
 message-input-border-radius = extra-small
 message-input-font-size = font-size
 message-input-font-family = Arial
@@ -153,10 +170,10 @@ message-input-border-width = border-width
 
 message-input-min-height = 30px
 message-input-max-height = 200px
-message-input-line-height = 16px // don't works
+message-input-line-height = 20px
 
-message-input-placeholder-text-color = textColor4
-message-input-placeholder-text-color-focus = textColor5
+message-input-placeholder-text-color = textColor5
+message-input-placeholder-text-color-focus = textColor6
 
 // Theme input
 theme-input-margin = 0 0 small middle
@@ -165,11 +182,11 @@ theme-input-bg-color = transparent
 theme-input-bg-color-focus = color1mostLighter
 theme-input-text-color = textColor3
 theme-input-border-radius = 2px
-theme-input-text-color-focus = textColor2
+theme-input-text-color-focus = textColor3
 theme-input-font-size = font-size
 
-theme-input-placeholder-text-color = textColor4
-theme-input-placeholder-text-color-focus = textColor5
+theme-input-placeholder-text-color = textColor5
+theme-input-placeholder-text-color-focus = textColor6
 
 // Folder title theme-input
 folder-theme-input-padding = small
@@ -177,7 +194,7 @@ folder-theme-input-bg-color = transparent
 folder-theme-input-bg-color-focus = color1mostLighter
 folder-theme-input-text-color = textColor1
 folder-theme-input-text-color-focus = textColor1
-folder-theme-input-font-size = font-size
+folder-theme-input-font-size = folder-button-text-size
 folder-theme-border-width-focus = border-width
 folder-theme-border-color-focus = color4
 folder-button-inner-icon-bg-color = color1
@@ -188,10 +205,11 @@ connection-info-border-radius = small
 connection-info-box-shadow-offset = 5px
 connection-info-inner-svg-width = 25px
 connection-info-inner-svg-height = 20px
+connection-info-inner-text-color = textColor1
 
 // Inside input svg
 inside-input-right-offset = 20px
-inside-input-top-offset = 10px
+inside-input-top-offset = 5px
 
 // Specialize plus svg button
 plus-button-width = 60px
@@ -209,7 +227,7 @@ find-input-padding = 0
 find-input-left-offset-width = (middle * 2)
 find-input-margin = 0 middle extra-small extra-small
 find-input-bg-color = transparent
-find-input-text-color = textColor2
+find-input-text-color = textColor3
 find-input-font-size = small-font-size
 find-input-border-radius = 0
 
@@ -220,7 +238,7 @@ find-input-border-color-focus = color4
 find-input-border-width-focus = border-width
 find-input-margin-left-focus = middle
 
-find-input-placeholder-text-color = textColor4
+find-input-placeholder-text-color = textColor5
 find-input-placeholder-text-color-focus = textColor3
 
 // Ondrag
@@ -250,6 +268,22 @@ markdown-button-svg-photo-stroke = 2px
 markdown-button-svg-photo-fill = transparent
 
 no-messages-info-bottom-padding = 20px
+
+// Decoration styles
+code-decoration-background = color2
+code-decoration-border-radius = 2px
+blockquote-decoration-color = color1mostLighter
+blockquote-decoration-width = 2px
+blockquote-decoration-margin = small 0
+blockquote-decoration-padding = 0 0 0 middle
+blockquote-decoration-offset = 25px
+code-decoration-padding = 0 0 0 middle
+list-decoration-margin = small 0
+list-decoration-offset = 40px
+list-decoration-color = color1
+link-decoration-color = color5
+link-decoration-color-visited = color5-A
+p-decoration-margin = extra-small 0
 
 // Mobile styles
 mobile-profile-button-size = 35px
@@ -284,24 +318,6 @@ mobile-dialogue-recipient-bg-color = color2lighter
 .pad-xl
   padding extra-large
 */
-
-.text-1
-.text-2
-.text-3
-.text-4
-  font-size font-size
-
-.text-1
-  color textColor1
-.text-2
-  color textColor2
-.text-3
-  color textColor3
-.text-4
-  color textColor4
-
-.text-bigger
-  font-size big-font-size
 
 .fullwidth
   width 100%
@@ -395,6 +411,9 @@ mobile-dialogue-recipient-bg-color = color2lighter
 .dialogues-listing::-webkit-scrollbar
   background dialogue-button-color
 
+.standalone-info-text
+  color standalone-info-text-color
+
 .header // big columns headers
   padding headers-padding
   background headers-bg-color
@@ -403,6 +422,10 @@ mobile-dialogue-recipient-bg-color = color2lighter
   border-bottom headers-border-bottom solid headers-border-color
   z-index 2
   height headers-height
+  .dialogue-time
+    color header-time-text-color
+  .username
+    color header-username-text-color
 .header-title // decoration for mobiles
   border-radius (small-avatar-size / 2)
   padding-left 0
@@ -419,7 +442,7 @@ mobile-dialogue-recipient-bg-color = color2lighter
 
 .tool-dialogue
   padding dialogue-button-padding
-  min-height dialogue-button-height
+  min-height headers-height
 
 // --- Listing button:
 .listing-button
@@ -434,6 +457,9 @@ mobile-dialogue-recipient-bg-color = color2lighter
   cursor pointer
   white-space nowrap
   transition all 0.3s ease, background-color ease-out 0.2s, border-left 0s, padding-left 0s
+  img.centered
+    margin ((dialogue-button-height - dialogue-button-padding * 2 - middle-avatar-size) / 2) 0
+    margin-left dialogue-button-avatar-margin-left
 .listing-button.active
   background-color dialogue-button-color-active
   border-left dialogue-border-left-active solid dialogue-border-left-color-active
@@ -449,6 +475,8 @@ mobile-dialogue-recipient-bg-color = color2lighter
 
 .listing-button.folder
   background-color folder-button-color
+  color folder-button-text-color
+  font-size folder-button-text-size
 .listing-button.folder.active
   background-color folder-button-color-active
 .listing-button.folder.selected
@@ -459,6 +487,7 @@ mobile-dialogue-recipient-bg-color = color2lighter
 .dialogue-meta
   position relative
   white-space nowrap
+  color dialogue-meta-text-color
 
 .listing-button
 .message-block
@@ -481,6 +510,8 @@ mobile-dialogue-recipient-bg-color = color2lighter
   max-height new-folder-button-height
   padding-top new-folder-button-padding
   padding-bottom new-folder-button-padding
+  .dialogue-text
+    font-size new-folder-button-text-size
 .new-folder-button:hover
   background-color folder-button-color-selected
 .new-folder-button
@@ -495,11 +526,14 @@ mobile-dialogue-recipient-bg-color = color2lighter
   height dialogues-divider-height
   min-height dialogues-divider-height
   max-height dialogues-divider-height
-  background-color dialogues-divider-bg-color
-  border-top dialogues-divider-border solid dialogues-divider-border-color
-  border-bottom dialogues-divider-border solid dialogues-divider-border-color
+  background linear-gradient(45deg, transparent 0%, dialogues-divider-bg-color 50%, transparent 100%)
+
+  border-width dialogues-divider-border 0
+  border-style solid
+  border-color dialogues-divider-border-color
   overflow hidden
   transition all 0.3s ease
+  color dialogues-divider-text-color
 
 .empty-dialogue
   min-height empty-dialogue-height
@@ -517,6 +551,11 @@ mobile-dialogue-recipient-bg-color = color2lighter
   font-size dialogue-status-font-size
   color dialogue-status-text-color
 .dialogue-body
+  color dialogue-meta-body-color
+.dialogue-title
+  color dialogue-meta-title-color
+  font-size dialogue-meta-title-text-size
+.dialogue-body
 .dialogue-title
   overflow hidden
   text-overflow ellipsis
@@ -529,6 +568,8 @@ mobile-dialogue-recipient-bg-color = color2lighter
   margin (between-message-blocks / 4) (message-blocks-horizontal-margin / 2)
   border-radius message-blocks-border-radius
   border-top-left-radius (middle-avatar-size / 2)
+  img
+    margin (between-message-blocks / 4) message-blocks-avatar-horizontal-margin
 .message-block.not-your
   background left-message-bg-color
 .message-block.your
@@ -543,15 +584,40 @@ mobile-dialogue-recipient-bg-color = color2lighter
 
 .message-block-title
   color message-block-title-color
-  width "calc(100% - %s - %s)" % (message-block-between-avatar-and-title middle-avatar-size)
-  margin-left middle-avatar-size + message-block-between-avatar-and-title
-  padding ((middle-avatar-size - message-block-title-font-size) / 2) 0
+  width 100%
+  margin message-block-margin
+  padding message-block-padding
 
 .message-body
   color message-body-text-color
-  padding message-body-text-padding
+  padding message-body-padding
   margin-left message-body-text-margin-left
   word-wrap break-word
+  // message text styles
+  code
+    font-family monospace
+    background code-decoration-background
+    border-radius code-decoration-border-radius
+  blockquote
+    border-left blockquote-decoration-width blockquote-decoration-color solid
+    margin blockquote-decoration-margin
+    padding blockquote-decoration-padding
+    margin-inline-start blockquote-decoration-offset
+  ul
+    list-style-type disc
+    margin list-decoration-margin
+    padding-inline-start list-decoration-offset
+    li::marker
+      color list-decoration-color
+  a
+  link
+    color link-decoration-color
+  a:visited
+  link:visited
+    color link-decoration-color-visited
+  p
+    margin p-decoration-margin
+
 .message-info
   color message-info-text-color
   margin message-info-margin
@@ -563,10 +629,18 @@ mobile-dialogue-recipient-bg-color = color2lighter
 .status-warning-svg
   fill message-info-status-undelivered-color
 
-.messages-footer
-  #message-send-button
-    margin-left send-message-button-horizontal-margin
-    margin-right send-message-button-horizontal-margin
+
+#message-send-button
+  margin-left send-message-button-horizontal-margin
+  margin-right send-message-button-horizontal-margin
+  max-width 0
+  transition all ease-out 0.4s
+  opacity 0
+  transform rotate(45deg)
+#message-send-button.showed
+  max-width 100px // to delay move after rotation
+  opacity 1
+  transform rotate(0)
 
 .message-input
   padding message-input-padding
@@ -588,7 +662,7 @@ mobile-dialogue-recipient-bg-color = color2lighter
   min-height message-input-min-height
   resize none
   max-height message-input-max-height
-  overflow-y hidden
+  overflow-y scroll
   line-height message-input-line-height
 
   transition all ease 0.2s
@@ -620,6 +694,8 @@ mobile-dialogue-recipient-bg-color = color2lighter
     width connection-info-inner-svg-width
     height connection-info-inner-svg-height
     pointer-events none
+.connection-text
+  color connection-info-inner-text-color
 
 .pos-relative
   position relative
