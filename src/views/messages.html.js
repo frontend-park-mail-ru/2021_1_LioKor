@@ -972,12 +972,14 @@ export async function handler(element, app) {
         // get new (or not) messages
         const gottenMessages = await messagesListing.networkGetter.getFirstPage();
         // console.log("Messages:", gottenMessages);
-        const lastMessage = messagesListing.getLast();
         convertMessagesToBlocks(gottenMessages);
         const isScrolledToBottom = messagesListingElem.scrollHeight - messagesListingElem.scrollTop === messagesListingElem.clientHeight;
-        for (createdElems = 0; (createdElems < gottenMessages.length) && (String(gottenMessages[createdElems].id) !== lastMessage.id); createdElems++) {
+        for (let i = 0; (i < gottenMessages.length); i++) {
+            if (messagesListing.findIndexById(gottenMessages[i].id) === -1) {
+                continue;
+            }
             // add message if we don't have it yet
-            newMessage(gottenMessages[createdElems], messagesListing, false);
+            newMessage(gottenMessages[i], messagesListing, false);
         }
         if (createdElems > 0) {
             messagesListing.redraw();
