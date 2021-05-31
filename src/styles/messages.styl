@@ -1,5 +1,6 @@
 @require "constants.styl"
 
+// Constants. Don't use it in styles. Only inside other variables
 extra-small = 5px
 small = 7px
 middle = 10px
@@ -12,8 +13,9 @@ font-size = 16px
 big-font-size = 18px
 // ----------
 
+// Avatar sizes
 small-avatar-size = 30px
-middle-avatar-size = 40px
+middle-avatar-size = 40px // Now there's only it
 large-avatar-size = 50px
 
 // All page
@@ -144,8 +146,8 @@ message-block-margin = 0 0 0 middle-large
 message-block-padding = middle-large 0
 
 message-body-text-color = textColor2
-message-body-padding = large middle
-message-body-text-margin-left = middle-large
+message-body-padding = large large
+message-body-text-margin = 0
 
 message-info-text-color = textColor3
 message-info-status-ok-color = svg-buttons-fill-color
@@ -269,7 +271,7 @@ markdown-button-svg-photo-fill = transparent
 
 no-messages-info-bottom-padding = 20px
 
-// Decoration styles
+// Decoration for html tags inside messages
 code-decoration-background = color2
 code-decoration-border-radius = 2px
 blockquote-decoration-color = color1mostLighter
@@ -284,6 +286,7 @@ list-decoration-color = color1
 link-decoration-color = color5
 link-decoration-color-visited = color5-A
 p-decoration-margin = extra-small 0
+img-decoration-margin = 0
 
 // Mobile styles
 mobile-profile-button-size = 35px
@@ -567,7 +570,6 @@ mobile-dialogue-recipient-bg-color = color2lighter
 .message-block
   margin (between-message-blocks / 4) (message-blocks-horizontal-margin / 2)
   border-radius message-blocks-border-radius
-  border-top-left-radius (middle-avatar-size / 2)
   img
     margin (between-message-blocks / 4) message-blocks-avatar-horizontal-margin
 .message-block.not-your
@@ -591,7 +593,7 @@ mobile-dialogue-recipient-bg-color = color2lighter
 .message-body
   color message-body-text-color
   padding message-body-padding
-  margin-left message-body-text-margin-left
+  margin message-body-text-margin
   word-wrap break-word
   // message text styles
   code
@@ -617,6 +619,9 @@ mobile-dialogue-recipient-bg-color = color2lighter
     color link-decoration-color-visited
   p
     margin p-decoration-margin
+  img
+    max-width 100%
+    margin img-decoration-margin
 
 .message-info
   color message-info-text-color
