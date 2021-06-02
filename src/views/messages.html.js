@@ -188,6 +188,7 @@ export async function handler(element, app) {
 
     // --- One-element containers
     let currentDialoguesListing;
+    const isInMobileVersion = /Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent);
     let isLostConnection = false;
 
     const defaultMessagesPageInnerHTML = `
@@ -207,24 +208,26 @@ export async function handler(element, app) {
     const messageBlockInnerHTMLTemplate = Handlebars.compile(`
         <img src={{ avatar }} alt="avatar" class="middle-avatar floatleft">
         <div class="message-block {{ side }} pos-relative">
-            <div class="message-info table-rows flex-end floatright">
-                <div class="hide-on-hover">{{ time }}</div>
-                {{#if isStated}}
-                    <div class="status-icon">
-                        {{#if isDelivered}}
-                            <svg xmlns="http://www.w3.org/2000/svg" class="status-ok-svg" width="20px" height="20px"><g transform="scale(1.2)"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/></g></svg>
-                        {{else}}
-                            <svg xmlns="http://www.w3.org/2000/svg" class="status-warning-svg message-status" width="20px" height="20px"><g transform="scale(1.2)"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/></g></svg>
-                        {{/if}}
-                    </div>
-                {{/if}}
-                <svg class="svg-button delete-message show-on-hover absolute-top-right" realid="{{ realId }}" xmlns="http://www.w3.org/2000/svg" width="18px" height="15px">
-                    <path pointer-events="none" d="M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z"/>
-                </svg>
+            <div class="absolute-top-right">
+                <div class="message-info table-rows flex-end pos-relative">
+                    <div class="hide-on-hover">{{ time }}</div>
+                    {{#if isStated}}
+                        <div class="status-icon">
+                            {{#if isDelivered}}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="status-ok-svg" width="20px" height="20px"><g transform="scale(1.2)"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/></g></svg>
+                            {{else}}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="status-warning-svg message-status" width="20px" height="20px"><g transform="scale(1.2)"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/></g></svg>
+                            {{/if}}
+                        </div>
+                    {{/if}}
+                    <svg class="svg-button delete-message show-on-hover absolute-top-right" realid="{{ realId }}" xmlns="http://www.w3.org/2000/svg" width="18px" height="15px">
+                        <path pointer-events="none" d="M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z"/>
+                    </svg>
+                </div>
             </div>
             <div class="message-block-title">{{ title }}</div>
             {{#each body}}
-                <div id={{ @index }} class="message-body">{{ this }}</div>
+                <div id={{ @index }} class="message-body scrollable">{{ this }}</div>
             {{/each}}
         </div>`);
 
@@ -549,7 +552,9 @@ export async function handler(element, app) {
             document.title = `${app.name} | ${dialogue.username}`;
 
             messageInput.dispatchEvent(new Event('input')); // trigger resize input event
-            messageInput.focus();
+            if (!isInMobileVersion) {
+                messageInput.focus();
+            }
 
             dialogue.messagesListing.redraw();
             dialogue.messagesListing.scrollToBottom();
@@ -827,7 +832,9 @@ export async function handler(element, app) {
             if (foundDialogue) {
                 findInput.value = '';
                 findInput.dispatchEvent(new Event('input'));
-                messageInput.focus();
+                if (!isInMobileVersion) {
+                    messageInput.focus();
+                }
                 await dialoguesListing.setActive(foundDialogue.id);
                 return;
             }
@@ -1217,9 +1224,11 @@ export async function handler(element, app) {
         dialoguesListing.activeElem.messagesListing.scrollToBottom();
 
         // to focus input after sending
-        setTimeout(() => {
-            messageInput.focus();
-        }, 0);
+        if (!isInMobileVersion) {
+            setTimeout(() => {
+                messageInput.focus();
+            }, 0);
+        }
     }
 
     /**
