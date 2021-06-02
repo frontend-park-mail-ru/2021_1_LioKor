@@ -1,5 +1,6 @@
 @require "constants.styl"
 
+// Constants. Don't use it in styles. Only inside other variables
 extra-small = 5px
 small = 7px
 middle = 10px
@@ -12,8 +13,9 @@ font-size = 16px
 big-font-size = 18px
 // ----------
 
+// Avatar sizes
 small-avatar-size = 30px
-middle-avatar-size = 40px
+middle-avatar-size = 40px // Now there's only it
 large-avatar-size = 50px
 
 // All page
@@ -140,12 +142,12 @@ right-message-bg-color = color4
 
 message-block-title-color = textColor1
 message-block-title-font-size = big-font-size
-message-block-margin = 0 0 0 middle-large
-message-block-padding = middle-large 0
+message-block-title-padding = middle-large
+message-block-width = 85%
 
 message-body-text-color = textColor2
-message-body-padding = large middle
-message-body-text-margin-left = middle-large
+message-body-padding = 0 large
+message-body-margin = 0
 
 message-info-text-color = textColor3
 message-info-status-ok-color = svg-buttons-fill-color
@@ -269,7 +271,7 @@ markdown-button-svg-photo-fill = transparent
 
 no-messages-info-bottom-padding = 20px
 
-// Decoration styles
+// Decoration for html tags inside messages
 code-decoration-background = color2
 code-decoration-border-radius = 2px
 blockquote-decoration-color = color1mostLighter
@@ -284,6 +286,7 @@ list-decoration-color = color1
 link-decoration-color = color5
 link-decoration-color-visited = color5-A
 p-decoration-margin = extra-small 0
+img-decoration-margin = 0
 
 // Mobile styles
 mobile-profile-button-size = 35px
@@ -492,10 +495,10 @@ mobile-dialogue-recipient-bg-color = color2lighter
 .listing-button
 .message-block
   .show-on-hover
-    transition opacity ease 0.2s
+    transition all ease 0.2s
     opacity 0
   .hide-on-hover
-    transition opacity ease 0.2s
+    transition all ease 0.2s
     opacity 1
 .listing-button:hover
 .message-block:hover
@@ -567,7 +570,8 @@ mobile-dialogue-recipient-bg-color = color2lighter
 .message-block
   margin (between-message-blocks / 4) (message-blocks-horizontal-margin / 2)
   border-radius message-blocks-border-radius
-  border-top-left-radius (middle-avatar-size / 2)
+  max-width message-block-width
+  //max-width 100%
   img
     margin (between-message-blocks / 4) message-blocks-avatar-horizontal-margin
 .message-block.not-your
@@ -577,22 +581,22 @@ mobile-dialogue-recipient-bg-color = color2lighter
 
 .left-block
   text-align left
-  margin-right 15%
 .right-block
   text-align left
-  margin-left 15%
+  margin-left (100% - message-block-width)
 
 .message-block-title
   color message-block-title-color
   width 100%
-  margin message-block-margin
-  padding message-block-padding
+  padding message-block-title-padding
 
 .message-body
+  overflow-x scroll
   color message-body-text-color
   padding message-body-padding
-  margin-left message-body-text-margin-left
+  margin message-body-margin
   word-wrap break-word
+  width 100%
   // message text styles
   code
     font-family monospace
@@ -617,6 +621,9 @@ mobile-dialogue-recipient-bg-color = color2lighter
     color link-decoration-color-visited
   p
     margin p-decoration-margin
+  img
+    max-width 100%
+    margin img-decoration-margin
 
 .message-info
   color message-info-text-color
@@ -729,11 +736,6 @@ mobile-dialogue-recipient-bg-color = color2lighter
   opacity 1
   transform svg-buttons-transform-hover
   fill svg-buttons-fill-color-hover
-
-.delete-message.show-on-hover
-  top message-info-margin
-  right message-info-margin
-  transition all ease 0.2s
 
 .plus-button
   cursor pointer
