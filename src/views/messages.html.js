@@ -424,6 +424,20 @@ export async function handler(element, app) {
             const prevDialoguesListing = currentDialoguesListing;
             currentDialoguesListing = dialoguesListing;
 
+            // push old message-input and theme into localStorage
+            if (prevDialoguesListing && prevDialoguesListing.prevActiveElem) {
+                localStorage.setItem(prevDialoguesListing.prevActiveElem.username + '-theme', themeInput.value);
+                localStorage.setItem(prevDialoguesListing.prevActiveElem.username + '-message', messageInput.value);
+            }
+            // get new message-input and theme from localStorage
+            const theme = localStorage.getItem(dialogue.username + '-theme');
+            const message = localStorage.getItem(dialogue.username + '-message');
+            themeInput.value = theme;
+            messageInput.value = message;
+
+            messageInput.dispatchEvent(new Event('input'));
+            setTimeout(() => messageInput.dispatchEvent(new Event('input')), 100); // trigger resize event-listener
+
             // Create and configure new element
             if (!dialogue.messagesListing) {
                 dialogue.messagesListing = new Listing(messagesListingElem);
@@ -520,17 +534,6 @@ export async function handler(element, app) {
             dialogueHeader.innerText = dialogue.username;
             dialogueTime.innerText = dialogue.time;
 
-            // push old message-input and theme into localStorage
-            if (prevDialoguesListing && prevDialoguesListing.prevActiveElem) {
-                localStorage.setItem(prevDialoguesListing.prevActiveElem.username + '-theme', themeInput.value);
-                localStorage.setItem(prevDialoguesListing.prevActiveElem.username + '-message', messageInput.value);
-            }
-            // get new message-input and theme from localStorage
-            const theme = localStorage.getItem(dialogue.username + '-theme');
-            const message = localStorage.getItem(dialogue.username + '-message');
-            themeInput.value = theme;
-            messageInput.value = message;
-
             // set default theme of message
             const messageBlock = dialogue.messagesListing.getLast();
             if (messageBlock) {
@@ -554,7 +557,6 @@ export async function handler(element, app) {
             history.pushState(null, null, currentPath.toString());
             document.title = `${app.name} | ${dialogue.username}`;
 
-            messageInput.dispatchEvent(new Event('input')); // trigger resize input event
             if (!isInMobileVersion) {
                 messageInput.focus();
             }
