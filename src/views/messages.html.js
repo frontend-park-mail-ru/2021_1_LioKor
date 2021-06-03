@@ -307,12 +307,15 @@ export async function handler(element, app) {
 
         // create folder
         const folderId = await newFolderRequest(folderName);
-        newFolder({
+        const folderElem = newFolder({
             name: folderName,
             id: folderId
-        }).classList.remove('closed');
+        });
 
         redrawListings();
+        setTimeout(() => {
+            folderElem.classList.remove('closed');
+        }, 0);
     });
     newFolderButton.addEventListener('mousemove', (event) => {
         foldersListing.clearSelected();
@@ -1348,7 +1351,7 @@ export async function handler(element, app) {
                 if (!folderId) {
                     return;
                 }
-                newFolder({
+                const folderElem = newFolder({
                     name: folderName,
                     id: folderId
                 });
@@ -1364,8 +1367,12 @@ export async function handler(element, app) {
                 // open dialogues listing
                 if (foldersListing.isOpened) {
                     redrawListings();
+                    setTimeout(() => {
+                        folderElem.classList.remove('closed');
+                    }, 0);
                     return;
                 }
+
                 foldersButton.dispatchEvent(new Event('click'));
             },
             'listing-button');
