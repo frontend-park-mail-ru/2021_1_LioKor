@@ -987,11 +987,10 @@ export async function handler(element, app) {
         convertMessagesToBlocks(gottenMessages);
         const isScrolledToBottom = messagesListingElem.scrollHeight - messagesListingElem.scrollTop === messagesListingElem.clientHeight;
         for (let i = 0; (i < gottenMessages.length); i++) {
-            if (messagesListing.findIndexById(gottenMessages[i].id) === -1) {
-                continue;
-            }
             // add message if we don't have it yet
-            newMessage(gottenMessages[i], messagesListing, false);
+            if (messagesListing.findIndexById(gottenMessages[i].id) === -1) {
+                newMessage(gottenMessages[i], messagesListing, false);
+            }
         }
         if (createdElems > 0) {
             messagesListing.redraw();
