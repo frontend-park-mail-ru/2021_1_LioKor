@@ -45,10 +45,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@korolion/get-image-as-dataurl@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@korolion/get-image-as-dataurl/-/get-image-as-dataurl-0.1.0.tgz#fe357d191368815c1ce660feb4ca15de7c97f457"
-  integrity sha512-ouVd8Yhek5sSKsamZP80/mpgMr9MxlFc8BzVi2bIITLpC+QjK+/Wcw283NjYiGa+hEigFKY/a3TeohXFOY0Z7A==
+"@korolion/get-image-as-dataurl@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@korolion/get-image-as-dataurl/-/get-image-as-dataurl-0.2.0.tgz#73004125df959a7cb568adb13d02caf3c298cefc"
+  integrity sha512-mfUXPwpYOIuwG9hvPboAEk6/GQuceMweDKbUoA5MV9YiazH3upfcW1WeJRhPU63mSq24psvcznAVMarAF84MhQ==
 
 "@nodelib/fs.scandir@2.1.4":
   version "2.1.4"
@@ -1058,9 +1058,9 @@ ee-first@1.1.1:
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
 electron-to-chromium@^1.3.723:
-  version "1.3.738"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.738.tgz#aec24b091c82acbfabbdcce08076a703941d17ca"
-  integrity sha512-vCMf4gDOpEylPSLPLSwAEsz+R3ShP02Y3cAKMZvTqule3XcPp7tgc/0ESI7IS6ZeyBlGClE50N53fIOkcIVnpw==
+  version "1.3.739"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.739.tgz#f07756aa92cabd5a6eec6f491525a64fe62f98b9"
+  integrity sha512-+LPJVRsN7hGZ9EIUUiWCpO7l4E3qBYHNadazlucBfsXBbccDFNKUBAgzE68FnkWGJPwD/AfKhSzL+G+Iqb8A4A==
 
 emoji-regex@^8.0.0:
   version "8.0.0"
@@ -1091,7 +1091,7 @@ error-ex@^1.3.1:
   dependencies:
     is-arrayish "^0.2.1"
 
-es-abstract@^1.17.2, es-abstract@^1.18.0-next.1, es-abstract@^1.18.0-next.2:
+es-abstract@^1.17.2, es-abstract@^1.18.0-next.1, es-abstract@^1.18.0-next.2, es-abstract@^1.18.2:
   version "1.18.2"
   resolved "https://registry.yarnpkg.com/es-abstract/-/es-abstract-1.18.2.tgz#6eb518b640262e8ddcbd48e0bc8549f82efd48a7"
   integrity sha512-byRiNIQXE6HWNySaU6JohoNXzYgbBjztwFnBLUTiJmWXjaU9bSq3urQLUlNLQ292tc+gc07zYZXNZjaOoAX3sw==
@@ -2263,14 +2263,13 @@ object.getownpropertydescriptors@^2.1.0:
     es-abstract "^1.18.0-next.2"
 
 object.values@^1.1.0, object.values@^1.1.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/object.values/-/object.values-1.1.3.tgz#eaa8b1e17589f02f698db093f7c62ee1699742ee"
-  integrity sha512-nkF6PfDB9alkOUxpf1HNm/QlkeW3SReqL5WXeBLpEJJnlPSvRaDQpW3gQTksTN3fgJX4hL42RzKyOin6ff3tyw==
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/object.values/-/object.values-1.1.4.tgz#0d273762833e816b693a637d30073e7051535b30"
+  integrity sha512-TnGo7j4XSnKQoK3MfvkzqKCi0nVe/D9I9IjwTNYdb/fxYHpjrluHVOgw0AF6jrRFGMPHdfuidR09tIDiIvnaSg==
   dependencies:
     call-bind "^1.0.2"
     define-properties "^1.1.3"
-    es-abstract "^1.18.0-next.2"
-    has "^1.0.3"
+    es-abstract "^1.18.2"
 
 on-finished@~2.3.0:
   version "2.3.0"
@@ -3172,9 +3171,9 @@ rollup-plugin-terser@^7.0.2:
     terser "^5.0.0"
 
 rollup@^2.45.2:
-  version "2.50.0"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.50.0.tgz#e5a77820c2230c66ef9ea26cbc9d7a3c1a18a439"
-  integrity sha512-wO+F2MqWPGUCZx0549oqY8dsQqHVjuSxoyBWWnxKoQE+1UGcDKjtL7wHq/8jnnLJEeoGDQLf3ztrpgRwlbGJ0A==
+  version "2.50.1"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.50.1.tgz#5d52d5c65ade19164d56efec98f16a461c6df38e"
+  integrity sha512-3MQhSdGpms4xjYrtR3WNHMT+VrWWM4oqUxUC770MmLo1FWFR2pr/OL81HSPC/ifmiu0uMFk0qPGLmjkSMRIESw==
   optionalDependencies:
     fsevents "~2.3.1"
 
@@ -3642,14 +3641,14 @@ type-is@~1.6.17, type-is@~1.6.18:
     mime-types "~2.1.24"
 
 typescript@^4.2.4:
-  version "4.2.4"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.2.4.tgz#8610b59747de028fda898a8aef0e103f156d0961"
-  integrity sha512-V+evlYHZnQkaz8TRBuxTA92yZBPotr5H+WhQ7bD3hZUndx5tGOa1fuCgeSjxAzM1RiN5IzvadIXTVefuuwZCRg==
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.2.tgz#399ab18aac45802d6f2498de5054fcbbe716a805"
+  integrity sha512-zZ4hShnmnoVnAHpVHWpTcxdv7dWP60S2FsydQLV8V5PbS3FifjWFFRiHSWpDJahly88PRyV5teTSLoq4eG7mKw==
 
 uglify-js@^3.1.4:
-  version "3.13.7"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.13.7.tgz#25468a3b39b1c875df03f0937b2b7036a93f3fee"
-  integrity sha512-1Psi2MmnZJbnEsgJJIlfnd7tFlJfitusmR7zDI8lXlFI0ACD4/Rm/xdrU8bh6zF0i74aiVoBtkRiFulkrmh3AA==
+  version "3.13.8"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.13.8.tgz#7c2f9f2553f611f3ff592bdc19c6fb208dc60afb"
+  integrity sha512-PvFLMFIQHfIjFFlvAch69U2IvIxK9TNzNWt1SxZGp9JZ/v70yvqIQuiJeVPPtUMOzoNt+aNRDk4wgxb34wvEqA==
 
 unbox-primitive@^1.0.1:
   version "1.0.1"

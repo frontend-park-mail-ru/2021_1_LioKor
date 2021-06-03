@@ -34,6 +34,10 @@ export class Listing {
         return this.elements.find(elem => elem.id === String(id));
     }
 
+    findIndexById(id) {
+        return this.elements.findIndex(elem => elem.id === String(id));
+    }
+
     findBy(fieldName, value) {
         return this.elements.find(elem => elem[fieldName] === value);
     }

@@ -25,6 +25,7 @@ body
     // background-image url(../images/background.jpg)
     // background-repeat repeat-y
     background-color clBackground
+    transition background-color ease 0.3s
 
     div.main
         overflow auto
@@ -33,18 +34,23 @@ body
         background-color transparent
         background-image none
 
+        header
+            max-height auto
+            transition max-height ease-out 0.2s
+            overflow hidden
         header.lite
             height logo-height
             line-height logo-height
-            padding logo-padding
             div.logo
+                padding logo-padding 0
                 display flex
                 margin 0 auto
                 width logo-width
                 text-align center
                 div.image
+                    padding-top (logo-padding - 5px)
                     img
-                        height logo-height
+                        height image-height
                 div.text
                     padding-left logo-padding
                     color textColor1
