@@ -296,7 +296,7 @@ export async function handler(element, app) {
 
     // create "new folder" button as plugBottom
     const newFolderButton = newElem(`<svg class="folders-button svg-button middle-avatar floatleft folder-icon" pointer-events="none" xmlns="http://www.w3.org/2000/svg"><path transform="scale(2.2) translate(-1,-1)" d="M10 3.25c.41 0 .75.34.75.75v5.25H16a.75.75 0 010 1.5h-5.25V16a.75.75 0 01-1.5 0v-5.25H4a.75.75 0 010-1.5h5.25V4c0-.41.34-.75.75-.75z"/></svg>
-            <div class="dialogue-text centered">Создать папку...</div>`, 'li', '0', 'listing-button', 'folder', 'closed', 'new-folder-button');
+            <div class="dialogue-text centered">Создать папку...</div>`, 'li', '0', ['listing-button', 'folder', 'closed', 'new-folder-button']);
     foldersListing.setPlugBottomState('new-folder-button', newFolderButton);
     foldersListing.plugBottomState = 'new-folder-button';
     newFolderButton.addEventListener('click', async (event) => {
@@ -408,19 +408,19 @@ export async function handler(element, app) {
 
         // create folders plugs for dialoguesListing
         foldersListing.forEach((folder) => {
-            dialoguesListing.setPlugTopState('folder-' + folder.id, newElem(dividerHTMLTemplate({ folder: folder.name }), 'div', 'dialogues-listing-divider', 'dialogues-listing-divider', 'center-text'));
+            dialoguesListing.setPlugTopState('folder-' + folder.id, newElem(dividerHTMLTemplate({ folder: folder.name }), 'div', 'dialogues-listing-divider', ['dialogues-listing-divider', 'center-text']));
         });
 
         dialoguesListing.setPlugBottomState(plugStates.end, newElem(`
             <svg class="svg-button" pointer-events="none" width="40" height="30" xmlns="http://www.w3.org/2000/svg"><g transform="scale(0.6)"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></g></svg>
             <div class="standalone-info-text">Больше диалогов нет</div>`,
-        'div', '', 'center-text', 'empty-dialogue'));
+        'div', '', ['center-text', 'empty-dialogue']));
         dialoguesListing.setPlugBottomState(plugStates.offline, newElem(`
             <svg class="svg-button centered" pointer-events="none" width="50" height="30" xmlns="http://www.w3.org/2000/svg"><g transform="scale(1.5)"><path d="M21.0303 4.83038C21.3232 4.53749 21.3232 4.06261 21.0303 3.76972C20.7374 3.47683 20.2626 3.47683 19.9697 3.76972L3.96967 19.7697C3.67678 20.0626 3.67678 20.5375 3.96967 20.8304C4.26256 21.1233 4.73744 21.1233 5.03033 20.8304L7.11065 18.7501H18.5233C20.9961 18.7501 23.0008 16.7454 23.0008 14.2725C23.0008 11.7996 20.9961 9.79493 18.5233 9.79493C18.4592 9.79493 18.3955 9.79628 18.3321 9.79895C18.2944 9.15027 18.1424 8.53227 17.8959 7.96479L21.0303 4.83038ZM16.7186 9.14209L8.61065 17.2501H18.5233C20.1677 17.2501 21.5008 15.917 21.5008 14.2725C21.5008 12.628 20.1677 11.2949 18.5233 11.2949C18.2557 11.2949 17.9975 11.33 17.7524 11.3955C17.5122 11.4596 17.2558 11.4006 17.0679 11.2378C16.8799 11.075 16.7849 10.8297 16.8141 10.5828C16.8321 10.4306 16.8414 10.2755 16.8414 10.1178C16.8414 9.78093 16.7987 9.45399 16.7186 9.14209Z"/><path d="M12.9319 4.70837C14.0388 4.70837 15.068 5.04083 15.9252 5.61134C16.0521 5.69579 16.0649 5.87451 15.9571 5.9823L15.2295 6.70991C15.1455 6.79392 15.0144 6.80644 14.912 6.74617C14.3313 6.4044 13.6545 6.20837 12.9319 6.20837C11.3816 6.20837 10.0406 7.1107 9.40813 8.42218C9.23808 8.77479 8.82543 8.9373 8.46061 8.79534C7.96987 8.60439 7.43541 8.49926 6.87461 8.49926C4.45814 8.49926 2.49921 10.4582 2.49921 12.8747C2.49921 14.521 3.40846 15.9549 4.75218 16.7017C4.90497 16.7866 4.94313 16.9963 4.81953 17.1199L4.09641 17.843C4.01666 17.9227 3.89307 17.9397 3.79705 17.8805C2.1183 16.8462 0.999207 14.9911 0.999207 12.8747C0.999207 9.62976 3.62971 6.99925 6.87461 6.99925C7.39427 6.99925 7.89899 7.0669 8.38002 7.19408C9.34177 5.69979 11.0205 4.70837 12.9319 4.70837Z"/></g></svg>
             <div class="standalone-info-text">Это все загруженные диалоги</div>`,
-        'div', '', 'center-text', 'empty-dialogue'));
+        'div', '', ['center-text', 'empty-dialogue']));
         dialoguesListing.setPlugBottomState(plugStates.loading, newElem('<div class="dot-pulse"></div>',
-            'div', '', 'center-text', 'load-animation', 'empty-dialogue'));
+            'div', '', ['center-text', 'load-animation', 'empty-dialogue']));
 
         dialoguesListing.setOnActiveHandler(async (dialogue) => {
             const prevDialoguesListing = currentDialoguesListing;
@@ -448,12 +448,12 @@ export async function handler(element, app) {
 
                 dialogue.messagesListing.setPlugTopState(plugStates.end, newElem(`<svg class="svg-button centered" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><path d="M22.03 10c-8.48 0-14.97 5.92-14.97 12.8 0 2.47.82 4.79 2.25 6.74a1.5 1.5 0 01.3.9c0 1.63-.43 3.22-.96 4.67a41.9 41.9 0 01-1.17 2.8c3.31-.33 5.5-1.4 6.8-2.96a1.5 1.5 0 011.69-.43 17.06 17.06 0 006.06 1.1C30.5 35.61 37 29.68 37 22.8 37 15.93 30.5 10 22.03 10zM4.06 22.8C4.06 13.9 12.3 7 22.03 7 31.75 7 40 13.88 40 22.8c0 8.93-8.25 15.81-17.97 15.81-2.17 0-4.25-.33-6.17-.95-2.26 2.14-5.55 3.18-9.6 3.34a2.2 2.2 0 01-2.07-3.08l.42-.95c.43-.96.86-1.9 1.22-2.9.41-1.11.69-2.18.76-3.18a14.28 14.28 0 01-2.53-8.08z"></path><path d="M43.01 18.77a1.5 1.5 0 00.38 2.09c3.44 2.38 5.55 5.98 5.55 9.95 0 2.47-.81 4.78-2.25 6.73a1.5 1.5 0 00-.3.9c0 1.63.43 3.22.96 4.67.35.96.77 1.92 1.17 2.8-3.31-.33-5.5-1.4-6.8-2.96a1.5 1.5 0 00-1.69-.43 17.06 17.06 0 01-6.06 1.1c-2.98 0-5.75-.76-8.08-2.03a1.5 1.5 0 00-1.44 2.63 20.19 20.19 0 0015.7 1.44c2.25 2.14 5.54 3.18 9.59 3.34a2.2 2.2 0 002.07-3.08l-.42-.95c-.44-.96-.86-1.9-1.22-2.9a11.65 11.65 0 01-.76-3.18 14.28 14.28 0 002.53-8.08c0-5.1-2.72-9.56-6.84-12.42a1.5 1.5 0 00-2.09.38z"></path></svg>
                         <div class="standalone-info-text">Это начало истории сообщений</div>`,
-                'div', '', 'center-text', 'top-filler', 'no-messages-info'));
+                'div', '', ['center-text', 'top-filler', 'no-messages-info']));
                 dialogue.messagesListing.setPlugTopState(plugStates.offline, newElem(`<svg class="svg-button centered" pointer-events="none" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><g transform="scale(2.4)"><path d="M21.0303 4.83038C21.3232 4.53749 21.3232 4.06261 21.0303 3.76972C20.7374 3.47683 20.2626 3.47683 19.9697 3.76972L3.96967 19.7697C3.67678 20.0626 3.67678 20.5375 3.96967 20.8304C4.26256 21.1233 4.73744 21.1233 5.03033 20.8304L7.11065 18.7501H18.5233C20.9961 18.7501 23.0008 16.7454 23.0008 14.2725C23.0008 11.7996 20.9961 9.79493 18.5233 9.79493C18.4592 9.79493 18.3955 9.79628 18.3321 9.79895C18.2944 9.15027 18.1424 8.53227 17.8959 7.96479L21.0303 4.83038ZM16.7186 9.14209L8.61065 17.2501H18.5233C20.1677 17.2501 21.5008 15.917 21.5008 14.2725C21.5008 12.628 20.1677 11.2949 18.5233 11.2949C18.2557 11.2949 17.9975 11.33 17.7524 11.3955C17.5122 11.4596 17.2558 11.4006 17.0679 11.2378C16.8799 11.075 16.7849 10.8297 16.8141 10.5828C16.8321 10.4306 16.8414 10.2755 16.8414 10.1178C16.8414 9.78093 16.7987 9.45399 16.7186 9.14209Z"/><path d="M12.9319 4.70837C14.0388 4.70837 15.068 5.04083 15.9252 5.61134C16.0521 5.69579 16.0649 5.87451 15.9571 5.9823L15.2295 6.70991C15.1455 6.79392 15.0144 6.80644 14.912 6.74617C14.3313 6.4044 13.6545 6.20837 12.9319 6.20837C11.3816 6.20837 10.0406 7.1107 9.40813 8.42218C9.23808 8.77479 8.82543 8.9373 8.46061 8.79534C7.96987 8.60439 7.43541 8.49926 6.87461 8.49926C4.45814 8.49926 2.49921 10.4582 2.49921 12.8747C2.49921 14.521 3.40846 15.9549 4.75218 16.7017C4.90497 16.7866 4.94313 16.9963 4.81953 17.1199L4.09641 17.843C4.01666 17.9227 3.89307 17.9397 3.79705 17.8805C2.1183 16.8462 0.999207 14.9911 0.999207 12.8747C0.999207 9.62976 3.62971 6.99925 6.87461 6.99925C7.39427 6.99925 7.89899 7.0669 8.38002 7.19408C9.34177 5.69979 11.0205 4.70837 12.9319 4.70837Z"/></g></svg>
                         <div class="standalone-info-text">Это все загруженные сообщения</div>`,
-                'div', '', 'center-text', 'top-filler'));
+                'div', '', ['center-text', 'top-filler']));
                 dialogue.messagesListing.setPlugTopState(plugStates.loading, newElem('<div class="dot-pulse"></div>',
-                    'div', '', 'center-text', 'load-animation'));
+                    'div', '', ['center-text', 'load-animation']));
 
                 dialogue.messagesListing.setScrollHandlers(async (event) => {
                     // Get messages
@@ -1156,7 +1156,7 @@ export async function handler(element, app) {
     function addCreateNewDialogueElem() {
         // create dialogue HTML-element
         const elem = newElem('<svg class="plus-button" id="find-dialogue-button" xmlns="http://www.w3.org/2000/svg"><g transform="scale(3) translate(1, -2)"><path d="M10.25 2.5C5.68 2.5 2 5.83 2 10a7 7 0 001.26 4c-.1.6-.47 1.52-1.12 2.73a1.2 1.2 0 001.1 1.77c1.9-.06 3.35-.51 4.35-1.4.85.27 1.74.4 2.66.4 4.57 0 8.25-3.33 8.25-7.5s-3.68-7.5-8.25-7.5zm0 1.5C6.37 4 3.5 6.79 3.5 10a5.51 5.51 0 001 3.15l.17.26a.75.75 0 01.12.55l-.05.3c-.13.74-.5 1.67-1.03 2.71a4.84 4.84 0 002.89-.99l.31-.28a.75.75 0 01.72-.15l.4.12a7.58 7.58 0 002.22.33c3.88 0 6.75-2.79 6.75-6s-2.87-6-6.75-6z"/><path d="M11 7a.75.75 0 00-1.5 0v2.25H7.25a.75.75 0 000 1.5H9.5V13a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5H11V7z"/></g></svg>',
-            'li', 'new-dialogue-button', 'listing-button', 'center-text');
+            'li', 'new-dialogue-button', ['listing-button', 'center-text']);
         dialoguesListingElem.insertBefore(elem, dialoguesListingElem.firstChild);
 
         // create Event-listener on element
@@ -1243,14 +1243,18 @@ export async function handler(element, app) {
      * @param innerHTML
      * @param tag
      * @param id
+     * @param data
      * @param classes
      * @returns {*}
      */
-    function newElem(innerHTML, tag, id, ...classes) {
+    function newElem(innerHTML, tag, id, classes, data = null) {
         const elem = document.createElement(tag);
         elem.id = id;
         elem.classList.add(...classes);
         elem.innerHTML = innerHTML;
+        if (data != null) {
+            elem.setAttribute('data', data);
+        }
         return elem;
     }
 
@@ -1403,7 +1407,7 @@ export async function handler(element, app) {
             body: new Handlebars.SafeString(dialogue.body),
             newMessages: dialogue.new
         });
-        const elem = newElem(dialogueInnerHTML, 'li', dialogue.id, 'listing-button');
+        const elem = newElem(dialogueInnerHTML, 'li', dialogue.id, ['listing-button'], dialogue.username);
         elem.username = dialogue.username;
         elem.time = dialogue.time;
         elem.avatar = dialogue.avatarUrl;
@@ -1470,7 +1474,7 @@ export async function handler(element, app) {
             title: folder.name,
             newMessages: folder.new
         }));
-        const elem = newElem(folderInnerHTML, 'div', folder.id, 'listing-button', 'folder', 'table-columns', 'closed');
+        const elem = newElem(folderInnerHTML, 'div', folder.id, ['listing-button', 'folder', 'table-columns', 'closed'], folder.name);
         elem.name = folder.name;
         elem.statusElem = elem.querySelector('.dialogue-status');
 
@@ -1601,7 +1605,7 @@ export async function handler(element, app) {
             }),
             'div',
             messageBlock.id,
-            'message-block',
+            ['message-block'],
             isYour ? 'right-block' : 'left-block'
         );
 
