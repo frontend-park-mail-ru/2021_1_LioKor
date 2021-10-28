@@ -1251,7 +1251,7 @@ export async function handler(element, app) {
         elem.classList.add(...classes);
         elem.innerHTML = innerHTML;
         if (data != null) {
-            elem.setAttribute("data", data);
+            elem.setAttribute('data', data);
         }
         return elem;
     }
