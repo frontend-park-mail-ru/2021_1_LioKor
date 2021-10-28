@@ -15,7 +15,7 @@ const html = `
 
             <div class="title">
                 <div class="avatar">
-                    <img id="avatarImage" src="{{ avatarUrl }}">
+                    <img id="avatarImage" src="{{ avatarUrl }}" alt="avatar">
                     <div id="avatarChange" class="cover">
                         Изменить
                     </div>
@@ -146,6 +146,8 @@ export async function handler(element, app) {
             app.storage.avatar = avatarUrl;
             avatarImage.src = dataURL;
             app.messages.success('Успех', 'Аватар успешно изменён');
+        } else {
+            app.messages.error('Ошибка', 'Не удалось изменить аватар!');
         }
     });
 }
