@@ -131,8 +131,15 @@ export async function handler(element, app) {
     const avatarImage = document.getElementById('avatarImage');
     document.getElementById('avatarChange').addEventListener('click', async () => {
         // if "Cancel" button will be pressed - Promise never resolves, but there's no event to resolve on cancel =(
-        const dataURL = await getImageAsDataURL();
+        let dataURL;
+        try {
+            dataURL = await getImageAsDataURL();
+        } catch (err) {
+            app.messages.error('Ошибка', err.toString());
+            return;
+        }
         if (avatarDataURL.value === dataURL) {
+            app.messages.success('Успех', 'Данный аватар уже установлен!');
             return;
         }
 
