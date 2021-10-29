@@ -1567,6 +1567,8 @@ export async function handler(element, app) {
                     inputElem.value = folder.name;
                     return;
                 }
+
+                elem.setAttribute("data", inputElem.value)
                 app.messages.success('Папка переименована', `Было: ${folder.name} Стало: ${inputElem.value}`);
 
                 // rename in structure
