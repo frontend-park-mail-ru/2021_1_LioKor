@@ -1607,8 +1607,7 @@ export async function handler(element, app) {
             }),
             'div',
             messageBlock.id,
-            ['message-block'],
-            isYour ? 'right-block' : 'left-block'
+            ['message-block', isYour ? 'right-block' : 'left-block']
         );
 
         messageBlockElem.sender = messageBlock.sender;
