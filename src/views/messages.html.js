@@ -1012,10 +1012,10 @@ export async function handler(element, app) {
         encaseMessageText('**', '**');
     });
     italicMarkdownButton.addEventListener('mousedown', (event) => {
-        encaseMessageText(' _', '_ ');
+        encaseMessageText('_', '_');
     });
     strikethroughMarkdownButton.addEventListener('mousedown', (event) => {
-        encaseMessageText(' ~~', '~~ ');
+        encaseMessageText('~~', '~~');
     });
     codeMarkdownButton.addEventListener('mousedown', (event) => {
         encaseMessageText('`', '`');
