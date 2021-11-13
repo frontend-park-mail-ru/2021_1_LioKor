@@ -911,7 +911,7 @@ export async function handler(element, app) {
     }
 
     // Our pretty WebSockets...
-    setInterval(async () => {
+    /*setInterval(async () => {
         if (!app.storage.username) {
             return;
         }
@@ -973,7 +973,7 @@ export async function handler(element, app) {
                     previewElem.innerText = stripTags(dialogue.body);
                 }
             }
-        });
+        });*/
         if (createdElems > 0) {
             redrawListings();
         }
