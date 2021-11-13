@@ -15,7 +15,7 @@ const dialoguesByRequest = 50;
 const foldersByRequest = 500;
 const messagesByRequest = 15;
 
-const updateCycleTime = 5000; // ms
+// const updateCycleTime = 5000; // ms
 
 const messagesScrollLoadOffset = 40; // px
 const dialoguesScrollLoadOffset = 40; // px
@@ -911,7 +911,7 @@ export async function handler(element, app) {
     }
 
     // Our pretty WebSockets...
-    /*setInterval(async () => {
+    /* setInterval(async () => {
         if (!app.storage.username) {
             return;
         }
@@ -973,7 +973,7 @@ export async function handler(element, app) {
                     previewElem.innerText = stripTags(dialogue.body);
                 }
             }
-        });*/
+        });
         if (createdElems > 0) {
             redrawListings();
         }
@@ -1000,7 +1000,7 @@ export async function handler(element, app) {
         if (isScrolledToBottom) {
             messagesListing.scrollToBottom();
         }
-    }, updateCycleTime);
+    }, updateCycleTime); */
 
     /* // Deny to show mini-context window on text selection
     messageInput.addEventListener('mouseup', (event) => {
