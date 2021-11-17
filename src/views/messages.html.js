@@ -14,6 +14,7 @@ const CL_HIGHLIGHT_DRAG_AND_DROP = 'orange';
 const dialoguesByRequest = 50;
 const foldersByRequest = 500;
 const messagesByRequest = 15;
+const findInputEventTimeoutDelay = 50;
 
 // const updateCycleTime = 5000; // ms
 
@@ -765,25 +766,18 @@ export async function handler(element, app) {
         findInput.dispatchEvent(new Event('input'));
     });
 
-    // create find input event-listener
-    findInput.addEventListener('input', async (event) => {
-        // get find value
+    async function findInputModified() {
         const findText = findInput.value;
         dialoguesListing.scrollActive = false;
+
         if (findText === '') {
             dialoguesListing = foldersListing.activeElem.dialoguesListing;
         } else {
-            dialoguesListing = foundDialogues[findText];
-        }
-        if (!dialoguesListing) {
             dialoguesListing = newDialoguesListing('?find=' + findText);
-            // get found dialogues
             const gottenDialogues = await dialoguesListing.networkGetter.getNextPage();
             gottenDialogues.forEach((dialogue) => {
                 newDialogue(dialogue);
             });
-
-            foundDialogues[findText] = dialoguesListing;
         }
         dialoguesListing.scrollActive = true;
 
@@ -822,6 +816,15 @@ export async function handler(element, app) {
         }
         // findText isn't empty => draw magnifier on button
         findButton.innerHTML = '<g transform="scale(0.06) translate(40,60)"><path d="M506.141,477.851L361.689,333.399c65.814-80.075,61.336-198.944-13.451-273.73c-79.559-79.559-209.01-79.559-288.569,0    s-79.559,209.01,0,288.569c74.766,74.766,193.62,79.293,273.73,13.451l144.452,144.452c7.812,7.812,20.477,7.812,28.289,0    C513.953,498.328,513.953,485.663,506.141,477.851z M319.949,319.948c-63.96,63.96-168.03,63.959-231.99,0    c-63.96-63.96-63.96-168.03,0-231.99c63.958-63.957,168.028-63.962,231.99,0C383.909,151.918,383.909,255.988,319.949,319.948z"/></g>';
+    }
+
+    // we need to wait a little, because input could be very fast
+    let findInputEventTimeout;
+    findInput.addEventListener('input', async (event) => {
+        clearInterval(findInputEventTimeout);
+        findInputEventTimeout = setTimeout(() => {
+            findInputModified();
+        }, findInputEventTimeoutDelay);
     });
 
     // create event-listener on press key in input
