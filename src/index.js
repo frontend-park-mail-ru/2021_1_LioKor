@@ -7,6 +7,9 @@ import './styles/messages.styl';
 import { registerSW } from './modules/sw-installer.js';
 import App from './app';
 
+// const API_BASE_URL = 'https://api.mail.liokor.ru';
+const API_BASE_URL = 'https://mail.liokor.ru/api';
+
 const headContentHTML = '<link rel="icon" href="/images/favicon.ico" type="image/x-icon">';
 const baseContentHTML = `<div class="main" id="main">
     <header class="lite desktop-only">
@@ -34,7 +37,7 @@ async function main() {
     await registerSW();
 
     const { hostname, origin, pathname, search } = window.location;
-    let apiUrl = 'https://api.mail.liokor.ru';
+    let apiUrl = API_BASE_URL;
     if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.')) {
         apiUrl = `${origin}/api`;
     }

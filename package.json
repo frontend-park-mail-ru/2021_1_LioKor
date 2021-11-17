@@ -37,7 +37,7 @@
         "typescript": "^4.2.4"
     },
     "dependencies": {
-        "@korolion/get-image-as-dataurl": "^0.1.0",
+        "@korolion/get-image-as-dataurl": "^0.2.0",
         "handlebars": "^4.7.7"
     }
 }
